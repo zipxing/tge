@@ -2,22 +2,27 @@ namespace Snake {
     export class TermRender extends nge.Render {
         gridboxes: any[][];
         msgbox: any;
+        gamebox: any;
         constructor() {
             super();
             let nb = (<nge.TermRun>nge.mode);
+            this.gamebox = nb.blessed.box({
+                width:Model.snakew+2, height:Model.snakeh+2, top:0,
+                left:0, border:{type:'line'}, tags:true });
+            nb.tscreen.append(this.gamebox);
             this.gridboxes=[];
             for(let i=0;i<Model.snakeh;i++) {
                 this.gridboxes[i]=[];
                 for(let j=0;j<Model.snakew;j++) {
                     this.gridboxes[i][j]=nb.blessed.box({
-                        width:1, height:1, top:i, left:j, tags:true
+                        width:1, height:1, top:i+1, left:j+1, tags:true
                     });
                     nb.tscreen.append(this.gridboxes[i][j]);
                 }
             }
             this.msgbox = nb.blessed.box({
-                width:Model.snakew, height:1, top:Model.snakeh+1, 
-                left:0, tags:true });
+                width:Model.snakew+2, height:3, top:Model.snakeh+1, 
+                left:0, border:{type:'line'}, tags:true });
             nb.tscreen.append(this.msgbox);
         }
         draw() {
