@@ -1,12 +1,12 @@
 namespace Snake {
-    export class TermRender extends nge.Render {
+    export class TermRender extends tge.Render {
         gridboxes: any[][];
         msgbox: any;
         gamebox: any;
 
         constructor() {
             super();
-            let nb = (<nge.TermRun>nge.mode);
+            let nb = (<tge.TermRun>tge.mode);
 
             this.gamebox = nb.blessed.box({
                 width:Model.snakew+2, height:Model.snakeh+2, top:0,
@@ -28,17 +28,22 @@ namespace Snake {
                 width:Model.snakew+2, height:3, top:Model.snakeh+1, 
                 left:0, border:{type:'line'}, tags:true });
             nb.tscreen.append(this.msgbox);
+
+            tge.Emitter.register("Snake.REDRAW_MSG", this.redrawMsg, this);
         }
 
-        draw() {
+        redrawMsg() {
             let msg:string[] =['SnakeGame1.0,press {green-fg}q{/} quit...',
                 'Game over,press {green-fg}r{/} restart...',
                 'Game over,press {green-fg}r{/} restart...'];
+            this.msgbox.setContent(msg[g.gameover]);
+        }
+
+        draw() {
             let c = ['magenta', 'blue', 'red', 'green', 'yellow', 'cyan'];
             let g = TermRender.game;
             let m = <Snake.Model>g.model;
 
-            this.msgbox.setContent(msg[g.gameover]);
             for(let i=0;i<Model.snakeh;i++) {
                 for(let j=0;j<Model.snakew;j++) {
                     let gv = m.grid[i][j];
@@ -58,7 +63,7 @@ namespace Snake {
                     }
                 }
             }
-            let nb = (<nge.TermRun>nge.mode);
+            let nb = (<tge.TermRun>tge.mode);
             nb.tscreen.render();
         }
     }

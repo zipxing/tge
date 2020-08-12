@@ -1,4 +1,4 @@
-namespace nge {
+namespace tge {
     export interface TimerData {
         time: number;
         count: number;
@@ -16,7 +16,7 @@ namespace nge {
         setup(name: string, time: number, endcall: Function) {
             this.timers[name] = {
                 time: 0,
-                count: Math.ceil(time*nge.Game._frameHz),
+                count: Math.ceil(time*tge.Game._frameHz),
                 endcall: endcall,
                 exdata: 0
             }

@@ -5,7 +5,7 @@ namespace Snake {
         OverBorder
     }
 
-    export class Game extends nge.Game {
+    export class Game extends tge.Game {
         initGame() {
             let m = <Snake.Model>this.model;
             m.body[0] = {x:Model.snakew/2, y:Model.snakeh/2};
@@ -17,6 +17,7 @@ namespace Snake {
             m.makeGrid();
             m.dir='D';
             this.gameover=GameState.Ok;
+            tge.Emitter.fire("Snake.REDRAW_MSG");
         }
 
         restartGame() {
@@ -73,6 +74,7 @@ namespace Snake {
             cy = m.body[0].y+dy;
             if(cx>=Model.snakew || cy>=Model.snakeh || cx<0 || cy<0) {
                 this.gameover=GameState.OverBorder;
+                tge.Emitter.fire("Snake.REDRAW_MSG");
                 return;
             }
             //check head meet seed
@@ -93,7 +95,8 @@ namespace Snake {
                 }
             } else {
                 if(m.grid[cy][cx]!=0) {
-                    this.gameover=2;
+                    this.gameover=GameState.OverSelf;
+                    tge.Emitter.fire("Snake.REDRAW_MSG");
                     return;
                 }
                 m.body.pop();

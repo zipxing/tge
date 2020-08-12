@@ -1,4 +1,4 @@
-namespace nge {
+namespace tge {
     export interface WebRun {
         kind: "WEB";
         context: any;

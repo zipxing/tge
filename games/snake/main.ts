@@ -1,4 +1,4 @@
-nge.initMode("TERM");
+tge.initMode("TERM");
 let m = new Snake.Model();
 let r = new Snake.TermRender();
 let g = new Snake.Game(m, r);

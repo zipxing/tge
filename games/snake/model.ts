@@ -1,9 +1,9 @@
 namespace Snake {
-    export class Model extends nge.Model {
+    export class Model extends tge.Model {
         static snakew:number = 50;
         static snakeh:number = 30;
-        seed: nge.Point;
-        body: nge.Point[];
+        seed: tge.Point;
+        body: tge.Point[];
         grid: number[][];
         dir: string;
 

@@ -1,4 +1,4 @@
-namespace nge {
+namespace tge {
     export class Emitter {
         private static listeners:{[eventname: string]: any} = {};
 
