@@ -3,13 +3,16 @@ namespace Snake {
         gridboxes: any[][];
         msgbox: any;
         gamebox: any;
+
         constructor() {
             super();
             let nb = (<nge.TermRun>nge.mode);
+
             this.gamebox = nb.blessed.box({
                 width:Model.snakew+2, height:Model.snakeh+2, top:0,
                 left:0, border:{type:'line'}, tags:true });
             nb.tscreen.append(this.gamebox);
+
             this.gridboxes=[];
             for(let i=0;i<Model.snakeh;i++) {
                 this.gridboxes[i]=[];
@@ -20,11 +23,13 @@ namespace Snake {
                     nb.tscreen.append(this.gridboxes[i][j]);
                 }
             }
+
             this.msgbox = nb.blessed.box({
                 width:Model.snakew+2, height:3, top:Model.snakeh+1, 
                 left:0, border:{type:'line'}, tags:true });
             nb.tscreen.append(this.msgbox);
         }
+
         draw() {
             let msg:string[] =['SnakeGame1.0,press {green-fg}q{/} quit...',
                 'Game over,press {green-fg}r{/} restart...',
@@ -32,6 +37,7 @@ namespace Snake {
             let c = ['magenta', 'blue', 'red', 'green', 'yellow', 'cyan'];
             let g = TermRender.game;
             let m = <Snake.Model>g.model;
+
             this.msgbox.setContent(msg[g.gameover]);
             for(let i=0;i<Model.snakeh;i++) {
                 for(let j=0;j<Model.snakew;j++) {
