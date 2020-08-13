@@ -17,6 +17,7 @@ namespace Snake {
             m.makeGrid();
             m.dir='D';
             this.gameover=GameState.Ok;
+            tge.Emitter.fire("Snake.REDRAW_GRID");
             tge.Emitter.fire("Snake.REDRAW_MSG");
         }
 
@@ -75,6 +76,7 @@ namespace Snake {
             if(cx>=Model.snakew || cy>=Model.snakeh || cx<0 || cy<0) {
                 this.gameover=GameState.OverBorder;
                 tge.Emitter.fire("Snake.REDRAW_MSG");
+                tge.Emitter.fire("Snake.REDRAW_GRID");
                 return;
             }
             //check head meet seed
@@ -97,6 +99,7 @@ namespace Snake {
                 if(m.grid[cy][cx]!=0) {
                     this.gameover=GameState.OverSelf;
                     tge.Emitter.fire("Snake.REDRAW_MSG");
+                    tge.Emitter.fire("Snake.REDRAW_GRID");
                     return;
                 }
                 m.body.pop();
@@ -104,6 +107,7 @@ namespace Snake {
             m.body.splice(0,0,{x:cx,y:cy});
             m.dir = act;
             m.makeGrid();
+            tge.Emitter.fire("Snake.REDRAW_GRID");
             this.timeout_auto=0.0;
 
         }

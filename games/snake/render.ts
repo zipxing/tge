@@ -30,6 +30,7 @@ namespace Snake {
             nb.tscreen.append(this.msgbox);
 
             tge.Emitter.register("Snake.REDRAW_MSG", this.redrawMsg, this);
+            tge.Emitter.register("Snake.REDRAW_GRID", this.redrawGrid, this);
         }
 
         redrawMsg() {
@@ -39,7 +40,11 @@ namespace Snake {
             this.msgbox.setContent(msg[g.gameover]);
         }
 
-        draw() {
+        setPoint(box: any, bg:string, fg:string, cchar:string) {
+            box.setContent(`{${bg}-bg}{${fg}-fg}${cchar}{/}`);
+        }
+
+        redrawGrid() {
             let c = ['magenta', 'blue', 'red', 'green', 'yellow', 'cyan'];
             let g = TermRender.game;
             let m = <Snake.Model>g.model;
@@ -51,18 +56,36 @@ namespace Snake {
                     switch(gv) {
                         case 0:
                             if(g.gameover==Snake.GameState.Ok) 
-                                gb.setContent('{white-bg} {/}');
+                                this.setPoint(gb, "black", "white", " ");
                             else
-                                gb.setContent('{yellow-bg} {/}');
+                                this.setPoint(gb, "yellow", "white", " ");
                             break;
                         case 10000:
-                            gb.setContent('{white-bg}{red-fg}*{/}');
                             break;
                         default:
-                            gb.setContent(`{${c[gv%c.length]}-bg} {/}`);
+                            if(g.gameover==Snake.GameState.Ok) 
+                                this.setPoint(gb, "black", c[gv%c.length], "█");
+                            else
+                                this.setPoint(gb, "yellow", c[gv%c.length], "█");
                     }
                 }
             }
+        }
+
+        drawSeed() {
+            let c = ['blue', 'red', 'green'];
+            let g = TermRender.game;
+            let m = <Snake.Model>g.model;
+            let gb = this.gridboxes[m.seed.y][m.seed.x];
+            let tc = c[Math.floor((g.stage / 10)) % c.length];
+            if(g.gameover==Snake.GameState.Ok) 
+                this.setPoint(gb, "black", tc, "∙");
+            else
+                this.setPoint(gb, "yellow", "red", "∙");
+        }
+
+        draw() {
+            this.drawSeed();
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
         }
