@@ -74,6 +74,7 @@ namespace tge {
 
         scheduleUpdate(dt: number) {
             this.stage++;
+            Timer.update();
             this.playUserAction(dt);
             this.playAutoAction(dt);
             this.playAiAction(dt);

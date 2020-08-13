@@ -7,14 +7,10 @@ namespace tge {
     }
 
     export class Timer {
-        timers: {[key: string]: TimerData};
+        private static timers: {[key: string]: TimerData} = {};
 
-        constructor() {
-            this.timers = {};
-        }
-
-        setup(name: string, time: number, endcall: Function) {
-            this.timers[name] = {
+        static register(name: string, time: number, endcall: Function) {
+            Timer.timers[name] = {
                 time: 0,
                 count: Math.ceil(time*tge.Game._frameHz),
                 endcall: endcall,
@@ -22,27 +18,39 @@ namespace tge {
             }
         }
 
-        fire(name: string, exdata: any) {
-            this.timers[name].time = this.timers[name].count;
+        static fire(name: string, exdata: any) {
+            let tmo: TimerData = Timer.timers[name];
+            if (!tmo) return;
+            tmo.time = tmo.count;
         }
 
-        cancel(name: string) {
-            this.timers[name].time = 0;
-            if(this.timers[name].endcall)
-                this.timers[name].endcall();
+        static cancel(name: string) {
+            let tmo: TimerData = Timer.timers[name];
+            if (!tmo) return;
+            tmo.time = 0;
+            if(tmo.endcall)
+                tmo.endcall();
         }
 
-        getpercent(name: string) {
-            let t = this.timers[name];
+        static getStage(name: string) {
+            let tmo: TimerData = Timer.timers[name];
+            if (!tmo) return;
+            return tmo.time;
+        }
+
+        static getPercent(name: string) {
+            let tmo: TimerData = Timer.timers[name];
+            if (!tmo) return;
+            let t = tmo;
             return t.time*1.0/t.count*1.0;
         }
 
-        update() {
-            for(let t in this.timers) {
-                if(this.timers[t].time>0) {
-                    this.timers[t].time--;
-                    if(this.timers[t].time==0) {
-                        this.cancel(t);
+        static update() {
+            for(let t in Timer.timers) {
+                if(Timer.timers[t].time>0) {
+                    Timer.timers[t].time--;
+                    if(Timer.timers[t].time==0) {
+                        Timer.cancel(t);
                     }
                 }
             }

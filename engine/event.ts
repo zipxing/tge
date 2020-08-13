@@ -2,7 +2,7 @@ namespace tge {
     export class Emitter {
         private static listeners:{[eventname: string]: any} = {};
 
-        public static register(name: string, callback: Function, context: any) {
+        static register(name: string, callback: Function, context: any) {
             let observers: Observer[] = Emitter.listeners[name];
             if (!observers) {
                 Emitter.listeners[name] = [];
@@ -10,7 +10,7 @@ namespace tge {
             Emitter.listeners[name].push(new Observer(callback, context));
         }
 
-        public static remove(name: string, callback: Function, context: any) {
+        static remove(name: string, callback: Function, context: any) {
             let observers: Observer[] = Emitter.listeners[name];
             if (!observers) return;
             let length = observers.length;
@@ -26,7 +26,7 @@ namespace tge {
             }
         }
 
-        public static fire(name: string, ...args: any[]) {
+        static fire(name: string, ...args: any[]) {
             let observers: Observer[] = Emitter.listeners[name];
             if (!observers) return;
             let length = observers.length;
