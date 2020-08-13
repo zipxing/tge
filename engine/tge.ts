@@ -16,26 +16,26 @@ namespace tge {
         kind: "COCOS";
     }
 
-    type RunMode = WebRun | TermRun | CocosRun;
-    export var mode:RunMode;
+    type RunEnv = WebRun | TermRun | CocosRun;
+    export var env:RunEnv;
 
-    export function initMode(runmode:string) {
-        switch(runmode) {
+    export function initMode(runenv:string) {
+        switch(runenv) {
             case "WEB":
-                mode = <WebRun>{kind:runmode, context:{}, canvas:{}};
+                env = <WebRun>{kind:runenv, context:{}, canvas:{}};
                 break;
             case "TERM":
                 let b = require('blessed');
                 let p = b.program();
                 let s = b.screen({fastCSR: true});
-                mode = <TermRun>{kind:runmode, 
+                env = <TermRun>{kind:runenv, 
                     blessed:b, program:p, tscreen:s};
                 break;
             case "COCOS":
-                mode = <CocosRun>{kind:runmode};
+                env = <CocosRun>{kind:runenv};
                 break;
             default:
-                console.log("ERROR:error runmode string...");
+                console.log("ERROR:error runenv string...");
         }
     }
 
@@ -81,10 +81,10 @@ namespace tge {
         }
 
         regKeyAction(keyDefine: { [key: string]: any }) {
-            if(mode.kind === "TERM") {
+            if(env.kind === "TERM") {
                 let that = this;
                 for (let k in keyDefine) {
-                    mode.program.key(k, function(ch: any, key: any) {
+                    env.program.key(k, function(ch: any, key: any) {
                         that.useract.splice(0,0,keyDefine[key.name]);
                     });
                 }
@@ -92,7 +92,7 @@ namespace tge {
         }
 
         loop() {
-            switch(mode.kind) {
+            switch(env.kind) {
                 case "TERM":
                     let now = Date.now();
                     Game._actualTicks++;
@@ -109,7 +109,7 @@ namespace tge {
                     }
                     break;
                 default:
-                    console.log("RunMode must be TERM | COCOS | WEB...");
+                    console.log("RunEnv must be TERM | COCOS | WEB...");
             }
         }
     }
@@ -127,8 +127,8 @@ namespace tge {
     export abstract class Render {
         static game: Game;
         constructor() {
-            if(mode.kind=="TERM") {
-                let mp = mode.program;
+            if(env.kind=="TERM") {
+                let mp = env.program;
                 mp.key('q', function(ch:any, key:any) {
                     mp.clear();
                     mp.disableMouse();
@@ -136,7 +136,7 @@ namespace tge {
                     mp.normalBuffer();
                     process.exit(0);
                 });
-                mode.program.on('mouse', function(data:any) {
+                env.program.on('mouse', function(data:any) {
                     if (data.action === 'mousemove') {
                     }
                 });

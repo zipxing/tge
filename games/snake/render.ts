@@ -6,7 +6,7 @@ namespace Snake {
 
         constructor() {
             super();
-            let nb = (<tge.TermRun>tge.mode);
+            let nb = (<tge.TermRun>tge.env);
 
             this.gamebox = nb.blessed.box({
                 width:Model.snakew+2, height:Model.snakeh+2, top:0,
@@ -63,7 +63,7 @@ namespace Snake {
                     }
                 }
             }
-            let nb = (<tge.TermRun>tge.mode);
+            let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
         }
     }
