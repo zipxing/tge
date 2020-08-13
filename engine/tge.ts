@@ -1,4 +1,5 @@
 namespace tge {
+    //Typescript game engine run environment...
     export interface WebRun {
         kind: "WEB";
         context: any;
@@ -19,17 +20,27 @@ namespace tge {
     type RunEnv = WebRun | TermRun | CocosRun;
     export var env:RunEnv;
 
-    export function initMode(runenv:string) {
+    //Init environment...
+    export function initEnvironment(runenv:string) {
         switch(runenv) {
             case "WEB":
-                env = <WebRun>{kind:runenv, context:{}, canvas:{}};
+                env = <WebRun>{
+                    kind:runenv, 
+                    context:{}, 
+                    canvas:{}
+                };
                 break;
             case "TERM":
                 let b = require('blessed');
                 let p = b.program();
-                let s = b.screen({fastCSR: true});
-                env = <TermRun>{kind:runenv, 
-                    blessed:b, program:p, tscreen:s};
+                //smartCSR or fastCSR...
+                let s = b.screen({smartCSR: true});
+                env = <TermRun>{
+                        kind:runenv,
+                        blessed:b, 
+                        program:p, 
+                        tscreen:s
+                };
                 break;
             case "COCOS":
                 env = <CocosRun>{kind:runenv};
@@ -49,9 +60,9 @@ namespace tge {
         timeout_ai: number;
 
         static _frameHz: number = 60;
-        static _tickLengthMs: number = 1000 / Game._frameHz;
-        static _previousTick: number = Date.now();
-        static _actualTicks: number = 0;
+        private static _tickLengthMs: number = 1000 / Game._frameHz;
+        private static _previousTick: number = Date.now();
+        private static _actualTicks: number = 0;
 
         constructor(m: Model, r: Render) {
             this.render = r;
