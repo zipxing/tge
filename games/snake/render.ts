@@ -1,23 +1,41 @@
 namespace Snake {
     export class TermRender extends tge.Render {
-        gridboxes: any[][];
         titlebox: any;
-        msgbox: any;
+        logobox: any;
         gamebox: any;
+        gridboxes: any[][];
+        msgbox: any;
 
         constructor() {
             super();
             let nb = (<tge.TermRun>tge.env);
 
             this.titlebox = nb.blessed.box({
-                width:Model.snakew+2, height:1, top:0,
-                left:0, tags:true });
-            this.titlebox.setContent("SnakeGame1.0 PoweredByTGE");
+                width:Model.snakew+2,
+                height:4,
+                top:0,
+                left:3,
+                tags:true
+            });
             nb.tscreen.append(this.titlebox);
 
+            this.logobox = nb.blessed.box({
+                width:12,
+                height:4,
+                top:0,
+                left:Model.snakew+14,
+                tags:true
+            });
+            nb.tscreen.append(this.logobox);
+
             this.gamebox = nb.blessed.box({
-                width:Model.snakew+2, height:Model.snakeh+2, top:1,
-                left:0, border:{type:'line'}, tags:true });
+                width:Model.snakew+2,
+                height:Model.snakeh+2,
+                top:4,
+                left:0,
+                border:{type:'line'},
+                tags:true
+            });
             nb.tscreen.append(this.gamebox);
 
             this.gridboxes=[];
@@ -25,15 +43,24 @@ namespace Snake {
                 this.gridboxes[i]=[];
                 for(let j=0;j<Model.snakew;j++) {
                     this.gridboxes[i][j]=nb.blessed.box({
-                        width:1, height:1, top:i+2, left:j+1, tags:true
+                        width:1,
+                        height:1,
+                        top:i+5,
+                        left:j+1,
+                        tags:true
                     });
                     nb.tscreen.append(this.gridboxes[i][j]);
                 }
             }
 
             this.msgbox = nb.blessed.box({
-                width:Model.snakew+2, height:3, top:Model.snakeh+3, 
-                left:0, border:{type:'line'}, tags:true });
+                width:23,
+                height:Model.snakeh+2,
+                top:4,
+                left:Model.snakew+3,
+                border:{type:'line'},
+                tags:true
+            });
             nb.tscreen.append(this.msgbox);
 
             tge.Emitter.register("Snake.REDRAW_MSG", this.redrawMsg, this);
@@ -45,7 +72,20 @@ namespace Snake {
         }
 
         drawTitle() {
-            this.titlebox.setContent("Snake..."+tge.Timer.getStage("Snake.Timer.Title"));
+            let s1="   ____          __      ";
+            let s2="  / __/__  ___ _/ /_____ ";
+            let s3=" _\\ \\/ _ \\/ _ \`/  '_/ -_)";
+            let s4="/___/_//_/\\_,_/_/\\_\\\\__/ ";
+            let st = tge.Timer.getStage("Snake.Timer.Title");
+            this.titlebox.setContent(`${s1}\n${s2}\n${s3}\n${s4}`);
+        }
+
+        drawLogo() {
+            let s1="PoweredBy";
+            let s2="╔╦╗╔═╗╔═╗";
+            let s3=" ║ ║ ╦║╣ ";
+            let s4=" ╩ ╚═╝╚═╝";
+            this.logobox.setContent(`${s1}\n${s2}\n${s3}\n${s4}`);
         }
 
         redrawMsg() {
@@ -101,6 +141,7 @@ namespace Snake {
 
         draw() {
             this.drawTitle();
+            this.drawLogo();
             this.drawSeed();
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
