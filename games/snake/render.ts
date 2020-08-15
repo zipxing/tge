@@ -23,7 +23,7 @@ namespace Snake {
                 width:12,
                 height:4,
                 top:0,
-                left:Model.snakew+14,
+                left:Model.snakew+16,
                 tags:true
             });
             nb.tscreen.append(this.logobox);
