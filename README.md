@@ -1,5 +1,9 @@
 # tge
 A typescript(tiny) game engine and games...
-HaHaHa
 
-11111
+
+TODO:
+* AscII art editor with color(dump a blessed box content)
+* AscII art util class
+* sound function
+
