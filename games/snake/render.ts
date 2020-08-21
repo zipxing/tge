@@ -99,8 +99,13 @@ namespace Snake {
             box.setContent(`{${bg}-bg}{${fg}-fg}${cchar}{/}`);
         }
 
+        setPoint256(box: any, bg:number, fg:number, cchar:string) {
+            box.setContent(`{${bg}-bg}{${fg}-fg}${cchar}{/}`);
+        }
+
         redrawGrid() {
-            let c = ['magenta', 'blue', 'red', 'green', 'yellow', 'cyan'];
+            //let c = ['magenta', 'blue', 'red', 'green', 'yellow', 'cyan'];
+            let c = [27, 33, 39, 45, 51, 50, 44, 38, 32, 26];
             let g = TermRender.game;
             let m = <Snake.Model>g.model;
 
@@ -119,9 +124,9 @@ namespace Snake {
                             break;
                         default:
                             if(g.gameover==Snake.GameState.Ok) 
-                                this.setPoint(gb, "black", c[gv%c.length], "█");
+                                this.setPoint256(gb, 0, c[gv%c.length], "█");
                             else
-                                this.setPoint(gb, "yellow", c[gv%c.length], "█");
+                                this.setPoint256(gb, 15, c[gv%c.length], "█");
                     }
                 }
             }
