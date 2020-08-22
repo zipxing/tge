@@ -105,7 +105,8 @@ namespace Snake {
 
         redrawGrid() {
             //let c = ['magenta', 'blue', 'red', 'green', 'yellow', 'cyan'];
-            let c = [27, 33, 39, 45, 51, 50, 44, 38, 32, 26];
+            let c = [27, 33, 39, 45, 51, 50, 44, 38, 32, 26,
+                     128, 134, 140, 146, 152, 147, 141, 135, 129];
             let g = TermRender.game;
             let m = <Snake.Model>g.model;
 
@@ -116,9 +117,9 @@ namespace Snake {
                     switch(gv) {
                         case 0:
                             if(g.gameover==Snake.GameState.Ok) 
-                                this.setPoint(gb, "black", "white", " ");
+                                this.setPoint256(gb, 0, 15, " ");
                             else
-                                this.setPoint(gb, "yellow", "white", " ");
+                                this.setPoint256(gb, 239, 15, " ");
                             break;
                         case 10000:
                             break;
@@ -133,15 +134,14 @@ namespace Snake {
         }
 
         drawSeed() {
-            let c = ['blue', 'red', 'green'];
             let g = TermRender.game;
             let m = <Snake.Model>g.model;
             let gb = this.gridboxes[m.seed.y][m.seed.x];
-            let tc = c[Math.floor((g.stage / 10)) % c.length];
+            let tc = 18 + Math.floor((g.stage / 2)) % 212;
             if(g.gameover==Snake.GameState.Ok) 
-                this.setPoint(gb, "black", tc, "∙");
+                this.setPoint256(gb, 0, tc, "∙");
             else
-                this.setPoint(gb, "yellow", "red", "∙");
+                this.setPoint256(gb, 239, 203, "∙");
         }
 
         draw() {
