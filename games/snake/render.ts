@@ -124,8 +124,12 @@ namespace Snake {
                         case 10000:
                             break;
                         default:
-                            if(g.gameover==Snake.GameState.Ok) 
-                                this.setPoint256(gb, 0, c[gv%c.length], "█");
+                            if(g.gameover==Snake.GameState.Ok) {
+                                if(gv==1)
+                                    this.setPoint256(gb, 0, 196, "█");
+                                else
+                                    this.setPoint256(gb, 0, c[gv%c.length], "▒");
+                            }
                             else
                                 this.setPoint256(gb, 15, c[gv%c.length], "█");
                     }

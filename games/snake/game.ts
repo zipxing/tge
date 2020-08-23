@@ -69,7 +69,7 @@ namespace Snake {
                     break;
                 default:
                     dx=0,dy=0;
-                    console.log('error act!');
+                    //console.log('error act!');
             }
             cx = m.body[0].x+dx;
             cy = m.body[0].y+dy;
