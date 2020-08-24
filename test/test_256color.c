@@ -11,6 +11,6 @@ main()
        16-231：6 × 6 × 6 立方（216色）: 16 + 36 × r + 6 × g + b (0 ≤ r, g, b ≤ 5)
        232-255：从黑到白的24阶灰度色
     */
-    printf("\e[38;5;7m\e[48;5;230m%s\e[0m\n", "hello world");
+    printf("\e[38;5;7m\e[48;5;8m%s\e[0m\n", "hello world");
     return 0;
 }

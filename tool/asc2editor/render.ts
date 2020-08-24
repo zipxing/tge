@@ -4,6 +4,10 @@ namespace AscIIEditor {
         logobox: any;
         gamebox: any;
         gridboxes: any[][];
+        colorbox: any;
+        gridcolor: any[][];
+        charbox: any;
+        gridchar: any[][];
         msgbox: any;
 
         constructor() {
@@ -11,7 +15,7 @@ namespace AscIIEditor {
             let nb = (<tge.TermRun>tge.env);
 
             this.titlebox = nb.blessed.box({
-                width:Model.snakew+2,
+                width:Model.asciiw+2,
                 height:4,
                 top:0,
                 left:3,
@@ -23,14 +27,14 @@ namespace AscIIEditor {
                 width:12,
                 height:4,
                 top:0,
-                left:Model.snakew+16,
+                left:Model.asciiw+16,
                 tags:true
             });
             nb.tscreen.append(this.logobox);
 
             this.gamebox = nb.blessed.box({
-                width:Model.snakew+2,
-                height:Model.snakeh+2,
+                width:Model.asciiw+2,
+                height:Model.asciih+2,
                 top:4,
                 left:0,
                 border:{type:'line'},
@@ -39,9 +43,9 @@ namespace AscIIEditor {
             nb.tscreen.append(this.gamebox);
 
             this.gridboxes=[];
-            for(let i=0;i<Model.snakeh;i++) {
+            for(let i=0;i<Model.asciih;i++) {
                 this.gridboxes[i]=[];
-                for(let j=0;j<Model.snakew;j++) {
+                for(let j=0;j<Model.asciiw;j++) {
                     this.gridboxes[i][j]=nb.blessed.box({
                         width:1,
                         height:1,
@@ -50,25 +54,72 @@ namespace AscIIEditor {
                         tags:true
                     });
                     nb.tscreen.append(this.gridboxes[i][j]);
+                    this.gridboxes[i][j].on('click', (data: any)=>{
+                        if(!TermRender.game) return;
+                        let g = TermRender.game;
+                        g.useract.splice(0,0,`IMAGE:${i}:${j}`);
+                    });
+                }
+            }
+
+            this.gridchar=[];
+            for(let i=0;i<Model.ascii.length;i++) {
+                this.gridchar[i]=[];
+                for(let j=0;j<Model.ascii[i].length;j++) {
+                    this.gridchar[i][j]=nb.blessed.box({
+                        width:1,height:1,
+                        content:`{15-fg}{238-bg}${Model.ascii[i][j]}{/}`,
+                        top:Model.asciih+6+i,
+                        left:j,
+                        tags:true
+                    });
+                    nb.tscreen.append(this.gridchar[i][j]);
+                    this.gridchar[i][j].on('click', (data: any)=>{
+                        if(!TermRender.game) return;
+                        let g = TermRender.game;
+                        g.useract.splice(0,0,`CHAR:${i}:${j}`);
+                    });
+                }
+            }
+             //init grid content...
+            this.gridcolor=[];
+            for(let i=0;i<8;i++) {
+                this.gridcolor[i]=[];
+                for(let j=0;j<32;j++) {
+                    let cn = i*32+j;
+                    let nstr = cn.toString(10);
+                    let pad = 3-nstr.length;
+                    for(let n=0; n<pad; n++) 
+                        nstr+=' ';
+                    nstr=' ';
+                    this.gridcolor[i][j]=nb.blessed.box({
+                        width:1,height:1,
+                        content:`{${cn}-bg}{${0}-fg}${nstr}{/}`,
+                        top:i+5,
+                        left:Model.asciiw+j+5,
+                        tags:true
+
+                    });
+                    nb.tscreen.append(this.gridcolor[i][j]);
+                    this.gridcolor[i][j].on('click', (data: any)=>{
+                        if(!TermRender.game) return;
+                        let g = TermRender.game;
+                        g.useract.splice(0,0,`COLOR:${i}:${j}`);
+                    });
                 }
             }
 
             this.msgbox = nb.blessed.box({
                 width:23,
-                height:Model.snakeh+2,
+                height:Model.asciih+2,
                 top:4,
-                left:Model.snakew+3,
+                left:Model.asciiw+3,
                 border:{type:'line'},
                 tags:true
             });
-            nb.tscreen.append(this.msgbox);
+            //nb.tscreen.append(this.msgbox);
 
-            tge.Emitter.register("Snake.REDRAW_MSG", this.redrawMsg, this);
-            tge.Emitter.register("Snake.REDRAW_GRID", this.redrawGrid, this);
-            tge.Timer.register("Snake.Timer.Title", 1.0, ()=>{
-                tge.Timer.fire("Snake.Timer.Title", 0);
-            });
-            tge.Timer.fire("Snake.Timer.Title", 0);
+            tge.Emitter.register("AscIIEditor.REDRAW_GRID", this.redrawGrid, this);
         }
 
         drawTitle() {
@@ -76,7 +127,6 @@ namespace AscIIEditor {
             let s2="  / __/__  ___ _/ /_____ ";
             let s3=" _\\ \\/ _ \\/ _ \`/  '_/ -_)";
             let s4="/___/_//_/\\_,_/_/\\_\\\\__/ ";
-            let st = tge.Timer.getStage("Snake.Timer.Title");
             this.titlebox.setContent(`${s1}\n${s2}\n${s3}\n${s4}`);
         }
 
@@ -92,7 +142,7 @@ namespace AscIIEditor {
             let msg:string[] =['Press {green-fg}q{/} quit...',
                 'Game over,press {green-fg}r{/} restart...',
                 'Game over,press {green-fg}r{/} restart...'];
-            this.msgbox.setContent(msg[g.gameover]);
+            //this.msgbox.setContent(msg[g.gameover]);
         }
 
         setPoint(box: any, bg:string, fg:string, cchar:string) {
@@ -100,49 +150,11 @@ namespace AscIIEditor {
         }
 
         redrawGrid() {
-            let c = ['magenta', 'blue', 'red', 'green', 'yellow', 'cyan'];
-            let g = TermRender.game;
-            let m = <Snake.Model>g.model;
-
-            for(let i=0;i<Model.snakeh;i++) {
-                for(let j=0;j<Model.snakew;j++) {
-                    let gv = m.grid[i][j];
-                    let gb = this.gridboxes[i][j];
-                    switch(gv) {
-                        case 0:
-                            if(g.gameover==Snake.GameState.Ok) 
-                                this.setPoint(gb, "black", "white", " ");
-                            else
-                                this.setPoint(gb, "yellow", "white", " ");
-                            break;
-                        case 10000:
-                            break;
-                        default:
-                            if(g.gameover==Snake.GameState.Ok) 
-                                this.setPoint(gb, "black", c[gv%c.length], "█");
-                            else
-                                this.setPoint(gb, "yellow", c[gv%c.length], "█");
-                    }
-                }
-            }
-        }
-
-        drawSeed() {
-            let c = ['blue', 'red', 'green'];
-            let g = TermRender.game;
-            let m = <Snake.Model>g.model;
-            let gb = this.gridboxes[m.seed.y][m.seed.x];
-            let tc = c[Math.floor((g.stage / 10)) % c.length];
-            if(g.gameover==Snake.GameState.Ok) 
-                this.setPoint(gb, "black", tc, "∙");
-            else
-                this.setPoint(gb, "yellow", "red", "∙");
         }
 
         draw() {
             this.drawTitle();
             this.drawLogo();
-            this.drawSeed();
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
         }

@@ -15,8 +15,8 @@ var box = blessed.box({
     type: 'line'
   },
   style: {
-    fg: 'white',
-    bg: 'magenta',
+    fg: 5,
+    bg: 8,
     border: {
       fg: '#ffffff'
     },
@@ -31,7 +31,8 @@ screen.append(box);
 
 // If our box is clicked, change the content.
 box.on('click', function(data) {
-  box.setContent('{center}Some different {230-bg}{7-fg}content{/}.{/center}');
+  console.log(data);
+  box.setContent('{center}Some different {8-bg}{123-fg}content{/}.{/center}');
   screen.render();
 });
 
