@@ -9,10 +9,22 @@ namespace AscIIEditor {
         charbox: any;
         gridchar: any[][];
         msgbox: any;
+        mousedown: boolean;
+
+        clickImage(b:any, i:number, j:number) {
+            let nb = (<tge.TermRun>tge.env);
+            if(!TermRender.game) return;
+            let g = TermRender.game;
+            let m = <AscIIEditor.Model>g.model;
+            b.content=`{${m.curbg}-bg}{${m.curfg}-fg}${m.curasc2code}{/}`;
+            nb.tscreen.render();
+            g.useract.splice(0,0,`IMAGE:${i}:${j}`);
+        }
 
         constructor() {
             super();
             let nb = (<tge.TermRun>tge.env);
+            this.mousedown = false;
 
             this.titlebox = nb.blessed.box({
                 width:Model.asciiw+2,
@@ -54,10 +66,17 @@ namespace AscIIEditor {
                         tags:true
                     });
                     nb.tscreen.append(this.gridboxes[i][j]);
-                    this.gridboxes[i][j].on('click', (data: any)=>{
-                        if(!TermRender.game) return;
-                        let g = TermRender.game;
-                        g.useract.splice(0,0,`IMAGE:${i}:${j}`);
+                    this.gridboxes[i][j].on('mousedown', (data: any)=>{
+                        this.mousedown = true;
+                        this.clickImage(this.gridboxes[i][j], i, j);
+                    });
+                    this.gridboxes[i][j].on('mouseup', (data: any)=>{
+                        this.mousedown = false;
+                        //this.clickImage(this.gridboxes[i][j], i, j);
+                    });
+                    this.gridboxes[i][j].on('mouseover', (data: any)=>{
+                        if(!this.mousedown) return;
+                        this.clickImage(this.gridboxes[i][j], i, j);
                     });
                 }
             }

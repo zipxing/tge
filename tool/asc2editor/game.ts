@@ -30,13 +30,13 @@ namespace AscIIEditor {
             let ag = act.split(":");
             switch(ag[0]) {
                 case "CHAR":
-                    console.log("CHAR", ag);
+                    //console.log("CHAR", ag);
                     break;
                 case "COLOR":
-                    console.log("COLOR", ag);
+                    //console.log("COLOR", ag);
                     break;
                 case "IMAGE":
-                    console.log("IMAGE", ag);
+                    //console.log("IMAGE", ag);
                     break;
                 default:
                     ;

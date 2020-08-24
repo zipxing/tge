@@ -39,7 +39,7 @@ namespace AscIIEditor {
             this.curpen = Pen.Asc2code;
             this.curbg = 0;
             this.curfg = 15;
-            this.curasc2code = " ";
+            this.curasc2code = "*";
             //init grid...
             for(let i=0;i<Model.asciih;i++) {
                 this.grid[i]=[];
