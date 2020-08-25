@@ -1,10 +1,4 @@
 namespace AscIIEditor {
-    export enum GameState {
-        Ok = 0,
-        OverSelf ,
-        OverBorder
-    }
-
     export class Game extends tge.Game {
         initGame() {
             let m = <AscIIEditor.Model>this.model;
