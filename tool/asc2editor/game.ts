@@ -38,22 +38,38 @@ namespace AscIIEditor {
                     m.curpen = Pen.Asc2code;
                     tge.Emitter.fire("AscIIEditor.REDRAW_MSG");
                     break;
-                case "COLOR":
+                case "FG-COLOR":
                     m.curfg = i*32+j;
                     m.curpen = Pen.Foreground;
                     tge.Emitter.fire("AscIIEditor.REDRAW_MSG");
                     break;
-                case "BCOLOR":
+                case "BG-COLOR":
                     m.curbg = i*32+j;
                     m.curpen = Pen.Background;
                     tge.Emitter.fire("AscIIEditor.REDRAW_MSG");
                     break;
                 case "IMAGE":
-                    m.grid[i][j] = {
-                        asc2code: m.curasc2code,
-                        fgcolor: m.curfg,
-                        bgcolor: m.curbg
-                    };
+                    switch(m.curpen) {
+                        case Pen.Asc2code:
+                            m.grid[i][j].asc2code = m.curasc2code;
+                            if(m.grid[i][j].asc2code == ' ') {
+                                m.grid[i][j].bgcolor = 0;
+                                m.grid[i][j].fgcolor = 15;
+                            }
+                            break;
+                        case Pen.Background:
+                            if(m.grid[i][j].asc2code == ' ')
+                                break;
+                            m.grid[i][j].bgcolor = m.curbg;
+                            break;
+                        case Pen.Foreground:
+                            if(m.grid[i][j].asc2code == ' ')
+                                break;
+                            m.grid[i][j].fgcolor = m.curfg;
+                            break;
+                        default:
+                            ;
+                    }
                     tge.Emitter.fire("AscIIEditor.REDRAW_IMAGE");
                     break;
                 default:

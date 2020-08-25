@@ -184,7 +184,10 @@ namespace AscIIEditor {
             });
             nb.tscreen.append(this.msgbox);
 
-            tge.Emitter.register("AscIIEditor.REDRAW_GRID", this.redrawGrid, this);
+            this.drawTitle();
+            this.drawLogo();
+
+            tge.Emitter.register("AscIIEditor.REDRAW_IMAGE", this.redrawGrid, this);
             tge.Emitter.register("AscIIEditor.REDRAW_MSG", this.redrawMsg, this);
         }
 
@@ -223,12 +226,17 @@ namespace AscIIEditor {
         }
 
         redrawGrid() {
+            let g = TermRender.game;
+            let m = <AscIIEditor.Model>g.model;
+            for(let i=0; i<Model.asciih; i++) {
+                for(let j=0; j<Model.asciiw; j++) {
+                    let b = m.grid[i][j];
+                    this.gridimage[i][j].setContent(`{${b.bgcolor}-bg}{${b.fgcolor}-fg}${b.asc2code}{/}`);
+                }
+            }
         }
 
         draw() {
-            this.drawTitle();
-            this.drawLogo();
-            //this.redrawMsg();
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
         }
