@@ -9,6 +9,7 @@ namespace AscIIEditor {
         initGame() {
             let m = <AscIIEditor.Model>this.model;
             tge.Emitter.fire("AscIIEditor.REDRAW_IMAGE");
+            tge.Emitter.fire("AscIIEditor.REDRAW_MSG");
         }
 
         restartGame() {
@@ -28,15 +29,32 @@ namespace AscIIEditor {
 
         doAction(act: any) {
             let ag = act.split(":");
+            let i = parseInt(ag[1]);
+            let j = parseInt(ag[2]);
+            let m = <AscIIEditor.Model>this.model;
             switch(ag[0]) {
                 case "CHAR":
-                    //console.log("CHAR", ag);
+                    m.curasc2code = Model.ascii[i][j];
+                    m.curpen = Pen.Asc2code;
+                    tge.Emitter.fire("AscIIEditor.REDRAW_MSG");
                     break;
                 case "COLOR":
-                    //console.log("COLOR", ag);
+                    m.curfg = i*32+j;
+                    m.curpen = Pen.Foreground;
+                    tge.Emitter.fire("AscIIEditor.REDRAW_MSG");
+                    break;
+                case "BCOLOR":
+                    m.curbg = i*32+j;
+                    m.curpen = Pen.Background;
+                    tge.Emitter.fire("AscIIEditor.REDRAW_MSG");
                     break;
                 case "IMAGE":
-                    //console.log("IMAGE", ag);
+                    m.grid[i][j] = {
+                        asc2code: m.curasc2code,
+                        fgcolor: m.curfg,
+                        bgcolor: m.curbg
+                    };
+                    tge.Emitter.fire("AscIIEditor.REDRAW_IMAGE");
                     break;
                 default:
                     ;

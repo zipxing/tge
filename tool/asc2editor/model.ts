@@ -10,8 +10,8 @@ namespace AscIIEditor {
         Foreground
     }
     export class Model extends tge.Model {
-        static asciiw:number = 80;
-        static asciih:number = 25;
+        static asciiw:number = 96;
+        static asciih:number = 24;
 
         static ascii = [
             //0x20~0x7e

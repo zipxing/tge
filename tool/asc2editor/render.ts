@@ -2,24 +2,21 @@ namespace AscIIEditor {
     export class TermRender extends tge.Render {
         titlebox: any;
         logobox: any;
-        gamebox: any;
-        gridboxes: any[][];
+
+        imagebox: any;
+        gridimage: any[][];
+
         colorbox: any;
         gridcolor: any[][];
+
+        colorbbox: any;
+        gridbcolor: any[][];
+
         charbox: any;
         gridchar: any[][];
+
         msgbox: any;
         mousedown: boolean;
-
-        clickImage(b:any, i:number, j:number) {
-            let nb = (<tge.TermRun>tge.env);
-            if(!TermRender.game) return;
-            let g = TermRender.game;
-            let m = <AscIIEditor.Model>g.model;
-            b.content=`{${m.curbg}-bg}{${m.curfg}-fg}${m.curasc2code}{/}`;
-            nb.tscreen.render();
-            g.useract.splice(0,0,`IMAGE:${i}:${j}`);
-        }
 
         constructor() {
             super();
@@ -30,7 +27,7 @@ namespace AscIIEditor {
                 width:Model.asciiw+2,
                 height:4,
                 top:0,
-                left:3,
+                left:0,
                 tags:true
             });
             nb.tscreen.append(this.titlebox);
@@ -39,12 +36,12 @@ namespace AscIIEditor {
                 width:12,
                 height:4,
                 top:0,
-                left:Model.asciiw+16,
+                left:Model.asciiw-7,
                 tags:true
             });
             nb.tscreen.append(this.logobox);
 
-            this.gamebox = nb.blessed.box({
+            this.imagebox = nb.blessed.box({
                 width:Model.asciiw+2,
                 height:Model.asciih+2,
                 top:4,
@@ -52,34 +49,45 @@ namespace AscIIEditor {
                 border:{type:'line'},
                 tags:true
             });
-            nb.tscreen.append(this.gamebox);
+            this.imagebox.setLabel("Image");
+            nb.tscreen.append(this.imagebox);
 
-            this.gridboxes=[];
+            this.gridimage=[];
             for(let i=0;i<Model.asciih;i++) {
-                this.gridboxes[i]=[];
+                this.gridimage[i]=[];
                 for(let j=0;j<Model.asciiw;j++) {
-                    this.gridboxes[i][j]=nb.blessed.box({
+                    this.gridimage[i][j]=nb.blessed.box({
                         width:1,
                         height:1,
                         top:i+5,
                         left:j+1,
                         tags:true
                     });
-                    nb.tscreen.append(this.gridboxes[i][j]);
-                    this.gridboxes[i][j].on('mousedown', (data: any)=>{
+                    nb.tscreen.append(this.gridimage[i][j]);
+                    this.gridimage[i][j].on('mousedown', (data: any)=>{
                         this.mousedown = true;
-                        this.clickImage(this.gridboxes[i][j], i, j);
+                        this.touchCell("IMAGE", i, j);
                     });
-                    this.gridboxes[i][j].on('mouseup', (data: any)=>{
+                    this.gridimage[i][j].on('mouseup', (data: any)=>{
                         this.mousedown = false;
-                        //this.clickImage(this.gridboxes[i][j], i, j);
                     });
-                    this.gridboxes[i][j].on('mouseover', (data: any)=>{
+                    this.gridimage[i][j].on('mouseover', (data: any)=>{
                         if(!this.mousedown) return;
-                        this.clickImage(this.gridboxes[i][j], i, j);
+                        this.touchCell("IMAGE", i, j);
                     });
                 }
             }
+
+            this.charbox = nb.blessed.box({
+                width:28+2,
+                height:8+2,
+                top:Model.asciih+6,
+                left:0,
+                border:{type:'line'},
+                tags:true
+            });
+            this.charbox.setLabel("ASCII");
+            nb.tscreen.append(this.charbox);
 
             this.gridchar=[];
             for(let i=0;i<Model.ascii.length;i++) {
@@ -88,65 +96,103 @@ namespace AscIIEditor {
                     this.gridchar[i][j]=nb.blessed.box({
                         width:1,height:1,
                         content:`{15-fg}{238-bg}${Model.ascii[i][j]}{/}`,
-                        top:Model.asciih+6+i,
-                        left:j,
+                        top:Model.asciih+7+i,
+                        left:j+1,
                         tags:true
                     });
                     nb.tscreen.append(this.gridchar[i][j]);
                     this.gridchar[i][j].on('click', (data: any)=>{
-                        if(!TermRender.game) return;
-                        let g = TermRender.game;
-                        g.useract.splice(0,0,`CHAR:${i}:${j}`);
+                        this.touchCell("CHAR", i, j);
                     });
                 }
             }
-             //init grid content...
+
+            this.colorbox = nb.blessed.box({
+                width:32+2,
+                height:8+2,
+                top:Model.asciih+6,
+                left:30,
+                border:{type:'line'},
+                tags:true
+            });
+            this.colorbox.setLabel("FGColor");
+            nb.tscreen.append(this.colorbox);
+
+            //init color content...
             this.gridcolor=[];
             for(let i=0;i<8;i++) {
                 this.gridcolor[i]=[];
                 for(let j=0;j<32;j++) {
                     let cn = i*32+j;
-                    let nstr = cn.toString(10);
-                    let pad = 3-nstr.length;
-                    for(let n=0; n<pad; n++) 
-                        nstr+=' ';
-                    nstr=' ';
+                    let nstr=' ';
                     this.gridcolor[i][j]=nb.blessed.box({
                         width:1,height:1,
                         content:`{${cn}-bg}{${0}-fg}${nstr}{/}`,
-                        top:i+5,
-                        left:Model.asciiw+j+5,
+                        top:Model.asciih+7+i,
+                        left:j+31,
                         tags:true
 
                     });
                     nb.tscreen.append(this.gridcolor[i][j]);
                     this.gridcolor[i][j].on('click', (data: any)=>{
-                        if(!TermRender.game) return;
-                        let g = TermRender.game;
-                        g.useract.splice(0,0,`COLOR:${i}:${j}`);
+                        this.touchCell("FG-COLOR", i, j);
+                    });
+                }
+            }
+
+            this.colorbbox = nb.blessed.box({
+                width:32+2,
+                height:8+2,
+                top:Model.asciih+6,
+                left:64,
+                border:{type:'line'},
+                tags:true
+            });
+            this.colorbbox.setLabel("BGColor");
+            nb.tscreen.append(this.colorbbox);
+
+            //init back color content...
+            this.gridbcolor=[];
+            for(let i=0;i<8;i++) {
+                this.gridbcolor[i]=[];
+                for(let j=0;j<32;j++) {
+                    let cn = i*32+j;
+                    let nstr=' ';
+                    this.gridbcolor[i][j]=nb.blessed.box({
+                        width:1,height:1,
+                        content:`{${cn}-bg}{${0}-fg}${nstr}{/}`,
+                        top:Model.asciih+7+i,
+                        left:j+65,
+                        tags:true
+
+                    });
+                    nb.tscreen.append(this.gridbcolor[i][j]);
+                    this.gridbcolor[i][j].on('click', (data: any)=>{
+                        this.touchCell("BG-COLOR", i, j);
                     });
                 }
             }
 
             this.msgbox = nb.blessed.box({
-                width:23,
-                height:Model.asciih+2,
-                top:4,
-                left:Model.asciiw+3,
-                border:{type:'line'},
+                width:35,
+                height:4,
+                top:0,
+                left:53,
+                border:{type:'line', fg:238},
+                align:'center',
                 tags:true
             });
-            //nb.tscreen.append(this.msgbox);
+            nb.tscreen.append(this.msgbox);
 
             tge.Emitter.register("AscIIEditor.REDRAW_GRID", this.redrawGrid, this);
+            tge.Emitter.register("AscIIEditor.REDRAW_MSG", this.redrawMsg, this);
         }
 
         drawTitle() {
-            let s1="   ____          __      ";
-            let s2="  / __/__  ___ _/ /_____ ";
-            let s3=" _\\ \\/ _ \\/ _ \`/  '_/ -_)";
-            let s4="/___/_//_/\\_,_/_/\\_\\\\__/ ";
-            this.titlebox.setContent(`${s1}\n${s2}\n${s3}\n${s4}`);
+            let s1=".__. __. __ ._.._.  .__..__ .___.  .___  .  ,       ";
+            let s2="[__](__ /  ` |  |   [__][__)  |    [__  _|*-+- _ ._.";
+            let s3="|  |.__)\\__._|__|_  |  ||  \\  |    [___(_]| | (_)[  ";
+            this.titlebox.setContent(`${s1}\n${s2}\n${s3}`);
         }
 
         drawLogo() {
@@ -157,15 +203,23 @@ namespace AscIIEditor {
             this.logobox.setContent(`${s1}\n${s2}\n${s3}\n${s4}`);
         }
 
-        redrawMsg() {
-            let msg:string[] =['Press {green-fg}q{/} quit...',
-                'Game over,press {green-fg}r{/} restart...',
-                'Game over,press {green-fg}r{/} restart...'];
-            //this.msgbox.setContent(msg[g.gameover]);
+        touchCell(t:string, i:number, j:number) {
+            let nb = (<tge.TermRun>tge.env);
+            if(!TermRender.game) return;
+            let g = TermRender.game;
+            let m = <AscIIEditor.Model>g.model;
+            if(t=='IMAGE') {
+                this.gridimage[i][j].setContent('#');
+            }
+            g.useract.splice(0,0,`${t}:${i}:${j}`);
         }
 
-        setPoint(box: any, bg:string, fg:string, cchar:string) {
-            box.setContent(`{${bg}-bg}{${fg}-fg}${cchar}{/}`);
+        redrawMsg() {
+            let g = TermRender.game;
+            let m = <AscIIEditor.Model>g.model;
+            let msg:string[] =['Press {green-fg}s{/} save. {green-fg}u{/} undo.',
+                `PEN:${m.curpen} fg:${m.curfg} bg:${m.curbg}`];
+            this.msgbox.setContent(msg[0]+'\n'+msg[1]);
         }
 
         redrawGrid() {
@@ -174,6 +228,7 @@ namespace AscIIEditor {
         draw() {
             this.drawTitle();
             this.drawLogo();
+            //this.redrawMsg();
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
         }
