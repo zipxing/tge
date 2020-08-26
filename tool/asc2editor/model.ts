@@ -51,5 +51,30 @@ namespace AscIIEditor {
                     };
             }
         }
+
+        loadAsciiArtFile(fpath: string) {
+            let fs = require("fs");
+            let buf = fs.readFileSync(fpath, "utf8"); 
+            let lines = buf.split('\n');
+            let row = 0, col = 0;
+            for(let l in lines) {
+                let line = lines[l];
+                line.replace(/\x1b\[[\d;]*m/g, '');
+                line.replace(/\r/g, '');
+                if(row>Model.asciih) break;
+                for(let c=0; c<line.length; c++) {
+                    if(c>Model.asciiw) break;
+                    this.grid[row][c] = {
+                        asc2code: line[c],
+                        fgcolor: 15,
+                        bgcolor: 0
+                    }
+                }
+                row++;
+            }
+        }
+
+        saveAsciiArtFile(fpath: string) {
+        }
     }
 }

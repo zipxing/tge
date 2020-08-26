@@ -1,13 +1,21 @@
 namespace AscIIEditor {
     export class Game extends tge.Game {
+        asciiart: string = '';
+
         initGame() {
             let m = <AscIIEditor.Model>this.model;
+            m.loadAsciiArtFile(this.asciiart);
             tge.Emitter.fire("AscIIEditor.REDRAW_IMAGE");
             tge.Emitter.fire("AscIIEditor.REDRAW_MSG");
         }
 
         restartGame() {
         }
+
+        setAsciiArtFile(fpath: string) {
+            this.asciiart = fpath;
+        }
+
 
         playUserAction(dt: number) {
             for(let i=0;i<this.useract.length;i++)
