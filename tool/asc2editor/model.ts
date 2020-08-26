@@ -53,6 +53,19 @@ namespace AscIIEditor {
         }
 
         saveAsciiArtFile(fpath: string) {
+            let ots = [];
+            for(let i=0; i<Model.asciih; i++) {
+                ots[ots.length]=tge.AscIIManager.processGridLine(this.grid[i]);
+                console.log(ots[i].length);
+            }
+            let blank_count = 0;
+            for(let i=ots.length-1; i>=0; i--) {
+                if(ots[i].length!=0) break;
+                blank_count++;
+            }
+            ots = ots.slice(0, ots.length-blank_count);
+            let fs=require('fs');
+            fs.writeFileSync('/tmp/test.art', ots.join('\n'));
         }
     }
 }

@@ -6,5 +6,5 @@ if(process.argv.length==3) {
     ag.setAsciiArtFile(process.argv[2]);
 }
 ag.initGame();
-ag.regKeyAction({'s':'S'});
+ag.regKeyAction({'s':'SAVE'});
 ag.loop();
