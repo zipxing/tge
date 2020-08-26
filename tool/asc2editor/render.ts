@@ -228,6 +228,7 @@ namespace AscIIEditor {
         redrawGrid() {
             let g = TermRender.game;
             let m = <AscIIEditor.Model>g.model;
+            if(!m.grid) return;
             for(let i=0; i<Model.asciih; i++) {
                 for(let j=0; j<Model.asciiw; j++) {
                     let b = m.grid[i][j];
