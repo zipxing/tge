@@ -8,6 +8,10 @@ namespace Snake {
 
         constructor() {
             super();
+
+            tge.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
+            tge.AscIIManager.loadArtFile("ascii_art/snake.txt", "snake");
+
             let nb = (<tge.TermRun>tge.env);
 
             this.titlebox = nb.blessed.box({
@@ -33,7 +37,7 @@ namespace Snake {
                 height:Model.snakeh+2,
                 top:4,
                 left:0,
-                border:{type:'line'},
+                border:{type:'line', fg:238},
                 tags:true
             });
             nb.tscreen.append(this.gamebox);
@@ -58,7 +62,7 @@ namespace Snake {
                 height:Model.snakeh+2,
                 top:4,
                 left:Model.snakew+3,
-                border:{type:'line'},
+                border:{type:'line', fg:238},
                 tags:true
             });
             nb.tscreen.append(this.msgbox);
@@ -72,19 +76,12 @@ namespace Snake {
         }
 
         drawTitle() {
-            let s1="   ____          __      ";
-            let s2="  / __/__  ___ _/ /_____ ";
-            let s3=" _\\ \\/ _ \\/ _ \`/  '_/ -_)";
-            let s4="/___/_//_/\\_,_/_/\\_\\\\__/ ";
-            let st = tge.Timer.getStage("Snake.Timer.Title");
-            this.titlebox.setContent(`${s1}\n${s2}\n${s3}\n${s4}`);
+            let s = tge.AscIIManager.getArt("snake").blessed_lines;
+            //let st = tge.Timer.getStage("Snake.Timer.Title");
+            this.titlebox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}`);
         }
 
         drawLogo() {
-            let s1="PoweredBy";
-            let s2="╔╦╗╔═╗╔═╗";
-            let s3=" ║ ║ ╦║╣ ";
-            let s4=" ╩ ╚═╝╚═╝";
             let s = tge.AscIIManager.getArt("tgelogo").blessed_lines;
             this.logobox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}`);
         }
