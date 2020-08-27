@@ -65,7 +65,7 @@ namespace AscIIEditor {
             }
             ots = ots.slice(0, ots.length-blank_count);
             let fs=require('fs');
-            fs.writeFileSync('/tmp/test.art', ots.join('\n'));
+            fs.writeFileSync(fpath, ots.join('\n'));
         }
     }
 }

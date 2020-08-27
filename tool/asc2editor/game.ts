@@ -36,7 +36,7 @@ namespace AscIIEditor {
             let m = <AscIIEditor.Model>this.model;
             switch(ag[0]) {
                 case "SAVE":
-                    m.saveAsciiArtFile('');
+                    m.saveAsciiArtFile(this.asciiart);
                     break;
                 case "CHAR":
                     m.curasc2code = Model.ascii[i][j];
