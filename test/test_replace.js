@@ -1,11 +1,15 @@
 var s = "wwwCF256mCB3mabcC0mdeCF58mCB10mfgC0maaaaa";
+var r = /\x1b\[38;5;(\d+)m\x1b\[48;5;(\d+)m(.*?)\x1b\[0m/;
 /*var t = s.replace(/C(\d+)M/g, "{$1-fg}");
 console.log(t, s);
 var n = s.search(/C\d+M/g);
 console.log(n);
 var m = s.match(/C\d+M/);
 console.log(m);*/
-var aaa = s.match(/\x1b\[38;5;(\d+)m\x1b\[48;5;(\d+)m(.*?)\x1b\[0m/);
+console.log(r.global);
+r.global = true;
+console.log(r.global);
+var aaa = s.match(r);
 console.log(aaa);
 
 while(true) {
