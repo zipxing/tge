@@ -49,7 +49,8 @@ namespace AscIIEditor {
 
         loadAsciiArtFile(fpath: string) {
             tge.AscIIManager.loadArtFile(fpath, "MainGrid");
-            this.grid = tge.AscIIManager.getArt("MainGrid");
+            let g = tge.AscIIManager.getArt("MainGrid");
+            if(g) this.grid = g;
         }
 
         saveAsciiArtFile(fpath: string) {

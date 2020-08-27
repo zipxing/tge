@@ -1,6 +1,6 @@
 namespace AscIIEditor {
     export class Game extends tge.Game {
-        asciiart: string = '';
+        asciiart: string = '/tmp/test.art';
 
         initGame() {
             let m = <AscIIEditor.Model>this.model;
