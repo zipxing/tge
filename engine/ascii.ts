@@ -18,6 +18,7 @@ namespace tge {
                 let lines = buf.split('\n');
                 let row = 0, col = 0;
                 let grid: any[][] = [];
+                let blessed_lines: string[] = [];
                 for(let i=0;i<AscIIManager.asciih;i++) {
                     grid[i]=[];
                     for(let j=0;j<AscIIManager.asciiw;j++)
@@ -31,6 +32,9 @@ namespace tge {
                     if(row>AscIIManager.asciih) break;
                     let line = lines[l];
                     line = line.replace(/\r/g, '');
+                    blessed_lines[blessed_lines.length] = 
+                        line.replace(/\x1b\[38;5;(\d+)m\x1b\[48;5;(\d+)m(.*?)\x1b\[0m/g, 
+                        "{$1-fg}{$2-bg}$3{/}");
                     let ocount = 0;
                     while(true) {
                         let m = line.match(/\x1b\[38;5;(\d+)m\x1b\[48;5;(\d+)m(.*?)\x1b\[0m/);
@@ -72,7 +76,7 @@ namespace tge {
                     }
                     row++;
                 }
-                AscIIManager.arts[name] = grid;
+                AscIIManager.arts[name] = {grid: grid, blessed_lines:blessed_lines};
             } catch(error) {
                 log(LogLevel.ERROR, "read file "+fpath+" error!");
                 log(LogLevel.ERROR, error.message);

@@ -19,6 +19,7 @@ namespace Snake {
             }
             this.dir='D';
             this.makeGrid();
+            tge.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
         }
 
         makeGrid() {

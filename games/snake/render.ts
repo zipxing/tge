@@ -85,7 +85,8 @@ namespace Snake {
             let s2="╔╦╗╔═╗╔═╗";
             let s3=" ║ ║ ╦║╣ ";
             let s4=" ╩ ╚═╝╚═╝";
-            this.logobox.setContent(`${s1}\n${s2}\n${s3}\n${s4}`);
+            let s = tge.AscIIManager.getArt("tgelogo").blessed_lines;
+            this.logobox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}`);
         }
 
         redrawMsg() {
