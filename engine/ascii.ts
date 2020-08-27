@@ -30,22 +30,52 @@ namespace tge {
                 for(let l in lines) {
                     if(row>AscIIManager.asciih) break;
                     let line = lines[l];
-                    line.replace(/\x1b\[[\d;]*m/g, '');
-                    line.replace(/\r/g, '');
-                    for(let c=0; c<line.length; c++) {
-                        if(c>AscIIManager.asciiw) break;
-                        grid[row][c] = {
-                            asc2code: line[c],
+                    line = line.replace(/\r/g, '');
+                    let ocount = 0;
+                    while(true) {
+                        let m = line.match(/\x1b\[38;5;(\d+)m\x1b\[48;5;(\d+)m(.*?)\x1b\[0m/);
+                        if(m==null) break;
+                        console.log(m);
+                        let shead = line.substring(0, m.index);
+                        let fg = parseInt(m[1]);
+                        let bg = parseInt(m[2]);
+                        let colorstr = m[3];
+                        log(LogLevel.DEBUG, m.index, m[0].length, fg, bg, colorstr);
+                        for(let i=0;i<shead.length;i++) {
+                            if(ocount>AscIIManager.asciiw) break;
+                            grid[row][ocount] = {
+                                asc2code: shead[i],
+                                fgcolor: 15,
+                                bgcolor: 0
+                            };
+                            ocount++;
+                        }
+                        for(let i=0;i<colorstr.length;i++) {
+                            if(ocount>AscIIManager.asciiw) break;
+                            grid[row][ocount] = {
+                                asc2code: colorstr[i],
+                                fgcolor: fg,
+                                bgcolor: bg
+                            };
+                            ocount++;
+                        }
+                        line = line.substring(m.index+m[0].length);
+                    }
+                    for(let i=0;i<line.length;i++) {
+                        if(ocount>AscIIManager.asciiw) break;
+                        grid[row][ocount] = {
+                            asc2code: line[i],
                             fgcolor: 15,
                             bgcolor: 0
-                        }
+                        };
+                        ocount++;
                     }
                     row++;
                 }
                 AscIIManager.arts[name] = grid;
             } catch(error) {
-                console.log("read file "+fpath+" error!");
-                console.log(error.message);
+                log(LogLevel.ERROR, "read file "+fpath+" error!");
+                log(LogLevel.ERROR, error.message);
             }
         }
 
