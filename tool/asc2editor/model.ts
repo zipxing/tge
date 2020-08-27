@@ -5,11 +5,10 @@ namespace AscIIEditor {
         Foreground
     }
     export class Model extends tge.Model {
-        static asciiw:number = tge.AscIIManager.asciiw;
-        static asciih:number = tge.AscIIManager.asciih;
+        static asciiw:number = tge.AscIIManager.width;
+        static asciih:number = tge.AscIIManager.height;
 
         static ascii = [
-            //0x20~0x7e
             " !\"#$%&'()*+,-./0123456789:;",
             "<=>?@ABCDEFGHIJKLMNOPQRSTUVW",
             "XYZ[\\]^_`abcdefghijklmnopqrs",
@@ -20,7 +19,6 @@ namespace AscIIEditor {
             "σµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■"
         ];
 
-        cursor: tge.Point;
         curpen: Pen;
         curfg: number;
         curbg: number;
@@ -29,7 +27,6 @@ namespace AscIIEditor {
 
         constructor() {
             super();
-            this.cursor = {x:0, y:0};
             this.grid = [];
             this.curpen = Pen.Asc2code;
             this.curbg = 0;

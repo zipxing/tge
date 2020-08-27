@@ -1,4 +1,5 @@
 tge.initEnvironment("TERM");
+tge.bindLogPath('tmp/snake.log');
 let m = new Snake.Model();
 let r = new Snake.TermRender();
 let g = new Snake.Game(m, r);

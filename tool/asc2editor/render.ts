@@ -20,6 +20,8 @@ namespace AscIIEditor {
 
         constructor() {
             super();
+            tge.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
+            tge.AscIIManager.loadArtFile("ascii_art/ascii_title.txt", "title");
             let nb = (<tge.TermRun>tge.env);
             this.mousedown = false;
 
@@ -192,18 +194,13 @@ namespace AscIIEditor {
         }
 
         drawTitle() {
-            let s1=".__. __. __ ._.._.  .__..__ .___.  .___  .  ,       ";
-            let s2="[__](__ /  ` |  |   [__][__)  |    [__  _|*-+- _ ._.";
-            let s3="|  |.__)\\__._|__|_  |  ||  \\  |    [___(_]| | (_)[  ";
-            this.titlebox.setContent(`${s1}\n${s2}\n${s3}`);
+            let s = tge.AscIIManager.getArt("title").blessed_lines;
+            this.titlebox.setContent(`${s[0]}\n${s[1]}\n${s[2]}`);
         }
 
         drawLogo() {
-            let s1="PoweredBy";
-            let s2="╔╦╗╔═╗╔═╗";
-            let s3=" ║ ║ ╦║╣ ";
-            let s4=" ╩ ╚═╝╚═╝";
-            this.logobox.setContent(`${s1}\n${s2}\n${s3}\n${s4}`);
+            let s = tge.AscIIManager.getArt("tgelogo").blessed_lines;
+            this.logobox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}`);
         }
 
         touchCell(t:string, i:number, j:number) {

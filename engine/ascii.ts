@@ -6,22 +6,22 @@ namespace tge {
     }
 
     export class AscIIManager {
-        static asciiw:number = 96;
-        static asciih:number = 24;
+        static width:number = 96;
+        static height:number = 24;
 
         private static arts:{[artname: string]: any} = {};
 
         static loadArtFile(fpath: string, name: string) {
             try {
                 let fs = require("fs");
-                let buf = fs.readFileSync(fpath, "utf8");
-                let lines = buf.split('\n');
-                let row = 0, col = 0;
+                let lines = fs.readFileSync(fpath, "utf8").split('\n');
+                let row = 0;
                 let grid: any[][] = [];
                 let blessed_lines: string[] = [];
-                for(let i=0;i<AscIIManager.asciih;i++) {
+
+                for(let i=0;i<AscIIManager.height;i++) {
                     grid[i]=[];
-                    for(let j=0;j<AscIIManager.asciiw;j++)
+                    for(let j=0;j<AscIIManager.width;j++)
                         grid[i][j]={
                             asc2code:' ',
                             fgcolor:15,
@@ -29,11 +29,12 @@ namespace tge {
                         };
                 }
                 for(let l in lines) {
-                    if(row>AscIIManager.asciih) break;
+                    if(row>AscIIManager.height) 
+                        break;
                     let line = lines[l];
                     line = line.replace(/\r/g, '');
                     blessed_lines[blessed_lines.length] = 
-                        line.replace(/\x1b\[38;5;(\d+)m\x1b\[48;5;(\d+)m(.*?)\x1b\[0m/g, 
+                        line.replace(/\x1b\[38;5;(\d+)m\x1b\[48;5;(\d+)m(.*?)\x1b\[0m/g,
                         "{$1-fg}{$2-bg}$3{/}");
                     let ocount = 0;
                     while(true) {
@@ -46,7 +47,7 @@ namespace tge {
                         let colorstr = m[3];
                         log(LogLevel.DEBUG, m.index, m[0].length, fg, bg, colorstr);
                         for(let i=0;i<shead.length;i++) {
-                            if(ocount>AscIIManager.asciiw) break;
+                            if(ocount>AscIIManager.width) break;
                             grid[row][ocount] = {
                                 asc2code: shead[i],
                                 fgcolor: 15,
@@ -55,7 +56,7 @@ namespace tge {
                             ocount++;
                         }
                         for(let i=0;i<colorstr.length;i++) {
-                            if(ocount>AscIIManager.asciiw) break;
+                            if(ocount>AscIIManager.width) break;
                             grid[row][ocount] = {
                                 asc2code: colorstr[i],
                                 fgcolor: fg,
@@ -66,7 +67,7 @@ namespace tge {
                         line = line.substring(m.index+m[0].length);
                     }
                     for(let i=0;i<line.length;i++) {
-                        if(ocount>AscIIManager.asciiw) break;
+                        if(ocount>AscIIManager.width) break;
                         grid[row][ocount] = {
                             asc2code: line[i],
                             fgcolor: 15,
@@ -97,13 +98,17 @@ namespace tge {
         static processGridLine(g: tge.AscIIPoint[]) {
             let ps: tge.AscIIPoint[] = [];
             let outs = '';
-            for(let i=0;i<AscIIManager.asciiw;i++) {
+            for(let i=0;i<AscIIManager.width;i++) {
                 if(g[i].asc2code == ' ') {
                     if(ps.length>0 && ps[ps.length-1].asc2code!=' ') {
                         outs+=AscIIManager.processToken(ps, false);
                         ps = [];
                     }
-                    ps[ps.length]={asc2code:' ', fgcolor:15, bgcolor:0};
+                    ps[ps.length]={
+                        asc2code:' ',
+                        fgcolor:15,
+                        bgcolor:0
+                    };
                 } else {
                     if(ps.length>0 && ps[ps.length-1].asc2code==' ') {
                         outs+=AscIIManager.processToken(ps, true);
