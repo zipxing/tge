@@ -35,6 +35,7 @@ namespace tge {
                 let p = b.program();
                 //smartCSR or fastCSR...
                 let s = b.screen({smartCSR: true});
+                //let s = b.screen({fastCSR: true});
                 env = <TermRun>{
                         kind:runenv,
                         blessed:b, 
@@ -59,7 +60,7 @@ namespace tge {
         timeout_auto: number;
         timeout_ai: number;
 
-        static _frameHz: number = 60;
+        static _frameHz: number = 36;
         private static _tickLengthMs: number = 1000 / Game._frameHz;
         private static _previousTick: number = Date.now();
         private static _actualTicks: number = 0;

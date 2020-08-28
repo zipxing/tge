@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+
+games = {
+    "engine" : {
+        "path": "engine",
+        "src" : [
+            "tge.ts",
+            "log.ts",
+            "event.ts",
+            "timer.ts",
+            "ascii.ts"
+        ]
+    },
+    "snake" : {
+        "path": "games/snake",
+        "src": [
+            "model.ts",
+            "render.ts",
+            "game.ts",
+            "main.ts"
+        ]
+    },
+    "ascii" : {
+        "path": "tool/asc2editor",
+        "src": [
+            "model.ts",
+            "render.ts",
+            "game.ts",
+            "main.ts"
+        ]
+    }
+}
+
+def make_cmd_line(name, is_build):
+    if name not in games:
+        print("Game:"+name+" not in list...");
+        return "";
+    if name == "engine":
+        print("Engine can't build independent...")
+        return "";
+    if is_build:
+        pe = ' '+games["engine"]["path"]+'/'
+        pg = ' '+games[name]["path"]+'/'
+        se = games["engine"]["src"]
+        sg = games["engine"]["src"]
+        return "tsc --outfile tmp/"+name+".js "+ \
+                pe+pe.join(se)+pg+pg.join(sg)
+    else:
+        return "node tmp/"+name+".js "
+
+print(make_cmd_line("snake", True))
+print(make_cmd_line("snake", False))
+
