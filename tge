@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import os
+import sys
+
 games = {
     "engine" : {
         "path": "engine",
@@ -34,20 +37,27 @@ games = {
 def make_cmd_line(name, is_build):
     if name not in games:
         print("Game:"+name+" not in list...");
-        return "";
+        return None;
     if name == "engine":
         print("Engine can't build independent...")
-        return "";
+        return None;
     if is_build:
         pe = ' '+games["engine"]["path"]+'/'
         pg = ' '+games[name]["path"]+'/'
         se = games["engine"]["src"]
-        sg = games["engine"]["src"]
+        sg = games[name]["src"]
         return "tsc --outfile tmp/"+name+".js "+ \
                 pe+pe.join(se)+pg+pg.join(sg)
     else:
         return "node tmp/"+name+".js "
 
-print(make_cmd_line("snake", True))
-print(make_cmd_line("snake", False))
+if __name__ == "__main__":
+    b = make_cmd_line(sys.argv[2], True)
+    r = make_cmd_line(sys.argv[2], False)
+    if 'b' in sys.argv[1] and b:
+        print(b)
+        os.system(b);
+    if 'r' in sys.argv[1] and r:
+        print(r)
+        os.system(r);
 
