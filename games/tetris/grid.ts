@@ -10,6 +10,7 @@ namespace Tetris {
         index: number;
         is_active: boolean;
         need_draw: boolean;
+        fangcha: number[];
 
         constructor (mod: string, i:number) {
             this.mod = mod;
@@ -52,93 +53,92 @@ namespace Tetris {
             tge.log(tge.LogLevel.INFO, "mq in setqueue:\n", queue);
         }
 
-    //重置数据，每局开始调用
-    reset() {
-        this.mcore = new Tetris.ElsCore();
-        tge.Timer.register("next-block", 0.8, ()=>{});
-        tge.Timer.register("clear-row", 0.3, ()=>{
-            this.clearRow(false);
-        });
-        tge.Timer.register("game-over", 0.12, () => {
-            console.log("OVER"+this.index);
-            this.mcore.game_over=true;
-            //if(tgrid.index==1)
-            //    process.exit(1);
-        });
-        this.mtimer.setup("fall", 0.01, function(){
-            tgrid.fall();
-        });
-        this.mtimer.setup("combo", 0.8);
-        this.mtimer.setup("attack", 0.8);
+        //重置数据，每局开始调用
+        reset() {
+            this.mcore = new Tetris.ElsCore();
+            tge.Timer.register("next-block", 0.8, ()=>{});
+            tge.Timer.register("clear-row", 0.3, ()=>{
+                this.clearRow(false);
+            });
+            tge.Timer.register("game-over", 0.12, ()=>{
+                console.log("OVER"+this.index);
+                this.mcore.game_over=true;
+                //if(tgrid.index==1)
+                //    process.exit(1);
+            });
+            tge.Timer.register("fall", 0.01, ()=>{
+                this.fall();
+            });
+            tge.Timer.register("combo", 0.8, ()=>{});
+            tge.Timer.register("attack", 0.8, ()=>{});
 
-        //设置初始grid.边框置为200，限制方块活动范围
-        for (var i = 0; i <els.ZONG+2; i++) 
-            for (var j = 0; j <els.HENG+4; j++)
-                this.mcore.grid[i * els.GRIDW + j]=200;
-        for (var i = 0; i <els.ZONG; i++) 
-            for (var j = 0; j <els.HENG; j++) 
-                this.mcore.grid[i * els.GRIDW + 2+j]=0;
+            //设置初始grid.边框置为200，限制方块活动范围
+            for (let i = 0; i <Tetris.ZONG+2; i++) 
+                for (let j = 0; j <Tetris.HENG+4; j++)
+                    this.mcore.grid[i * Tetris.GRIDW + j]=200;
+            for (let i = 0; i <Tetris.ZONG; i++) 
+                for (let j = 0; j <Tetris.HENG; j++) 
+                    this.mcore.grid[i * Tetris.GRIDW + 2+j]=0;
 
-        //初始化各种变量
-        this.mcore.cur_block  = this.mQueue[0];
-        this.mcore.next_block = this.mQueue[1];
-        this.mcore.save_block = -1;
-        this.mcore.save_lock  = false;
-        this.mcore.cur_x = 5;
-        this.mcore.cur_y = 0;
-        this.mcore.cur_z = 0;
-        this.mcore.game_over = false;
-        this.mcore.block_index = 0;
-        this.mcore.game_result = 0;
+            //初始化各种变量
+            this.mcore.cur_block  = this.mqueue[0];
+            this.mcore.next_block = this.mqueue[1];
+            this.mcore.save_block = -1;
+            this.mcore.save_lock  = false;
+            this.mcore.cur_x = 5;
+            this.mcore.cur_y = 0;
+            this.mcore.cur_z = 0;
+            this.mcore.game_over = false;
+            this.mcore.block_index = 0;
+            this.mcore.game_result = 0;
 
-        //计算初始col,hole,top
-        //UpdateColHoleTop(2, 11);
+            //计算初始col,hole,top
+            //UpdateColHoleTop(2, 11);
 
-        //用于判断用户是否主动放弃
-        this.fangcha = [];
-    },
+            //用于判断用户是否主动放弃
+            this.fangcha = [];
+        }
 
-    //下一块
-    nextBlk: function(ai, issave) {
-        //console.log("NEXT>>>>>>>>");
-        if(!ai) {
-            if(this.index==0) {
-                this.mod.tou._maxDAct = 0;
-                this.mod.tou._maxRLAct = 0;
+        //下一块
+        nextBlk(ai:boolean, issave:boolean) {
+            //console.log("NEXT>>>>>>>>");
+            if(!ai) {
+                if(this.index==0) {
+                    //this.mod.tou._maxDAct = 0;
+                    //this.mod.tou._maxRLAct = 0;
+                }
+                this.mstat.addScore(10);
             }
-            this.mstat.addScore(10);
-        }
-        this.mcore.block_index++;
-        this.mcore.cur_block = this.mcore.next_block;
-        if (!issave)
-            this.mtimer.trigger("next-block", 0.8);  
-        this.mcore.cur_x=5;
-        this.mcore.cur_y=0;
-        this.mcore.cur_z=0;
-        this.moveBlk(els.SET, ai);
-        this.mcore.next_block = this.mQueue[(this.mcore.block_index+1)%els.MAXBLKQUEUE];
+            this.mcore.block_index++;
+            this.mcore.cur_block = this.mcore.next_block;
+            if (!issave)
+                tge.Timer.fire("next-block", 0.8);
+            this.mcore.cur_x=5;
+            this.mcore.cur_y=0;
+            this.mcore.cur_z=0;
+            this.moveBlk(Tetris.SET, ai);
+            this.mcore.next_block = this.mqueue[(this.mcore.block_index+1)%Tetris.MAXBLKQUEUE];
 
-        if (!ai && this.index == 0)
-            this.fangcha[this.mcore.block_index] = this.calcFangCha();
-    },
-
-    calcFangCha: function () {
-        //计算总空
-        var top_total = 0;
-        for (var i = 0; i < els.HENG; i++) {
-            top_total += this.mcore.col_top[i] * 10;
+            if (!ai && this.index == 0)
+                this.fangcha[this.mcore.block_index] = this.calcFangCha();
         }
 
-        //计算平均行高,计算行高方差
-        var top_avg = top_total / els.HENG;
-        var fangcha = 0;
-        for (i = 0; i < els.HENG; i++) {
-            var t = this.mcore.col_top[i] * 10 - top_avg;
-            fangcha += (t * t);
-        }
+        calcFangCha(){
+            //计算总空
+            let top_total = 0;
+            for (let i = 0; i < Tetris.HENG; i++) {
+                top_total += this.mcore.col_top[i] * 10;
+            }
 
-        return fangcha;
-    },
+            //计算平均行高,计算行高方差
+            let top_avg = top_total / Tetris.HENG;
+            let fangcha = 0;
+            for (let i = 0; i < Tetris.HENG; i++) {
+                let t = this.mcore.col_top[i] * 10 - top_avg;
+                fangcha += (t * t);
+            }
+            return fangcha;
+        }
 
     isUserGiveup: function () {
         // 先计算一下方差,看看是不是用户自己放弃了

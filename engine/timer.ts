@@ -22,6 +22,7 @@ namespace tge {
             let tmo: TimerData = Timer.timers[name];
             if (!tmo) return;
             tmo.time = tmo.count;
+            tmo.exdata = exdata;
         }
 
         static cancel(name: string) {
