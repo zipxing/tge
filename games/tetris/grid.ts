@@ -140,68 +140,63 @@ namespace Tetris {
             return fangcha;
         }
 
-    isUserGiveup: function () {
-        // 先计算一下方差,看看是不是用户自己放弃了
-        var giveup = false;
+        isUserGiveup() {
+            // 先计算一下方差,看看是不是用户自己放弃了
+            let giveup = false;
 
-        // 当前方差
-        var curfangcha = this.fangcha[this.fangcha.length - 1];
-        // 5步之前的方差
-        var step = 0;
-        if (this.fangcha.length > 5)
-            step = this.fangcha.length - 6;
-        var prefangcha = this.fangcha[step];
-        if (curfangcha > 13000 || Math.abs(curfangcha - prefangcha) > 7000)
-            giveup = true;
+            // 当前方差
+            let curfangcha = this.fangcha[this.fangcha.length - 1];
+            // 5步之前的方差
+            let step = 0;
+            if (this.fangcha.length >= 6)
+                step = this.fangcha.length - 6;
+            let prefangcha = this.fangcha[step];
+            if (curfangcha > 13000 || Math.abs(curfangcha - prefangcha) > 7000)
+                giveup = true;
 
-        return giveup;
-    },
-
-    //暂存块,每次确认下落后才能再次存(save_lock)
-    saveBlk: function(ai) {
-        if(!this.mcore.save_lock) {
-            this.mcore.save_lock = true;
-            this.moveBlk(els.CLEAR, ai);
-            if(this.mcore.save_block>=0) {
-                var blktmp = this.mcore.cur_block;
-                this.mcore.cur_block = this.mcore.save_block;
-                this.mcore.save_block = blktmp;
-                this.mcore.cur_x=5;
-                this.mcore.cur_y=0;
-                this.mcore.cur_z=0;
-                this.moveBlk(els.SET, ai);
-            } else {
-                this.mcore.save_block = this.mcore.cur_block;
-                this.nextBlk(ai, false);
-            }
-            //触发保存块动画
-            this.mtimer.save_block = 10;
+            return giveup;
         }
-    },
 
-    //消除最底下三行
-    clearThreeBottomLines : function(){
-
-        if(this.index != 0)return;
-
-        for(var i=els.ZONG-5; i<els.ZONG;i++){
-            for(var j=2; j<els.HENG+2;j++){
-                this.mcore.grid[i * els.GRIDW + j]=101 + Math.floor(Math.random()*1000)%6;
+        //暂存块,每次确认下落后才能再次存(save_lock)
+        saveBlk(ai:boolean) {
+            if(!this.mcore.save_lock) {
+                this.mcore.save_lock = true;
+                this.moveBlk(Tetris.CLEAR, ai);
+                if(this.mcore.save_block>=0) {
+                    var blktmp = this.mcore.cur_block;
+                    this.mcore.cur_block = this.mcore.save_block;
+                    this.mcore.save_block = blktmp;
+                    this.mcore.cur_x=5;
+                    this.mcore.cur_y=0;
+                    this.mcore.cur_z=0;
+                    this.moveBlk(els.SET, ai);
+                } else {
+                    this.mcore.save_block = this.mcore.cur_block;
+                    this.nextBlk(ai, false);
+                }
+                //触发保存块动画
+                this.mtimer.save_block = 10;
             }
         }
 
-        this.mcore.fullrows=[16,17,18,19,20];
-        this.clearRow(false);
-        //this.mtimer.trigger("clear-row", nge.clone(this.mcore.fullrows));
+        //消除最底下三行
+        clearThreeBottomLines() {
+            if(this.index != 0)return;
+            for(let i=Tetris.ZONG-5; i<Tetris.ZONG;i++){
+                for(var j=2; j<Tetris.HENG+2;j++){
+                    this.mcore.grid[i * Tetris.GRIDW + j] = 
+                        101 + Math.floor(Math.random()*1000) % 6;
+                }
+            }
+            this.mcore.fullrows=[16,17,18,19,20];
+            this.clearRow(false);
+            //this.mtimer.trigger("clear-row", nge.clone(this.mcore.fullrows));
+        }
 
-    },
-
-    clearRow: function(ai) {
+    clearRow(ai: boolean) {
         if(!ai) {
-            //console.log("CLEAR ROW"+this.mcore.fullrows.length);
-            if(this.mtimer.getstat("game-over")) {
-                //console.log("cancel over...");
-                this.mtimer.cancel("game-over");
+            if(tge.Timer.getStage("game-over") != 0) {
+                tge.Timer.cancel("game-over");
                 this.mcore.game_over=false;
             }
         }
