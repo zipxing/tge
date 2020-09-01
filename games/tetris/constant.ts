@@ -6,17 +6,17 @@ namespace Tetris {
     export var ELS_CLASSIC = true;
 
     //定义行数列数
-    export var HENG:number = 10, ZONG:number = 21;
-    export var GRIDW:number =HENG+4;
-    export var GRIDH:number =ZONG+2;
-    export var GRIDSIZE:number =(HENG+4)*(ZONG+2);
+    export const HENG:number = 10, ZONG:number = 21;
+    export const GRIDW:number =HENG+4;
+    export const GRIDH:number =ZONG+2;
+    export const GRIDSIZE:number =(HENG+4)*(ZONG+2);
 
 
     //落到底后，达到稳定状态的延时
-    export var WENDING=15;
+    export const WENDING=15;
 
     //为了保证AB两人的方块序列完全一致，事先生成好500个方块序列，500块后轮回取块
-    export var MAXBLKQUEUE=500;
+    export const MAXBLKQUEUE=500;
 
     //游戏的状态
     export enum ElsGameState  {

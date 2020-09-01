@@ -51,6 +51,20 @@ namespace tge {
         }
     }
 
+    export function clone(obj: any) {
+        return JSON.parse(JSON.stringify(obj));
+    }
+
+    //采用Microsoft的LCG,c代码和javascript代码生成随机序列可以方便的对上
+    var randomNext:number=0;
+    export function srand(seed:number) {
+        randomNext = seed>>>0;
+    }
+    export function rand() {
+        randomNext = (randomNext*214013 + 2531011)&0x7FFFFFFF;
+        return ((randomNext>>16)&0x7FFF);
+    }
+
     export abstract class Game {
         useract: any[];
         gameover: number;
