@@ -1,5 +1,5 @@
 namespace Tetris {
-    export class ElsModel extends tge.Model {
+    export class Model extends tge.Model {
         mgrid: ElsGrid[];
         stage: number;
         emergencyCount: number;
@@ -19,7 +19,7 @@ namespace Tetris {
             this.currentStatus = ElsGameState.HOMEPAGE;
             this.allowDoPopAction = true;
             for(var i=0;i<2;i++) {
-                this.mgrid[i]=new ElsGrid('', i);
+                this.mgrid[i]=new ElsGrid(this, i);
             }
             this.mBlockQueue = new Array(MAXBLKQUEUE);
         }

@@ -4,7 +4,7 @@ namespace Tetris {
         mcore: ElsCore;
         corecls: ElsCore;
         mstat: ElsStat;
-        mod: string;
+        mod: Model;
         mqueue: number[];
         mblkDat: any;
         index: number;
@@ -13,7 +13,7 @@ namespace Tetris {
         fangcha: number[];
         ready_wending: number;
 
-        constructor (mod: string, i: number) {
+        constructor (mod: Model, i: number) {
             this.mod = mod;
             this.mcore=new ElsCore();
             this.corecls = new ElsCore;
@@ -356,7 +356,7 @@ namespace Tetris {
             //不稳定块置0,100以上为已经下落稳定的块
             for(i=0; i<4; i++) 
                 for(j=0; j<4; j++) 
-                    if(this.isInGrid(cy+i, cx+j) && mc.grid[(cy+i) * GRIDW + cx+j]<100)
+                    if(this.isInGrid(cy+i, cx+j) && mc.grid[(cy+i)*GRIDW + cx+j]<100)
                         mc.grid[(cy+i) * GRIDW + cx+j]=0;
 
             if (dir == ElsMove.CLEAR) 
@@ -408,11 +408,6 @@ namespace Tetris {
                                     }
                                 }
                             }
-
-                            //触发粘住光晕动画...
-                            //CALLUI cling block animation...
-                            //if (m_pElSModel->mcore[idx].cling_count>0 && idx==0) 
-                            //  m_pPlayAreas[idx]->New_lighting();
 
                             this.updateColHoleTop(2, 11);
 
@@ -516,6 +511,21 @@ namespace Tetris {
 
         isInGrid(x:number, y:number) {
             return ((x>=0 && x<ZONG+2) && (y>=0 && y<HENG+4));
+        }
+
+        checkAttack() {
+            let mc = this.mcore;
+            if (mc.game_over) return;
+
+            //检测执行攻击
+            if(mc.attack[0]) {
+                if(!mc.game_over) {
+                    this.attack(this.mod.mgrid[1-this.index], mc.attack[0], mc.attack[1]);
+                    this.mod.mgrid[1-this.index].testDDown();
+                    tge.Timer.fire(this.index+"attack", mc.attack[0]);
+                }
+                mc.attack[0]=0;
+            }
         }
 
         //攻击对方

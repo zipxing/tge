@@ -82,10 +82,10 @@ namespace Snake {
             //check head meet seed
             if(m.grid[cy][cx]==10000) {
                 let sok = false;
-                for(var n=0;n<888;n++) {
-                    var _nx = Math.floor(Math.random()*Snake.Model.snakew);
-                    var _ny = Math.floor(Math.random()*Snake.Model.snakeh);
-                    var _np = m.grid[_ny][_nx];
+                for(let n=0;n<888;n++) {
+                    let _nx = Math.floor(Math.random()*Snake.Model.snakew);
+                    let _ny = Math.floor(Math.random()*Snake.Model.snakeh);
+                    let _np = m.grid[_ny][_nx];
                     if(_np==10000 || _np==0) {
                         m.seed = {x:_nx, y:_ny};
                         sok = true;
