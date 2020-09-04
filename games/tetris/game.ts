@@ -4,7 +4,7 @@ namespace Tetris {
         bmp: number;
         seed: number;
 
-        constructor(m:Tetris.Model, r:ElsRender) {
+        constructor(m:Tetris.Model, r:Tetris.TermRender) {
             super(m, r);
             this.mode = ElsMode.AI;
             this.bmp = 0;
