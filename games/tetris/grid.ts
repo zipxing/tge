@@ -2,7 +2,6 @@ namespace Tetris {
     //玩家区域网格,关键变量,以及核心处理逻辑
     export class ElsGrid {
         mcore: ElsCore;
-        corecls: ElsCore;
         mstat: ElsStat;
         mod: Model;
         mqueue: number[];
@@ -16,7 +15,6 @@ namespace Tetris {
         constructor (mod: Model, i: number) {
             this.mod = mod;
             this.mcore=new ElsCore();
-            this.corecls = new ElsCore;
             this.mstat=new ElsStat();
             this.is_active=false;
             this.mqueue=[];
@@ -30,14 +28,14 @@ namespace Tetris {
         //用于冒险模式设置10x10地图
         setBmp(bmp: number[][]) {
             let mc = this.mcore;
-            for (let i = 0; i < ZONG; i++) {
-                for (let j = 0; j < HENG; j++) {
-                    mc.grid[i * GRIDW + 2 + j] = 
-                        (i >= (ZONG - 10)) ? 
-                        (100 + bmp[i - (ZONG-10)][j]) : 
+            for (let i=0; i<ZONG; i++) {
+                for (let j=0; j<HENG; j++) {
+                    mc.grid[i*GRIDW + 2+j] =
+                        (i>=(ZONG-10)) ?
+                        (100 + bmp[i - (ZONG-10)][j]) :
                         0;
-                    if(mc.grid[i * GRIDW + 2+j]==100) {
-                        mc.grid[i * GRIDW + 2+j]=0;
+                    if(mc.grid[i*GRIDW + 2+j]==100) {
+                        mc.grid[i*GRIDW + 2+j]=0;
                     }
                 }
             }
@@ -71,7 +69,7 @@ namespace Tetris {
             });
 
             tge.Timer.register(this.index+"game-over", 0.12, ()=>{
-                console.log("OVER"+this.index);
+                tge.log(tge.LogLevel.INFO, "OVER"+this.index);
                 mc.game_over=true;
                 //if(tgrid.index==1)
                 //    process.exit(1);
@@ -86,13 +84,13 @@ namespace Tetris {
             tge.Timer.register(this.index+"attack", 0.8, ()=>{});
 
             //设置初始grid.边框置为200，限制方块活动范围
-            for (let i = 0; i < ZONG+2; i++) 
-                for (let j = 0; j < HENG+4; j++)
-                    mc.grid[i * GRIDW + j]=200;
+            for (let i=0; i<ZONG+2; i++) 
+                for (let j=0; j<HENG+4; j++)
+                    mc.grid[i*GRIDW + j]=200;
 
-            for (let i = 0; i < ZONG; i++) 
-                for (let j = 0; j < HENG; j++) 
-                    mc.grid[i * GRIDW + 2+j]=0;
+            for (let i=0; i<ZONG; i++) 
+                for (let j=0; j<HENG; j++) 
+                    mc.grid[i*GRIDW + 2+j]=0;
 
             //初始化各种变量
             mc.cur_block  = this.mqueue[0];
@@ -115,13 +113,8 @@ namespace Tetris {
 
         //下一块
         nextBlk(ai:boolean, issave:boolean) {
-            if(!ai) {
-                if(this.index==0) {
-                    //this.mod.tou._maxDAct = 0;
-                    //this.mod.tou._maxRLAct = 0;
-                }
-                this.mstat.addScore(10);
-            }
+            if(!ai) this.mstat.addScore(10);
+
             let mc = this.mcore;
             mc.block_index++;
             mc.cur_block = mc.next_block;
@@ -133,7 +126,7 @@ namespace Tetris {
             this.moveBlk(ElsMove.SET, ai);
             mc.next_block = this.mqueue[(mc.block_index+1) % MAXBLKQUEUE];
 
-            if (!ai && this.index == 0)
+            if (!ai && this.index==0)
                 this.fangcha[mc.block_index] = this.calcFangCha();
         }
 
@@ -225,17 +218,17 @@ namespace Tetris {
                 let i,j,n;
                 for(n=0; n<mc.fullrows.length%100; n++) {
                     for(i=mc.fullrows[n]; i>=0; i--) {
-                        for (j = 0; j < HENG; j++) {
+                        for (j=0; j<HENG; j++) {
                             if(i) {
-                                if(mc.grid[(i-1) * GRIDW + j+2]>100 || mc.grid[(i-1) * GRIDW + j+2]==0) {
-                                    if(!(mc.grid[i * GRIDW + j+2]<10 && mc.grid[i * GRIDW + j+2]>0))
-                                        mc.grid[i * GRIDW + j+2]=mc.grid[(i-1) * GRIDW + j+2];
-                                } else if(!(mc.grid[i * GRIDW + j+2]<10 && mc.grid[i * GRIDW + j+2]>0)) {
-                                    mc.grid[i * GRIDW + j+2]=0;
+                                if(mc.grid[(i-1)*GRIDW + j+2]>100 || mc.grid[(i-1)*GRIDW + j+2]==0) {
+                                    if(!(mc.grid[i*GRIDW + j+2]<10 && mc.grid[i*GRIDW + j+2]>0))
+                                        mc.grid[i*GRIDW + j+2]=mc.grid[(i-1)*GRIDW + j+2];
+                                } else if(!(mc.grid[i*GRIDW + j+2]<10 && mc.grid[i*GRIDW + j+2]>0)) {
+                                    mc.grid[i*GRIDW + j+2]=0;
                                 }
                             } else {
-                                if(!(mc.grid[i * GRIDW + j+2]<10 && mc.grid[i * GRIDW + j+2]>0))
-                                    mc.grid[i * GRIDW + j+2]=0;
+                                if(!(mc.grid[i*GRIDW + j+2]<10 && mc.grid[i*GRIDW + j+2]>0))
+                                    mc.grid[i*GRIDW + j+2]=0;
                             }
                         }
                     }
@@ -258,22 +251,22 @@ namespace Tetris {
         updateColHoleTop(gxs: number, gxe: number) {
             let m, n;
             let mc = this.mcore;
-            for(m=gxs;m<=gxe;m++) {
-                mc.col_top[m-2]=0;
-                mc.col_hole[m-2]=0;
-                for (n = ZONG; n>0; n--) {
-                    if (mc.grid[(ZONG-n) * GRIDW + m]>100) {
-                        mc.col_top[m-2]=n;
+            for(m=gxs; m<=gxe; m++) {
+                mc.col_top[m-2] = 0;
+                mc.col_hole[m-2] = 0;
+                for (n=ZONG; n>0; n--) {
+                    if (mc.grid[(ZONG-n)*GRIDW + m]>100) {
+                        mc.col_top[m-2] = n;
                         break;
                     }
                 }
-                for(;n>0;n--) {
-                    if (mc.grid[(ZONG-n) * GRIDW + m]==0)
+                for(; n>0; n--) {
+                    if (mc.grid[(ZONG-n)*GRIDW + m]==0)
                         mc.col_hole[m-2]+=n;
                 }
             }
             mc.top_line = 0;
-            for (m = 0; m < HENG; m++) 
+            for (m=0; m<HENG; m++) 
                 if(mc.col_top[m]>mc.top_line)
                     mc.top_line = mc.col_top[m];
 
@@ -603,7 +596,7 @@ namespace Tetris {
             //TODO:攻击影响col_hole
         }
 
-        update() {
+        update(dt: number) {
             if (this.ready_wending != WENDING) {
                 this.ready_wending--;
             }

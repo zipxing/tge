@@ -34,8 +34,6 @@ namespace Tetris {
                 case ElsMode.ADVENTURE:
                     if(m.pause) return;
                     if(m.mgrid[0].mcore.game_over) return;
-                    //if(this.model.timeUsed>=this.model.mconf.bmp_time[0]) 
-                    //    this.model.mgrid[0].mtimer.trigger("game-over"); 
                     this.playAutoAction(dt);
                     this.playUserAction(dt);
                     break;
@@ -199,22 +197,3 @@ namespace Tetris {
         }
     }
 }
-/*
-//Main entry...
-var m = new Model();
-var r = new ElsRender();
-var game = new ElsGame(m, r);
-if(nge.mode=="TERMINAL") {
-  //game.initGame(ELS_MODE_NET,0,REPSEED);
-  //game.model.mconf.isreplay=true;
-  game.initGame(ELS_MODE_AI, process.argv[2], process.argv[3]);
-  game.regKeyAction({'up':'T', 'down':'D', 'left':'L', 'right':'R', 'space':'W'});
-}
-if(nge.mode=="WEB") {
-  nge.regCanva("main");
-  nge.regCanva("l2");
-  game.initGame(REPMODE,-1,REPSEED,true);
-  //game.initGame(ELS_MODE_AI, 0, 0);
-}
-nge.run(game);
-*/

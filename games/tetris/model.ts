@@ -77,8 +77,8 @@ namespace Tetris {
             //this.mai = new ElsAi();
             this.genRandomBlockQueue(seed);
             //this.mrender=[];
-            for(var i=0;i<2;i++) {
-                this.mgrid[i] = new ElsGrid('', i);
+            for(let i=0;i<2;i++) {
+                this.mgrid[i] = new ElsGrid(this, i);
                 if(ELS_CLASSIC) {
                     this.mgrid[i].setBlkDat(BLKDAT_C);
                 } else {
