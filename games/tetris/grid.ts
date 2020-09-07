@@ -1,33 +1,33 @@
 namespace Tetris {
     //玩家区域网格,关键变量,以及核心处理逻辑
     export class ElsGrid {
-        mcore: ElsCore;
-        mstat: ElsStat;
-        mod: Model;
-        mqueue: number[];
-        mblkDat: any;
+        core: ElsCore;
+        stat: ElsStat;
+        model: Tetris.Model;
+        block_queue: number[];
+        block_data: any;
         index: number;
         is_active: boolean;
         need_draw: boolean;
-        fangcha: number[];
+        fang_cha: number[];
         ready_wending: number;
 
-        constructor (mod: Model, i: number) {
-            this.mod = mod;
-            this.mcore=new ElsCore();
-            this.mstat=new ElsStat();
+        constructor (mod: Tetris.Model, i: number) {
+            this.model = mod;
+            this.core=new ElsCore();
+            this.stat=new ElsStat();
             this.is_active=false;
-            this.mqueue=[];
-            this.mblkDat=null;
+            this.block_queue=[];
+            this.block_data=null;
             this.index=i;
             this.need_draw = true;
-            this.fangcha = [];
+            this.fang_cha = [];
             this.ready_wending = 0;
         }
 
         //用于冒险模式设置10x10地图
         setBmp(bmp: number[][]) {
-            let mc = this.mcore;
+            let mc = this.core;
             for (let i=0; i<ZONG; i++) {
                 for (let j=0; j<HENG; j++) {
                     mc.grid[i*GRIDW + 2+j] =
@@ -43,24 +43,24 @@ namespace Tetris {
 
         //用于AI模式设置难度
         setLevel(nandu: number) { 
-            this.mstat.level = nandu; 
+            this.stat.level = nandu; 
         }
 
         //设置方块类别，目前支持经典和非经典两种，参考block.h
         setBlkDat(bd: any) { 
-            this.mblkDat = bd; 
+            this.block_data = bd; 
         }
 
         //设置方块序列
         setQueue(queue: number[]) { 
-            this.mqueue=queue; 
+            this.block_queue=queue; 
             tge.log(tge.LogLevel.INFO, "mq in setqueue:\n", queue);
         }
 
         //重置数据，每局开始调用
         reset() {
             let mc = new ElsCore();
-            this.mcore = mc;
+            this.core = mc;
 
             tge.Timer.register(this.index+"next-block", 0.8, ()=>{});
 
@@ -93,8 +93,8 @@ namespace Tetris {
                     mc.grid[i*GRIDW + 2+j]=0;
 
             //初始化各种变量
-            mc.cur_block  = this.mqueue[0];
-            mc.next_block = this.mqueue[1];
+            mc.cur_block  = this.block_queue[0];
+            mc.next_block = this.block_queue[1];
             mc.save_block = -1;
             mc.save_lock  = false;
             mc.cur_x = 5;
@@ -108,14 +108,14 @@ namespace Tetris {
             //UpdateColHoleTop(2, 11);
 
             //用于判断用户是否主动放弃
-            this.fangcha = [];
+            this.fang_cha = [];
         }
 
         //下一块
         nextBlk(ai:boolean, issave:boolean) {
-            if(!ai) this.mstat.addScore(10);
+            if(!ai) this.stat.addScore(10);
 
-            let mc = this.mcore;
+            let mc = this.core;
             mc.block_index++;
             mc.cur_block = mc.next_block;
             if (!issave)
@@ -124,14 +124,14 @@ namespace Tetris {
             mc.cur_y=0;
             mc.cur_z=0;
             this.moveBlk(ElsMove.SET, ai);
-            mc.next_block = this.mqueue[(mc.block_index+1) % MAXBLKQUEUE];
+            mc.next_block = this.block_queue[(mc.block_index+1) % MAXBLKQUEUE];
 
             if (!ai && this.index==0)
-                this.fangcha[mc.block_index] = this.calcFangCha();
+                this.fang_cha[mc.block_index] = this.calcFangCha();
         }
 
         calcFangCha(){
-            let mc = this.mcore;
+            let mc = this.core;
             //计算总空
             let top_total = 0;
             for (let i = 0; i < HENG; i++) {
@@ -140,12 +140,12 @@ namespace Tetris {
 
             //计算平均行高,计算行高方差
             let top_avg = top_total / HENG;
-            let fangcha = 0;
+            let fang_cha = 0;
             for (let i = 0; i < HENG; i++) {
                 let t = mc.col_top[i] * 10 - top_avg;
-                fangcha += (t * t);
+                fang_cha += (t * t);
             }
-            return fangcha;
+            return fang_cha;
         }
 
         isUserGiveup() {
@@ -153,13 +153,13 @@ namespace Tetris {
             let giveup = false;
 
             // 当前方差
-            let curfangcha = this.fangcha[this.fangcha.length - 1];
+            let curfang_cha = this.fang_cha[this.fang_cha.length - 1];
             // 5步之前的方差
             let step = 0;
-            if (this.fangcha.length >= 6)
-                step = this.fangcha.length - 6;
-            let prefangcha = this.fangcha[step];
-            if (curfangcha > 13000 || Math.abs(curfangcha - prefangcha) > 7000)
+            if (this.fang_cha.length >= 6)
+                step = this.fang_cha.length - 6;
+            let prefang_cha = this.fang_cha[step];
+            if (curfang_cha > 13000 || Math.abs(curfang_cha - prefang_cha) > 7000)
                 giveup = true;
 
             return giveup;
@@ -167,7 +167,7 @@ namespace Tetris {
 
         //暂存块,每次确认下落后才能再次存(save_lock)
         saveBlk(ai:boolean) {
-            let mc = this.mcore;
+            let mc = this.core;
             if(!mc.save_lock) {
                 mc.save_lock = true;
                 this.moveBlk(ElsMove.CLEAR, ai);
@@ -190,7 +190,7 @@ namespace Tetris {
 
         //消除最底下三行
         clearThreeBottomLines() {
-            let mc = this.mcore;
+            let mc = this.core;
             if(this.index != 0)
                 return;
 
@@ -206,7 +206,7 @@ namespace Tetris {
         }
 
         clearRow(ai: boolean) {
-            let mc = this.mcore;
+            let mc = this.core;
             if(!ai) {
                 if(tge.Timer.getStage(this.index+"game-over") != 0) {
                     tge.Timer.cancel(this.index+"game-over");
@@ -241,7 +241,7 @@ namespace Tetris {
 
         fall() {
             do{
-                if(this.mcore.game_over) break;
+                if(this.core.game_over) break;
             } while (this.moveBlk(ElsMove.DDOWN, false) != 
                 ElsMoveRet.REACH_BOTTOM);
             this.nextBlk(false, false);
@@ -250,7 +250,7 @@ namespace Tetris {
 
         updateColHoleTop(gxs: number, gxe: number) {
             let m, n;
-            let mc = this.mcore;
+            let mc = this.core;
             for(m=gxs; m<=gxe; m++) {
                 mc.col_top[m-2] = 0;
                 mc.col_hole[m-2] = 0;
@@ -278,7 +278,7 @@ namespace Tetris {
         testDDown() {
             //return 0; //debug...
             let x, y;
-            let mc = this.mcore;
+            let mc = this.core;
             let tmp = mc.clone();
             while (this.moveBlk(ElsMove.DDOWN, true) != 
                 ElsMoveRet.REACH_BOTTOM);
@@ -293,8 +293,8 @@ namespace Tetris {
         //操作方块,更新Grid
         moveBlk(dir:ElsMove, ai:boolean) {
             let i, j, m, n ,fflag;
-            let mc = this.mcore;
-            let md = this.mblkDat;
+            let mc = this.core;
+            let md = this.block_data;
 
             if(mc.game_over) {
                 if (dir == ElsMove.LEFT || dir == ElsMove.RIGHT)
@@ -424,7 +424,7 @@ namespace Tetris {
                             //如果有满行，设置full_rows_count
                             if (mc.fullrows.length>0) {
                                 if(!ai) { 
-                                    //console.log("fullrows......"+this.mcore.fullrows.length);
+                                    //console.log("fullrows......"+this.core.fullrows.length);
                                     if(tge.Timer.getStage(this.index+"game-over") != 0) {
                                         tge.Timer.cancel(this.index+"game-over");
                                         mc.game_over=false;
@@ -434,25 +434,25 @@ namespace Tetris {
                                 if (!ai) {
                                     mc.attack[0]=mc.fullrows.length-1;
                                     if(mc.combo>=3) {
-                                        this.mstat.combo_total+=mc.combo;
-                                        if(mc.combo>this.mstat.combo_max)
-                                            this.mstat.combo_max=mc.combo;
-                                        this.mstat.combo_current=mc.combo;
+                                        this.stat.combo_total+=mc.combo;
+                                        if(mc.combo>this.stat.combo_max)
+                                            this.stat.combo_max=mc.combo;
+                                        this.stat.combo_current=mc.combo;
                                         mc.attack[0]++; // 如果连击数大于等于3   再给别人加一行
                                         tge.Timer.fire(this.index+"combo", mc.combo);
-                                        this.mstat.addScore(mc.combo * 100);
+                                        this.stat.addScore(mc.combo * 100);
                                     }
                                     mc.attack[1]=mc.block_index;
-                                    this.mstat.clear_lines+=mc.fullrows.length;
+                                    this.stat.clear_lines+=mc.fullrows.length;
                                     var fs = [50, 150, 300, 500];
-                                    this.mstat.addScore(fs[mc.fullrows.length-1]);
+                                    this.stat.addScore(fs[mc.fullrows.length-1]);
                                     tge.Timer.fire(this.index+"clear-row", tge.clone(mc.fullrows));
                                     //if(this.mconf.mode == Tetris.ELS_MODE_AI)
-                                    //    this.mstat.addScore(mc.attack[0] * 10000);
+                                    //    this.stat.addScore(mc.attack[0] * 10000);
                                 }
                             } else {
                                 mc.combo = 0;
-                                this.mstat.combo_current = 0;
+                                this.stat.combo_current = 0;
                             }
                             //进入了下一块处理,可以保存块了
                             mc.save_lock = false;
@@ -478,7 +478,7 @@ namespace Tetris {
                             //此时方块刚出来就有碰撞表明Game Over了
                             if (dir == ElsMove.SET && !ai) {
                                 //console.log("TRIGGER OVER");
-                                this.mstat.isko = true;
+                                this.stat.isko = true;
                                 tge.Timer.fire(this.index+"game-over", 0.12);
                             }
                             return ElsMoveRet.NORMAL;
@@ -507,14 +507,14 @@ namespace Tetris {
         }
 
         checkAttack() {
-            let mc = this.mcore;
+            let mc = this.core;
             if (mc.game_over) return;
 
             //检测执行攻击
             if(mc.attack[0]) {
                 if(!mc.game_over) {
-                    this.attack(this.mod.mgrid[1-this.index], mc.attack[0], mc.attack[1]);
-                    this.mod.mgrid[1-this.index].testDDown();
+                    this.attack(this.model.grids[1-this.index], mc.attack[0], mc.attack[1]);
+                    this.model.grids[1-this.index].testDDown();
                     tge.Timer.fire(this.index+"attack", mc.attack[0]);
                 }
                 mc.attack[0]=0;
@@ -526,7 +526,7 @@ namespace Tetris {
             let i, j, flowflag=0;
             let tgrid:Uint8Array;
 
-            if(target.mcore.game_over||line<=0) return;
+            if(target.core.game_over||line<=0) return;
             if(tge.Timer.getStage(target.index+"clear-row")) 
                 tge.Timer.cancel(target.index+"clear-row");
             if(tge.Timer.getStage(target.index+"fall")) 
@@ -534,10 +534,10 @@ namespace Tetris {
 
             tge.srand(spaceseed);
             tgrid = new Uint8Array(Tetris.GRIDSIZE);
-            tgrid.set(target.mcore.grid);
+            tgrid.set(target.core.grid);
             for (i = 0; i <Tetris.ZONG-line; i++) {
                 for (j = 0; j <Tetris.HENG; j++) {
-                    tgrid[i * Tetris.GRIDW + 2+j]=target.mcore.grid[(i+line) * Tetris.GRIDW + 2+j];
+                    tgrid[i * Tetris.GRIDW + 2+j]=target.core.grid[(i+line) * Tetris.GRIDW + 2+j];
                     if(tgrid[i * Tetris.GRIDW + 2+j]<10 && tgrid[i * Tetris.GRIDW + 2+j]>0) {
                         flowflag=1;
                         tgrid[i * Tetris.GRIDW + 2+j]=0;
@@ -557,40 +557,40 @@ namespace Tetris {
                 }
             }
 
-            target.mcore.grid = new Uint8Array(Tetris.GRIDSIZE);
-            target.mcore.grid.set(tgrid);
+            target.core.grid = new Uint8Array(Tetris.GRIDSIZE);
+            target.core.grid.set(tgrid);
 
             if (flowflag) {
-                let x=target.mcore.cur_x;
-                let y=target.mcore.cur_y;
-                let z=target.mcore.cur_z;
-                let blk=target.mcore.cur_block;
+                let x=target.core.cur_x;
+                let y=target.core.cur_y;
+                let z=target.core.cur_z;
+                let blk=target.core.cur_block;
                 let needUp=false;
                 for(i=0; i<4; i++)
                     for(j=0; j<4; j++) {
                         if(this.isInGrid(y+i,x+j)) {
-                            if(target.mcore.grid[(y+i)*GRIDW + x+j]&&target.mblkDat[blk][z][i*4+j])
+                            if(target.core.grid[(y+i)*GRIDW + x+j]&&target.block_data[blk][z][i*4+j])
                                 needUp=true;
                         }
                     }
                 if (needUp) {
                     //printf("ATTACK NEED UP CURRENT BLOCK!\n");
-                    target.mcore.cur_y-=line;
-                    y=target.mcore.cur_y;
+                    target.core.cur_y-=line;
+                    y=target.core.cur_y;
                 }
                 for(i=0; i<4; i++)
                     for(j=0; j<4; j++) {
                         if(this.isInGrid(y+i, x+j))
-                            target.mcore.grid[(y+i)*GRIDW + x+j]+=target.mblkDat[blk][z][i*4+j];
+                            target.core.grid[(y+i)*GRIDW + x+j]+=target.block_data[blk][z][i*4+j];
                     }
             }
 
             for (i = 0; i <Tetris.HENG;i++)
-                target.mcore.col_top[i]+=line;
+                target.core.col_top[i]+=line;
 
-            if (target.mcore.fullrows.length!=0) {
-                for (let f=0; f<target.mcore.fullrows.length; f++)
-                    target.mcore.fullrows[f]-=line;
+            if (target.core.fullrows.length!=0) {
+                for (let f=0; f<target.core.fullrows.length; f++)
+                    target.core.fullrows[f]-=line;
                 //DumpELS(idx, "ATTACK add fullrows!!!");
             }
             //TODO:攻击影响col_hole

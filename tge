@@ -14,6 +14,22 @@ games = {
             "ascii.ts"
         ]
     },
+    "tetris" : {
+        "path": "games/tetris",
+        "src": [
+            "constant.ts",
+            "block.ts",
+            "stage_bmp.ts",
+            "core.ts",
+            "stat.ts",
+            "replay.ts",
+            "grid.ts",
+            "model.ts",
+            "render.ts",
+            "game.ts",
+            "main.ts"
+        ]
+    },
     "snake" : {
         "path": "games/snake",
         "src": [

@@ -90,7 +90,7 @@ namespace Tetris {
             let msg:string[] =['Press {green-fg}q{/} quit...',
                 'Game over,press {green-fg}r{/} restart...',
                 'Game over,press {green-fg}r{/} restart...'];
-            this.msgbox.setContent(msg[g.gameover]);
+            //this.msgbox.setContent(msg[g.gameover]);
         }
 
         setPoint(box: any, bg:string, fg:string, cchar:string) {

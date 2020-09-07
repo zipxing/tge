@@ -26,20 +26,15 @@ namespace Tetris {
 
             switch(this.mode) {
                 case ElsMode.SINGLE:
-                    if(m.pause) return;
-                    if(m.mgrid[0].mcore.game_over) return;
-                    this.playAutoAction(dt);
-                    this.playUserAction(dt);
-                    break;
                 case ElsMode.ADVENTURE:
                     if(m.pause) return;
-                    if(m.mgrid[0].mcore.game_over) return;
+                    if(m.grids[0].core.game_over) return;
                     this.playAutoAction(dt);
                     this.playUserAction(dt);
                     break;
                 case ElsMode.AI:
                     if(m.pause) return;
-                    if(m.mgrid[0].mcore.game_over || m.mgrid[1].mcore.game_over) {
+                    if(m.grids[0].core.game_over || m.grids[1].core.game_over) {
                         return;
                     }
                     this.playAutoAction(dt);
@@ -102,15 +97,15 @@ namespace Tetris {
         updateELS(id:number, dt:number)
         {
             let m = <Model>this.model;
-            m.mgrid[0].checkAttack();
-            m.mgrid[1].checkAttack();
+            m.grids[0].checkAttack();
+            m.grids[1].checkAttack();
             //更新内部定时器等操作
-            m.mgrid[id].update(dt);
+            m.grids[id].update(dt);
         }
 
         //旋转动作的辅助函数
         _testTurn(pg: ElsGrid, dir: ElsMove, testcmd: string) {
-            let tcore=pg.mcore.clone();
+            let tcore=pg.core.clone();
             let mret;
 
             for(let i=0; i<testcmd.length; i++) {
@@ -124,8 +119,8 @@ namespace Tetris {
                 pg.testDDown();
                 return true;
             } else {
-                pg.mcore.recycle();
-                pg.mcore=tcore.clone();
+                pg.core.recycle();
+                pg.core=tcore.clone();
                 tcore.recycle();
             }
             return false;
@@ -134,7 +129,7 @@ namespace Tetris {
         //执行动作码的基础方法
         playActionBase(index: number, act: string) {
             let dir;
-            let pg = (<Model>this.model).mgrid[index];
+            let pg = (<Model>this.model).grids[index];
 
             if(tge.Timer.getStage(index+"fall")!=0) 
                 tge.Timer.cancel(index+"fall");
