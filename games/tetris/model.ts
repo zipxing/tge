@@ -2,31 +2,30 @@ namespace Tetris {
     export class Model extends tge.Model {
         grids: ElsGrid[];
         stage: number;
-        emergencyCount: number;
         pause: boolean;
-        currentStage: number;
         currentStatus: ElsGameState;
         allowDoPopAction: boolean;
         mBlockQueue: number[];
+        mrep: ElsReplay;
+        mai: ElsAi;
 
         constructor() {
             super();
             this.grids=[];
             this.stage=0;
-            this.emergencyCount = 1;
             this.pause=false;
-            this.currentStage = 0;
             this.currentStatus = ElsGameState.HOMEPAGE;
             this.allowDoPopAction = true;
             for(var i=0;i<2;i++) {
                 this.grids[i]=new ElsGrid(this, i);
             }
             this.mBlockQueue = new Array(MAXBLKQUEUE);
+            this.mrep = new ElsReplay();
+            this.mai = new ElsAi();
         }
 
         //生成随机块序列
-        genRandomBlockQueue(seed:number)
-        {
+        genRandomBlockQueue(seed:number) {
             tge.srand(seed);
             if (ELS_CLASSIC) {
                 let tmptype;
@@ -73,8 +72,8 @@ namespace Tetris {
                 [0,0,5,5,5,5,5,5,0,0]
             ];
 
-            //this.mrep = new ElsReplay();
-            //this.mai = new ElsAi();
+            this.mrep = new ElsReplay();
+            this.mai = new ElsAi();
             this.genRandomBlockQueue(seed);
             //this.mrender=[];
             for(let i=0;i<2;i++) {
@@ -86,12 +85,7 @@ namespace Tetris {
                 }
                 this.grids[i].setQueue(this.mBlockQueue);
                 this.grids[i].reset();
-                this.currentStage = bmpindex;
-                let bi = (bmpindex+3) % Object.keys(ELSBMP).length;
             }
-        }
-
-        checkEmergency() {
         }
 
         setGameStatus(s: ElsGameState) {

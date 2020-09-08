@@ -51,6 +51,7 @@ namespace Tetris {
             }
             for(let i=0; i<2; i++) 
                 this.updateELS(i, dt);
+            super.scheduleUpdate(dt);
         }
 
         //自然下落...

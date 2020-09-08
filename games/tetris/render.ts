@@ -3,7 +3,7 @@ namespace Tetris {
         titlebox: any;
         logobox: any;
         gamebox: any;
-        gridboxes: any[][];
+        gridboxes: any[2][][];
         msgbox: any;
 
         constructor() {
@@ -15,7 +15,7 @@ namespace Tetris {
             let nb = (<tge.TermRun>tge.env);
 
             this.titlebox = nb.blessed.box({
-                width:Tetris.HENG+2,
+                width:50,
                 height:4,
                 top:0,
                 left:3,
@@ -42,18 +42,29 @@ namespace Tetris {
             });
             nb.tscreen.append(this.gamebox);
 
-            this.gridboxes=[];
-            for(let i=0;i<Tetris.HENG;i++) {
-                this.gridboxes[i]=[];
-                for(let j=0;j<Tetris.HENG;j++) {
-                    this.gridboxes[i][j]=nb.blessed.box({
-                        width:1,
-                        height:1,
-                        top:i+5,
-                        left:j+1,
-                        tags:true
-                    });
-                    nb.tscreen.append(this.gridboxes[i][j]);
+            this.gridboxes=[[],[]];
+            for(let idx=0; idx<=1; idx++) {
+                for(let i=0; i<ZONG; i++) 
+                    this.gridboxes[idx][i]=new Array(HENG*2);
+                for(let i=0; i<ZONG; i++) {
+                    for(var j=0;j<HENG;j++) {
+                        this.gridboxes[idx][i][j*2]=nb.blessed.box({
+                            width:1, 
+                            height:1, 
+                            top:i, 
+                            left:j*2+idx*45, 
+                            tags:true
+                        });
+                        this.gridboxes[idx][i][j*2+1]=nb.blessed.box({
+                            width:1, 
+                            height:1, 
+                            top:i, 
+                            left:j*2+1+idx*45, 
+                            tags:true
+                        });
+                        nb.tscreen.append(this.gridboxes[idx][i][j*2]);
+                        nb.tscreen.append(this.gridboxes[idx][i][j*2+1]);
+                    }
                 }
             }
 
@@ -93,15 +104,26 @@ namespace Tetris {
             //this.msgbox.setContent(msg[g.gameover]);
         }
 
-        setPoint(box: any, bg:string, fg:string, cchar:string) {
-            box.setContent(`{${bg}-bg}{${fg}-fg}${cchar}{/}`);
-        }
-
-        setPoint256(box: any, bg:number, fg:number, cchar:string) {
-            box.setContent(`{${bg}-bg}{${fg}-fg}${cchar}{/}`);
-        }
-
         redrawGrid() {
+            let g = TermRender.game;
+            let m = <Tetris.Model>g.model;
+            for(let idx=0; idx<=1; idx++) {
+                for(let i=0;i<ZONG;i++) {
+                    for(let j=0;j<HENG;j++) {
+                        let gr = m.grids[idx];
+                        let gv = gr.core.grid[i*HENG + j+2];
+                        if(gv==0) {
+                            this.gridboxes[idx][i][j*2].setContent('{black-bg} {/}');
+                            this.gridboxes[idx][i][j*2+1].setContent('{black-bg}.{/}');
+                        } else {
+                            let c = ['magenta', 'blue', 'red', 'green', 'yellow', 'cyan'];
+                            let gvh = (gv&0xF0)>>4;
+                            this.gridboxes[idx][i][j*2].setContent('{'+c[gv%100%c.length]+'-bg}'+gvh+'{/}');
+                            this.gridboxes[idx][i][j*2+1].setContent('{'+c[gv%100%c.length]+'-bg}`{/}');
+                        }
+                    }
+                }
+            }
         }
 
         draw() {
