@@ -113,7 +113,8 @@ namespace Tetris {
 
         //下一块
         nextBlk(ai:boolean, issave:boolean) {
-            if(!ai) this.stat.addScore(10);
+            if(!ai)
+                this.stat.addScore(10);
 
             let mc = this.core;
             mc.block_index++;

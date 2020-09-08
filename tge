@@ -24,6 +24,7 @@ games = {
             "stat.ts",
             "replay.ts",
             "grid.ts",
+            "ai.ts",
             "model.ts",
             "render.ts",
             "game.ts",
