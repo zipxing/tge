@@ -21,7 +21,7 @@ namespace Tetris {
         save_lock: boolean;
         game_over: boolean;
         game_result: number;
-        _pool: any[];
+        static _pool: any[] = [];
 
         constructor() {
             this.grid = new Uint8Array(Tetris.GRIDSIZE);
@@ -42,13 +42,13 @@ namespace Tetris {
             this.save_lock=false;
             this.game_over=false;
             this.game_result=0;//0未得出结果, 1普通结束(经典模式), 2胜利, 3失败
-            this._pool = [];
+            //this._pool = [];
         }
 
         clone() {
             let cloned = undefined;
-            if (this._pool.length > 0){
-                cloned = this._pool.pop();
+            if (ElsCore._pool.length > 0){
+                cloned = ElsCore._pool.pop();
             } else {
                 cloned = new ElsCore();
             }
@@ -57,7 +57,7 @@ namespace Tetris {
         }
 
         recycle() {
-            this._pool.push(this);
+            ElsCore._pool.push(this);
         }
 
         _assign(src: ElsCore, dst: ElsCore) {
