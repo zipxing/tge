@@ -60,17 +60,17 @@ namespace Tetris {
                 for(let i=0; i<ZONG; i++) {
                     for(var j=0;j<HENG;j++) {
                         this.gridboxes[idx][i][j*2]=nb.blessed.box({
-                            width:1, 
-                            height:1, 
+                            width:1,
+                            height:1,
                             top:i+5, 
-                            left:j*2+idx*45, 
+                            left:j*2+idx*53+5,
                             tags:true
                         });
                         this.gridboxes[idx][i][j*2+1]=nb.blessed.box({
                             width:1, 
                             height:1, 
                             top:i+5, 
-                            left:j*2+1+idx*45, 
+                            left:j*2+1+idx*53+5,
                             tags:true
                         });
                         nb.tscreen.append(this.gridboxes[idx][i][j*2]);
