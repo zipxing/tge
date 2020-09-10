@@ -19,6 +19,7 @@ namespace tge {
     }
 
     export function log(level: LogLevel, ...arg: any[]) {
-        console.log(LogLevel[level], ...arg);
+        let d = new Date()
+        console.log(LogLevel[level], d, ...arg);
     }
 }
