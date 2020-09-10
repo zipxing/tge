@@ -75,7 +75,7 @@ namespace Tetris {
         //AI动作
         playAiAction(dt: number) {
             let m = <Model>this.model;
-            if(this.timeout_ai>AI_SPEED[0]*100) {
+            if(this.timeout_ai>AI_SPEED[0]*300) {
                 //if(this.timeout_ai>0.0) {   //AIWORK
                 let aiact = m.mai.getAIAct(m.grids[1]);
                 this.playActionBase(1, aiact);

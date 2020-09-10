@@ -20,7 +20,7 @@ namespace Tetris {
                 width:50,
                 height:4,
                 top:0,
-                left:3,
+                left:22,
                 tags:true
             });
             nb.tscreen.append(this.titlebox);
@@ -35,20 +35,20 @@ namespace Tetris {
             nb.tscreen.append(this.logobox);
 
             this.gamebox = nb.blessed.box({
-                width:Tetris.HENG*9,
-                height:Tetris.ZONG+2,
+                width:Tetris.HENG*9-6,
+                height:Tetris.ZONG+6,
                 top:4,
                 left:0,
-                border:{type:'line', fg:238},
+                border:{type:'ascii', fg:232},
                 tags:true
             });
             nb.tscreen.append(this.gamebox);
 
             this.backbox = nb.blessed.box({
-                width:Tetris.HENG*9,
+                width:Tetris.HENG*9-10,
                 height: Tetris.ZONG+2,
-                top: 4,
-                left: 2,
+                top: 4+2,
+                left: 2+1,
                 tags:true
             });
             nb.tscreen.append(this.backbox);
@@ -62,15 +62,15 @@ namespace Tetris {
                         this.gridboxes[idx][i][j*2]=nb.blessed.box({
                             width:1,
                             height:1,
-                            top:i+5, 
-                            left:j*2+idx*53+4,
+                            top:i+5+2,
+                            left:j*2+idx*53+4+1,
                             tags:true
                         });
                         this.gridboxes[idx][i][j*2+1]=nb.blessed.box({
-                            width:1, 
-                            height:1, 
-                            top:i+5, 
-                            left:j*2+1+idx*53+4,
+                            width:1,
+                            height:1,
+                            top:i+5+2,
+                            left:j*2+1+idx*53+4+1,
                             tags:true
                         });
                         nb.tscreen.append(this.gridboxes[idx][i][j*2]);
@@ -133,8 +133,8 @@ namespace Tetris {
                     g2.style.transparent = true;
                     break;
                 case 11: //被攻击出来的
-                    g1.setContent('{240-fg}{0-bg}#{/}');
-                    g2.setContent('{240-fg}{0-bg}#{/}');
+                    g1.setContent('{240-fg}{0-bg}█{/}');
+                    g2.setContent('{240-fg}{0-bg}█{/}');
                     break;
                 case 20: //投影
                     g1.setContent('{242-fg}{0-bg}░{/}');
@@ -165,16 +165,15 @@ namespace Tetris {
                         continue;
                     }
                 } else {
-                    tge.log(tge.LogLevel.DEBUG, "FFFF", frs);
-                    tge.log(tge.LogLevel.DEBUG, "FFFF", fr);
+                    //tge.log(tge.LogLevel.DEBUG, "FFFF", frs);
+                    //tge.log(tge.LogLevel.DEBUG, "FFFF", fr);
                 }
                 for(let i=0;i<ZONG;i++) {
                     for(let j=0;j<HENG;j++) {
                         let gv = gr.core.grid[i*GRIDW + j+2];
                         let hidden_fullrow = false;
                         if(frs!=undefined && frs!=0) {
-                            //if(fr.indexOf(i)!=-1 && (frs/4%2==0))
-                            if(fr.indexOf(i)!=-1)
+                            if(fr.indexOf(i)!=-1 && (Math.floor(frs/3)%2==0))
                                 hidden_fullrow = true;
                         }
                         //let hidden_fullrow = fr.indexOf(i)!=-1 && frs && frs%10==0;
