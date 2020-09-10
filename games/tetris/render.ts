@@ -142,7 +142,7 @@ namespace Tetris {
                         let gv = gr.core.grid[i*GRIDW + j+2];
                         let hidden_fullrow = false;
                         if(frs!=undefined && frs!=0) {
-                            if(fr.indexOf(i)!=-1 && (frs%2==0))
+                            if(fr.indexOf(i)!=-1 && (frs/3%2==0))
                                 hidden_fullrow = true;
                         }
                         //let hidden_fullrow = fr.indexOf(i)!=-1 && frs && frs%10==0;
@@ -158,6 +158,23 @@ namespace Tetris {
                             this.gridboxes[idx][i][j*2+1].setContent('{'+c[gv%100%c.length]+'-fg}]{/}');
                             this.gridboxes[idx][i][j*2].style.transparent = false;
                             this.gridboxes[idx][i][j*2+1].style.transparent = false;
+                        }
+                    }
+                }
+                let md = gr.block_data;
+                for(let i=0; i<4; i++) {
+                    for(let j=0; j<4; j++) {
+                        let ttx = gr.core.tdx+j;
+                        let tty = gr.core.tdy+i;
+                        if (gr.isInGrid(tty, ttx)) {
+                            if(md[gr.core.cur_block][gr.core.cur_z][i*4+j]!=0) {
+                                let g1=this.gridboxes[idx][tty][ttx*2-4];
+                                let g2=this.gridboxes[idx][tty][ttx*2+1-4];
+                                if(g1 && g2) {
+                                    this.gridboxes[idx][tty][ttx*2-4].setContent('{blue-fg}.{/}');
+                                    this.gridboxes[idx][tty][ttx*2+1-4].setContent('{blue-fg}.{/}');
+                                }
+                            }
                         }
                     }
                 }
