@@ -123,20 +123,39 @@ namespace Tetris {
             let g = TermRender.game;
             let m = <Tetris.Model>g.model;
             for(let idx=0; idx<=1; idx++) {
+                let gr = m.grids[idx];
+                let frs = tge.Timer.getStage(idx+"clear-row");
+                let fr = tge.Timer.getExData(idx+"clear-row");
+                if(frs==0) {
+                    if(gr.need_draw)
+                        gr.need_draw = false;
+                    else {
+                        //tge.log(tge.LogLevel.DEBUG, "skip not need draw...");
+                        continue;
+                    }
+                } else {
+                    tge.log(tge.LogLevel.DEBUG, "FFFF", frs);
+                    tge.log(tge.LogLevel.DEBUG, "FFFF", fr);
+                }
                 for(let i=0;i<ZONG;i++) {
                     for(let j=0;j<HENG;j++) {
-                        let gr = m.grids[idx];
                         let gv = gr.core.grid[i*GRIDW + j+2];
-                        if(gv==0) {
+                        let hidden_fullrow = false;
+                        if(frs!=undefined && frs!=0) {
+                            if(fr.indexOf(i)!=-1 && (frs%2==0))
+                                hidden_fullrow = true;
+                        }
+                        //let hidden_fullrow = fr.indexOf(i)!=-1 && frs && frs%10==0;
+                        if(gv==0 || hidden_fullrow) {
                             this.gridboxes[idx][i][j*2].setContent('{black-bg}{/}');
                             this.gridboxes[idx][i][j*2+1].setContent('{black-bg}{/}');
                             this.gridboxes[idx][i][j*2].style.transparent = true;
                             this.gridboxes[idx][i][j*2+1].style.transparent = true;
                         } else {
                             let c = ['magenta', 'blue', 'red', 'green', 'yellow', 'cyan'];
-                            let gvh = (gv&0xF0)>>4;
-                            this.gridboxes[idx][i][j*2].setContent('{'+c[gv%100%c.length]+'-bg}'+gvh+'{/}');
-                            this.gridboxes[idx][i][j*2+1].setContent('{'+c[gv%100%c.length]+'-bg}`{/}');
+                            //let gvh = (gv&0xF0)>>4;
+                            this.gridboxes[idx][i][j*2].setContent('{'+c[gv%100%c.length]+'-fg}[{/}');
+                            this.gridboxes[idx][i][j*2+1].setContent('{'+c[gv%100%c.length]+'-fg}]{/}');
                             this.gridboxes[idx][i][j*2].style.transparent = false;
                             this.gridboxes[idx][i][j*2+1].style.transparent = false;
                         }

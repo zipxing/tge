@@ -1,5 +1,6 @@
 namespace Tetris {
     export class ElsCore {
+        static _pool: any[] = [];
         grid: Uint8Array;
         col_top: number[];
         col_hole: number[];
@@ -21,7 +22,6 @@ namespace Tetris {
         save_lock: boolean;
         game_over: boolean;
         game_result: number;
-        static _pool: any[] = [];
 
         constructor() {
             this.grid = new Uint8Array(Tetris.GRIDSIZE);
@@ -42,7 +42,6 @@ namespace Tetris {
             this.save_lock=false;
             this.game_over=false;
             this.game_result=0;//0未得出结果, 1普通结束(经典模式), 2胜利, 3失败
-            //this._pool = [];
         }
 
         clone() {

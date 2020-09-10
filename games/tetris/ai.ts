@@ -53,9 +53,8 @@ namespace Tetris {
         }
     };
 
-    //var AIP = elsAiPolicyVS;
-    let AIP = elsAiPolicyADV;
-    console.log(AIP["safe"]);
+    let AIP = elsAiPolicyVS;
+    //let AIP = elsAiPolicyADV;
 
     export class ElsAi {
         mActQueue: string;

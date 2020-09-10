@@ -8,11 +8,13 @@ namespace Tetris {
             super(m, r);
             this.mode = ElsMode.AI;
             this.bmp = 0;
-            this.seed = 0;
+            tge.srand(new Date().getTime());
+            this.seed = tge.rand();
         }
 
         initGame() {
             let m = <Tetris.Model>this.model;
+            this.seed = tge.rand();
             m.init(this.bmp, this.seed);
             this.playActionBase(0, 'D');
         }
@@ -56,8 +58,6 @@ namespace Tetris {
 
         //自然下落...
         playAutoAction(dt: number) {
-            //return;
-            //自然下落...
             let m = <Model>this.model;
             //tdtime=DOWN_TIME[this.model.mgrid[0].mstat.level];
             let tdtime = DOWN_TIME[0]*1000;
@@ -75,7 +75,7 @@ namespace Tetris {
         //AI动作
         playAiAction(dt: number) {
             let m = <Model>this.model;
-            if(this.timeout_ai>AI_SPEED[0]*10) {
+            if(this.timeout_ai>AI_SPEED[0]*100) {
                 //if(this.timeout_ai>0.0) {   //AIWORK
                 let aiact = m.mai.getAIAct(m.grids[1]);
                 this.playActionBase(1, aiact);
@@ -97,8 +97,7 @@ namespace Tetris {
         }
 
         //检测攻击
-        updateELS(id:number, dt:number)
-        {
+        updateELS(id:number, dt:number) {
             let m = <Model>this.model;
             m.grids[0].checkAttack();
             m.grids[1].checkAttack();

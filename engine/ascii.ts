@@ -40,7 +40,6 @@ namespace tge {
                     while(true) {
                         let m = line.match(/\x1b\[38;5;(\d+)m\x1b\[48;5;(\d+)m(.*?)\x1b\[0m/);
                         if(m==null) break;
-                        //console.log(m);
                         let shead = line.substring(0, m.index);
                         let fg = parseInt(m[1]);
                         let bg = parseInt(m[2]);

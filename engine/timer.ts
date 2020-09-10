@@ -33,6 +33,12 @@ namespace tge {
                 tmo.endcall();
         }
 
+        static getExData(name: string) {
+            let tmo: TimerData = Timer.timers[name];
+            if (!tmo) return;
+            return tmo.exdata;
+        }
+
         static getStage(name: string) {
             let tmo: TimerData = Timer.timers[name];
             if (!tmo) return;
