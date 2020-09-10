@@ -63,14 +63,14 @@ namespace Tetris {
                             width:1,
                             height:1,
                             top:i+5, 
-                            left:j*2+idx*53+5,
+                            left:j*2+idx*53+4,
                             tags:true
                         });
                         this.gridboxes[idx][i][j*2+1]=nb.blessed.box({
                             width:1, 
                             height:1, 
                             top:i+5, 
-                            left:j*2+1+idx*53+5,
+                            left:j*2+1+idx*53+4,
                             tags:true
                         });
                         nb.tscreen.append(this.gridboxes[idx][i][j*2]);
