@@ -320,7 +320,7 @@ namespace Tetris {
                 tg.core.recycle();
                 tg.core = b.clone();
                 b.recycle();
-                return;
+                return '';
             }
 
             //针对ms_scan列表,进行第二块的遍历运算,每帧只算1个布局
@@ -336,7 +336,7 @@ namespace Tetris {
                 tai.work2idx-=1;
                 if(tai.work2idx==-1) 
                     tai.ms_scan = [];
-                return;
+                return '';
             }
 
             //取走第一个动作码，返回

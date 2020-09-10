@@ -56,6 +56,7 @@ namespace Tetris {
 
         //自然下落...
         playAutoAction(dt: number) {
+            //return;
             //自然下落...
             let m = <Model>this.model;
             //tdtime=DOWN_TIME[this.model.mgrid[0].mstat.level];
@@ -73,24 +74,25 @@ namespace Tetris {
 
         //AI动作
         playAiAction(dt: number) {
-            /*
-            //if(this.timeoai>AI_SPEED[this.model.mgrid[1].mstat.level]) {
-        if(this.timeoai>AI_SPEED[0]*1000) {
-            //if(this.timeoai>0.0) {   //AIWORK
-            var aiact = this.model.mai.getAIAct(this.model.mgrid[1]);
-            this.playActionBase(1, aiact);
-            if(aiact=='W')
-                nge.log("play ai action.....");
-            this.timeoai=0;
-        } else {
-            this.timeoai+=dt;
-        }*/
+            let m = <Model>this.model;
+            if(this.timeout_ai>AI_SPEED[0]*10) {
+                //if(this.timeout_ai>0.0) {   //AIWORK
+                let aiact = m.mai.getAIAct(m.grids[1]);
+                this.playActionBase(1, aiact);
+                if(aiact=='W')
+                    tge.log(tge.LogLevel.DEBUG, "play ai action.....");
+                this.timeout_ai=0;
+            } else {
+                this.timeout_ai+=dt;
+            }
         }
 
         //用户键盘输入
         playUserAction(dt: number) {
-            for(let i=0;i<this.useract.length;i++)
+            for(let i=0;i<this.useract.length;i++) {
+                //tge.log(tge.LogLevel.INFO, "PLAYUSERACT:", this.useract[i]);
                 this.playActionBase(0, this.useract[i]);
+            }
             this.useract=[];
         }
 
@@ -162,9 +164,10 @@ namespace Tetris {
                     break;
                 case 'D':
                     //this.mrep.recordAction(index, act);
+                    //tge.log(tge.LogLevel.DEBUG, "DOWN...");
                     if(pg.moveBlk(ElsMove.DOWN, false)==ElsMoveRet.REACH_BOTTOM)
                         pg.nextBlk(false, false);
-                    pg.testDDown();
+                    //pg.testDDown();
                     break;
                 case 'Z':      //only for replay “ZHANZHU"
                     pg.moveBlk(ElsMove.DDOWN, false);

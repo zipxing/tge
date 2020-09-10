@@ -40,12 +40,12 @@ namespace tge {
                     while(true) {
                         let m = line.match(/\x1b\[38;5;(\d+)m\x1b\[48;5;(\d+)m(.*?)\x1b\[0m/);
                         if(m==null) break;
-                        console.log(m);
+                        //console.log(m);
                         let shead = line.substring(0, m.index);
                         let fg = parseInt(m[1]);
                         let bg = parseInt(m[2]);
                         let colorstr = m[3];
-                        log(LogLevel.DEBUG, m.index, m[0].length, fg, bg, colorstr);
+                        //log(LogLevel.DEBUG, m.index, m[0].length, fg, bg, colorstr);
                         for(let i=0;i<shead.length;i++) {
                             if(ocount>AscIIManager.width) break;
                             grid[row][ocount] = {
