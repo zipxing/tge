@@ -3,6 +3,7 @@ namespace Tetris {
         titlebox: any;
         logobox: any;
         backbox: any;
+        helpbox: any;
         gamebox: any;
         gridboxes: any[2][][];
         msgbox: any;
@@ -13,12 +14,13 @@ namespace Tetris {
             tge.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
             tge.AscIIManager.loadArtFile("ascii_art/tetris2.txt", "tetrislogo");
             tge.AscIIManager.loadArtFile("ascii_art/tetris_back.txt", "tback");
+            tge.AscIIManager.loadArtFile("ascii_art/tetris_help.txt", "thelp");
 
             let nb = (<tge.TermRun>tge.env);
 
             this.titlebox = nb.blessed.box({
                 width:50,
-                height:4,
+                height:5,
                 top:0,
                 left:22,
                 tags:true
@@ -27,7 +29,7 @@ namespace Tetris {
 
             this.logobox = nb.blessed.box({
                 width:12,
-                height:4,
+                height:5,
                 top:0,
                 left:50+16,
                 tags:true
@@ -37,9 +39,9 @@ namespace Tetris {
             this.gamebox = nb.blessed.box({
                 width:Tetris.HENG*9-6,
                 height:Tetris.ZONG+6,
-                top:4,
+                top:5,
                 left:0,
-                border:{type:'ascii', fg:232},
+                border:{type:'line', fg:22},
                 tags:true
             });
             nb.tscreen.append(this.gamebox);
@@ -47,11 +49,20 @@ namespace Tetris {
             this.backbox = nb.blessed.box({
                 width:Tetris.HENG*9-10,
                 height: Tetris.ZONG+2,
-                top: 4+2,
+                top: 5+2,
                 left: 2+1,
                 tags:true
             });
             nb.tscreen.append(this.backbox);
+
+            this.helpbox = nb.blessed.box({
+                width: Tetris.HENG*7,
+                height: 1,
+                top: Tetris.ZONG+5+6,
+                left: 8,
+                tags: true
+            });
+            nb.tscreen.append(this.helpbox);
 
             this.gridboxes=[[],[]];
             for(let idx=0; idx<=1; idx++) {
@@ -62,14 +73,14 @@ namespace Tetris {
                         this.gridboxes[idx][i][j*2]=nb.blessed.box({
                             width:1,
                             height:1,
-                            top:i+5+2,
+                            top:i+6+2,
                             left:j*2+idx*53+4+1,
                             tags:true
                         });
                         this.gridboxes[idx][i][j*2+1]=nb.blessed.box({
                             width:1,
                             height:1,
-                            top:i+5+2,
+                            top:i+6+2,
                             left:j*2+1+idx*53+4+1,
                             tags:true
                         });
@@ -99,7 +110,7 @@ namespace Tetris {
 
         drawTitle() {
             let s = tge.AscIIManager.getArt("tetrislogo").blessed_lines;
-            this.titlebox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}`);
+            this.titlebox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}`);
         }
 
         drawLogo() {
@@ -110,6 +121,8 @@ namespace Tetris {
         drawBack() {
             let s = tge.AscIIManager.getArt("tback").blessed_lines;
             this.backbox.setContent(s.join('\n'));
+            let h = tge.AscIIManager.getArt("thelp").blessed_lines;
+            this.helpbox.setContent(`${h[0]}`);
         }
 
         redrawMsg() {

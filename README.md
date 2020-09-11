@@ -11,11 +11,14 @@ https://www.gridsagegames.com/rexpaint/downloads.html
 http://www.geocities.ws/SoHo/7373/color.html
 
 TETRIS TODO:
-- 美化界面，调整logo位置，尝试更好看的“块”
-- 加入分数和帮助信息框
-- 加入暂存按钮  ✅
-- 随机种子（目前种子一直是0） ✅
+- 美化界面，调整logo位置，尝试更好看的“块” ✅
+- 加入帮助信息框 ✅
+- 加入暂存按钮 ✅
+- 随机种子（目前种子一直是0）✅
 - 加入消行闪烁动画 ✅
-- 绘制落下的阴影
+- 绘制落下的阴影 ✅
 - 优化性能，不要每帧都调用耗时的redrawGrid ✅
+- 绘制Combo，Attack动画
+- 绘制Next，Hold块
+- 加入分数信息框
 
