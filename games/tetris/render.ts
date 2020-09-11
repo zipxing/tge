@@ -168,6 +168,7 @@ namespace Tetris {
                 top:14,
                 left:30,
                 border:{type:'line', fg:238},
+                align:'center',
                 //label:{text:"Message", side:"left"},
                 tags:true
             });
@@ -200,10 +201,17 @@ namespace Tetris {
         }
 
         redrawMsg() {
-            let msg:string[] =['Press {green-fg}q{/} quit...',
-                'Game over,press {green-fg}r{/} restart...',
-                'Game over,press {green-fg}r{/} restart...'];
-            //this.msgbox.setContent(msg[g.gameover]);
+            let msg:string[] =[
+                'Come on human, defeat the AI!',
+                'YOU WINpress {green-fg}r{/} restart...',
+                'GAME OVER\npress {green-fg}r{/} restart...'];
+            let g = TermRender.game;
+            let m = <Tetris.Model>g.model;
+            let c1 = m.grids[0].core.game_over;
+            let c2 = m.grids[1].core.game_over;
+            if(!c1 && !c2) this.msgbox.setContent(msg[0]);
+            if(!c1 && c2) this.msgbox.setContent(msg[1]);
+            if(c1 && !c2) this.msgbox.setContent(msg[2]);
         }
 
         redrawNext() {

@@ -70,7 +70,11 @@ namespace Tetris {
 
             tge.Timer.register(this.index+"game-over", 0.12, ()=>{
                 tge.log(tge.LogLevel.INFO, "OVER"+this.index);
-                mc.game_over=true;
+                //这里写mc.game_over会导致bug，因为实际玩的时候
+                //this.core已经不是mc了...
+                //mc.game_over=true;
+                this.core.game_over = true;
+                tge.Emitter.fire("Tetris.REDRAW_MSG");
                 //if(tgrid.index==1)
                 //    process.exit(1);
             });
@@ -430,7 +434,6 @@ namespace Tetris {
                             //如果有满行，设置full_rows_count
                             if (mc.fullrows.length>0) {
                                 if(!ai) { 
-                                    //console.log("fullrows......"+this.core.fullrows.length);
                                     if(tge.Timer.getStage(this.index+"game-over") != 0) {
                                         tge.Timer.cancel(this.index+"game-over");
                                         mc.game_over=false;

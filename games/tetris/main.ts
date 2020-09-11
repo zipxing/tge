@@ -12,6 +12,7 @@ g1.regKeyAction({
     'k':'D',
     'j':'L',
     'l':'R',
+    'r':'I',
     'space':'W',
     's':'S'
 });

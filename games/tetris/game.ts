@@ -16,7 +16,9 @@ namespace Tetris {
             let m = <Tetris.Model>this.model;
             this.seed = tge.rand();
             m.init(this.bmp, this.seed);
+            this.useract = [];
             this.playActionBase(0, 'D');
+            tge.Emitter.fire("Tetris.REDRAW_MSG");
         }
 
         restartGame() {
@@ -37,6 +39,10 @@ namespace Tetris {
                 case ElsMode.AI:
                     if(m.pause) return;
                     if(m.grids[0].core.game_over || m.grids[1].core.game_over) {
+                        for(let i=0;i<this.useract.length;i++) {
+                            if(this.useract[i] == 'I')
+                                this.playActionBase(0, this.useract[i]);
+                        }
                         return;
                     }
                     this.playAutoAction(dt);
@@ -189,6 +195,9 @@ namespace Tetris {
                     //this.mrep.recordAction(index, act);
                     pg.saveBlk(false);
                     pg.testDDown();
+                    break;
+                case 'I':
+                    this.initGame();
                     break;
                 case 'N':
                     //this.mrep.recordAction(index, act);
