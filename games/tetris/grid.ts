@@ -127,6 +127,9 @@ namespace Tetris {
             this.moveBlk(ElsMove.SET, ai);
             mc.next_block = this.block_queue[(mc.block_index+1) % MAXBLKQUEUE];
 
+            if(this.index==0)
+                tge.Emitter.fire("Tetris.REDRAW_NEXT");
+
             if (!ai && this.index==0)
                 this.fang_cha[mc.block_index] = this.calcFangCha();
         }
@@ -184,6 +187,8 @@ namespace Tetris {
                     mc.save_block = mc.cur_block;
                     this.nextBlk(ai, false);
                 }
+                if(this.index==0) 
+                    tge.Emitter.fire("Tetris.REDRAW_HOLD");
                 //触发保存块动画
                 //this.mtimer.save_block = 10;
             }

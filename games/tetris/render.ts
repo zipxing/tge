@@ -6,6 +6,10 @@ namespace Tetris {
         helpbox: any;
         gamebox: any;
         gridboxes: any[2][][];
+        nextbox: any;
+        nextboxes: any[4][8];
+        holdbox: any;
+        holdboxes: any[4][8];
         msgbox: any;
 
         constructor() {
@@ -80,6 +84,73 @@ namespace Tetris {
                     }
                 }
             }
+            this.holdbox = nb.blessed.box({
+                width:10,
+                height:6,
+                top:8,
+                left:43,
+                border:{type:'line', fg:238},
+                label:{text:'hold',side:'left'},
+                tags:true
+            });
+            nb.tscreen.append(this.holdbox);
+
+            this.holdboxes=[];
+            for(let i=0; i<4; i++) {
+                this.holdboxes[i] = new Array(4);
+                for(let j=0; j<4; j++) {
+                    this.holdboxes[i][j*2] = nb.blessed.box({
+                        width:1,
+                        height:1,
+                        top:i+8+1,
+                        left:j*2+1+43,
+                        tags:true
+                    });
+                    this.holdboxes[i][j*2+1] = nb.blessed.box({
+                        width:1,
+                        height:1,
+                        top:i+8+1,
+                        left:j*2+1+1+43,
+                        tags:true
+                    });
+                    nb.tscreen.append(this.holdboxes[i][j*2]);
+                    nb.tscreen.append(this.holdboxes[i][j*2+1]);
+                }
+            }
+
+            this.nextbox = nb.blessed.box({
+                width:10,
+                height:6,
+                top:8,
+                left:30,
+                border:{type:'line', fg:238},
+                label:{text:'next',side:'left'},
+                tags:true
+            });
+            nb.tscreen.append(this.nextbox);
+
+            this.nextboxes=[];
+            for(let i=0; i<4; i++) {
+                this.nextboxes[i] = new Array(4);
+                for(let j=0; j<4; j++) {
+                    this.nextboxes[i][j*2] = nb.blessed.box({
+                        width:1,
+                        height:1,
+                        top:i+8+1,
+                        left:j*2+1+30,
+                        tags:true
+                    });
+                    this.nextboxes[i][j*2+1] = nb.blessed.box({
+                        width:1,
+                        height:1,
+                        top:i+8+1,
+                        left:j*2+1+1+30,
+                        tags:true
+                    });
+                    nb.tscreen.append(this.nextboxes[i][j*2]);
+                    nb.tscreen.append(this.nextboxes[i][j*2+1]);
+                }
+            }
 
             this.logobox = nb.blessed.box({
                 width:12,
@@ -93,20 +164,22 @@ namespace Tetris {
 
             this.msgbox = nb.blessed.box({
                 width:23,
-                height:ZONG+2,
-                top:4,
-                left:HENG+3,
+                height:11,
+                top:14,
+                left:30,
                 border:{type:'line', fg:238},
+                //label:{text:"Message", side:"left"},
                 tags:true
             });
-            //nb.tscreen.append(this.msgbox);
+            nb.tscreen.append(this.msgbox);
 
-            /*tge.Emitter.register("Snake.REDRAW_MSG", this.redrawMsg, this);
-            tge.Emitter.register("Snake.REDRAW_GRID", this.redrawGrid, this);
-            tge.Timer.register("Snake.Timer.Title", 1.0, ()=>{
-                tge.Timer.fire("Snake.Timer.Title", 0);
-            });
-            tge.Timer.fire("Snake.Timer.Title", 0);*/
+            tge.Emitter.register("Tetris.REDRAW_MSG", this.redrawMsg, this);
+            tge.Emitter.register("Tetris.REDRAW_NEXT", this.redrawNext, this);
+            tge.Emitter.register("Tetris.REDRAW_HOLD", this.redrawHold, this);
+
+            this.drawTitle();
+            this.drawLogo();
+            this.drawBack();
         }
 
         drawTitle() {
@@ -133,10 +206,44 @@ namespace Tetris {
             //this.msgbox.setContent(msg[g.gameover]);
         }
 
-        setCell(idx:number, i:number, j:number, c:number) {
-            let g1 = this.gridboxes[idx][i][j*2];
-            let g2 = this.gridboxes[idx][i][j*2+1];
-            let fgs = [14, 201, 49, 33, 227, 196]
+        redrawNext() {
+            let g = TermRender.game;
+            let m = <Tetris.Model>g.model;
+            let gr = m.grids[0];
+            let md = gr.block_data;
+            for(let i=0; i<4; i++) {
+                for(let j=0; j<4; j++) {
+                    let g1=this.nextboxes[i][j*2];
+                    let g2=this.nextboxes[i][j*2+1];
+                    if(md[gr.core.next_block][0][i*4+j]!=0) {
+                        this.setCellBasic(g1, g2, gr.core.next_block+1);
+                    } else {
+                        this.setCellBasic(g1, g2, 0);
+                    }
+                }
+            }
+        }
+
+        redrawHold() {
+            let g = TermRender.game;
+            let m = <Tetris.Model>g.model;
+            let gr = m.grids[0];
+            let md = gr.block_data;
+            for(let i=0; i<4; i++) {
+                for(let j=0; j<4; j++) {
+                    let g1=this.holdboxes[i][j*2];
+                    let g2=this.holdboxes[i][j*2+1];
+                    if(md[gr.core.save_block][0][i*4+j]!=0) {
+                        this.setCellBasic(g1, g2, gr.core.save_block+1);
+                    } else {
+                        this.setCellBasic(g1, g2, 0);
+                    }
+                }
+            }
+        }
+
+        setCellBasic(g1:any, g2:any, c: number) {
+            let fgs = [14, 201, 49, 33, 227, 196];
             g1.style.transparent = false;
             g2.style.transparent = false;
             switch(c) {
@@ -155,13 +262,19 @@ namespace Tetris {
                     g2.setContent('{242-fg}{0-bg}░{/}');
                     break;
                 case 30: //满行闪烁
-                    g1.setContent('{30-fg}{0-bg}-{/}');
-                    g2.setContent('{30-fg}{0-bg}={/}');
+                    g1.setContent('{231-fg}{0-bg}-{/}');
+                    g2.setContent('{231-fg}{0-bg}={/}');
                     break;
                 default: //正常方块
                     g1.setContent(`{${fgs[c%fgs.length]}-fg}{0-bg}[{/}`);
                     g2.setContent(`{${fgs[c%fgs.length]}-fg}{0-bg}]{/}`);
             }
+        }
+
+        setCell(idx:number, i:number, j:number, c:number) {
+            let g1 = this.gridboxes[idx][i][j*2];
+            let g2 = this.gridboxes[idx][i][j*2+1];
+            this.setCellBasic(g1, g2, c);
         }
 
         redrawGrid() {
@@ -190,7 +303,6 @@ namespace Tetris {
                             if(fr.indexOf(i)!=-1 && (Math.floor(frs/3)%2==0))
                                 hidden_fullrow = true;
                         }
-                        //let hidden_fullrow = fr.indexOf(i)!=-1 && frs && frs%10==0;
                         if(gv==0) {
                             this.setCell(idx, i, j, 0);
                         } else {
@@ -221,9 +333,6 @@ namespace Tetris {
         }
 
         draw() {
-            this.drawTitle();
-            this.drawLogo();
-            this.drawBack();
             this.redrawGrid();
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
