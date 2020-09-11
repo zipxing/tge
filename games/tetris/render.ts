@@ -27,15 +27,6 @@ namespace Tetris {
             });
             nb.tscreen.append(this.titlebox);
 
-            this.logobox = nb.blessed.box({
-                width:12,
-                height:5,
-                top:0,
-                left:50+16,
-                tags:true
-            });
-            nb.tscreen.append(this.logobox);
-
             this.gamebox = nb.blessed.box({
                 width:Tetris.HENG*9-6,
                 height:Tetris.ZONG+6,
@@ -56,10 +47,10 @@ namespace Tetris {
             nb.tscreen.append(this.backbox);
 
             this.helpbox = nb.blessed.box({
-                width: Tetris.HENG*7,
+                width: Tetris.HENG*8,
                 height: 1,
                 top: Tetris.ZONG+5+6,
-                left: 8,
+                left: 3,
                 tags: true
             });
             nb.tscreen.append(this.helpbox);
@@ -89,6 +80,16 @@ namespace Tetris {
                     }
                 }
             }
+
+            this.logobox = nb.blessed.box({
+                width:12,
+                height:5,
+                top:25,
+                left:30+7,
+                tags:true
+            });
+            nb.tscreen.append(this.logobox);
+
 
             this.msgbox = nb.blessed.box({
                 width:23,
