@@ -203,7 +203,7 @@ namespace Tetris {
         redrawMsg() {
             let msg:string[] =[
                 'Come on human, defeat the AI!',
-                'YOU WINpress {green-fg}r{/} restart...',
+                'YOU WIN\npress {green-fg}r{/} restart...',
                 'GAME OVER\npress {green-fg}r{/} restart...'];
             let g = TermRender.game;
             let m = <Tetris.Model>g.model;
