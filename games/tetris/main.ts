@@ -8,10 +8,10 @@ let g1 = new Tetris.Game(m1, r1);
 
 g1.initGame();
 g1.regKeyAction({
-    'up':'T',
-    'down':'D',
-    'left':'L',
-    'right':'R',
+    'i':'T',
+    'k':'D',
+    'j':'L',
+    'l':'R',
     'space':'W',
     's':'S'
 });
