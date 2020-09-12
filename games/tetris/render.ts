@@ -38,7 +38,7 @@ namespace Tetris {
                 height:Tetris.ZONG+6,
                 top:5,
                 left:0,
-                border:{type:'line', fg:22},
+                //border:{type:'line', fg:232},
                 tags:true
             });
             nb.tscreen.append(this.gamebox);
@@ -91,8 +91,8 @@ namespace Tetris {
                 height:6,
                 top:8,
                 left:43,
-                border:{type:'line', fg:238},
-                label:{text:'hold',side:'left'},
+                border:{type:'line', fg:232},
+                label:{text:'{238-fg}Hold{/}'},
                 tags:true
             });
             nb.tscreen.append(this.holdbox);
@@ -125,8 +125,8 @@ namespace Tetris {
                 height:6,
                 top:8,
                 left:30,
-                border:{type:'line', fg:238},
-                label:{text:'next',side:'left'},
+                border:{type:'line', fg:232},
+                label:{text:'{238-fg}Next{/}'},
                 tags:true
             });
             nb.tscreen.append(this.nextbox);
@@ -169,7 +169,7 @@ namespace Tetris {
                 height:11,
                 top:14,
                 left:30,
-                border:{type:'line', fg:238},
+                border:{type:'line', fg:232},
                 align:'center',
                 tags:true
             });
@@ -354,7 +354,8 @@ namespace Tetris {
                             if(md[gr.core.cur_block][gr.core.cur_z][i*4+j]!=0) {
                                 let g1=this.gridboxes[idx][tty][ttx*2-4];
                                 let g2=this.gridboxes[idx][tty][ttx*2+1-4];
-                                if(g1 && g2) {
+                                //确保阴影和正常块重合时，阴影不遮盖正常块
+                                if(g1 && g2 && (gr.core.grid[tty*GRIDW + ttx]==0)) {
                                     this.setCell(idx, tty, ttx-2, 20);
                                 }
                             }
