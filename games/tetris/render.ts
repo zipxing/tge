@@ -11,6 +11,8 @@ namespace Tetris {
         holdbox: any;
         holdboxes: any[4][8];
         msgbox: any;
+        combobox: any[2];
+        attackbox: any[2];
 
         constructor() {
             super();
@@ -169,10 +171,32 @@ namespace Tetris {
                 left:30,
                 border:{type:'line', fg:238},
                 align:'center',
-                //label:{text:"Message", side:"left"},
                 tags:true
             });
             nb.tscreen.append(this.msgbox);
+
+            this.combobox = [];
+            this.attackbox = [];
+            for(let idx=0; idx<2; idx++) {
+                this.combobox[idx] = nb.blessed.box({
+                    width:10,
+                    height:1,
+                    top:18+idx,
+                    left:32,
+                    align:'center',
+                    tages:true
+                });
+                this.attackbox[idx] = nb.blessed.box({
+                    width:10,
+                    height:1,
+                    top:20+idx,
+                    left:32,
+                    align:'center',
+                    tages:true
+                });
+                nb.tscreen.append(this.combobox[idx]);
+                nb.tscreen.append(this.attackbox[idx]);
+            }
 
             tge.Emitter.register("Tetris.REDRAW_MSG", this.redrawMsg, this);
             tge.Emitter.register("Tetris.REDRAW_NEXT", this.redrawNext, this);
@@ -340,8 +364,52 @@ namespace Tetris {
             }
         }
 
+        drawCombo() {
+            let g = TermRender.game;
+            let m = <Tetris.Model>g.model;
+            for(let idx=0; idx<2; idx++) {
+                let cs = tge.Timer.getStage(idx+"combo");
+                if(cs==0) {
+                    this.combobox[idx].hidden = true;
+                    continue;
+                }
+                let cd = tge.Timer.getExData(idx+"combo");
+                this.combobox[idx].hidden = false;
+                if(idx==0) {
+                    this.combobox[idx].setContent(`${cd}combo>>`);
+                    this.combobox[idx].left = 42-Math.floor(cs/3);
+                } else {
+                    this.combobox[idx].setContent(`<<${cd}combo`);
+                    this.combobox[idx].left = 32+Math.floor(cs/3);
+                }
+            }
+        }
+
+        drawAttack() {
+            let g = TermRender.game;
+            let m = <Tetris.Model>g.model;
+            for(let idx=0; idx<2; idx++) {
+                let cs = tge.Timer.getStage(idx+"attack");
+                if(cs==0) {
+                    this.attackbox[idx].hidden = true;
+                    continue;
+                }
+                let cd = tge.Timer.getExData(idx+"attack");
+                this.attackbox[idx].hidden = false;
+                if(idx==0) {
+                    this.attackbox[idx].setContent(`${cd}attack>>`);
+                    this.attackbox[idx].left = 42-Math.floor(cs/3);
+                } else {
+                    this.attackbox[idx].setContent(`<<${cd}attack`);
+                    this.attackbox[idx].left = 32+Math.floor(cs/3);
+                }
+            }
+        }
+
         draw() {
             this.redrawGrid();
+            this.drawCombo();
+            this.drawAttack();
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
         }

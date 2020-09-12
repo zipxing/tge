@@ -283,9 +283,6 @@ namespace Tetris {
             for (m=0; m<HENG; m++) 
                 if(mc.col_top[m]>mc.top_line)
                     mc.top_line = mc.col_top[m];
-
-            //检测紧急模式
-            // this.mod.checkEmergency();
         }
 
         //用于预先绘制下落到底部的虚影，用于更好的瞄准
