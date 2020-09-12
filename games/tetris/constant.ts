@@ -11,10 +11,6 @@ namespace Tetris {
     export const GRIDH:number =ZONG+2;
     export const GRIDSIZE:number =(HENG+4)*(ZONG+2);
 
-
-    //落到底后，达到稳定状态的延时
-    export const WENDING=15;
-
     //为了保证AB两人的方块序列完全一致，事先生成好500个方块序列，500块后轮回取块
     export const MAXBLKQUEUE=500;
 

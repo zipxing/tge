@@ -109,8 +109,6 @@ namespace Tetris {
             let m = <Model>this.model;
             m.grids[0].checkAttack();
             m.grids[1].checkAttack();
-            //更新内部定时器等操作
-            m.grids[id].update(dt);
         }
 
         //旋转动作的辅助函数

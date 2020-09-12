@@ -10,7 +10,7 @@ namespace Tetris {
         is_active: boolean;
         need_draw: boolean;
         fang_cha: number[];
-        ready_wending: number;
+        need_zhanzhu: boolean;
 
         constructor (mod: Tetris.Model, i: number) {
             this.model = mod;
@@ -22,7 +22,7 @@ namespace Tetris {
             this.index=i;
             this.need_draw = true;
             this.fang_cha = [];
-            this.ready_wending = 0;
+            this.need_zhanzhu = false;
         }
 
         //用于冒险模式设置10x10地图
@@ -63,6 +63,10 @@ namespace Tetris {
             this.core = mc;
 
             tge.Timer.register(this.index+"next-block", 0.8, ()=>{});
+
+            tge.Timer.register(this.index+"ready-wending", 0.8, ()=>{
+                this.need_zhanzhu = true;
+            });
 
             tge.Timer.register(this.index+"clear-row", 0.3, ()=>{
                 this.clearRow(false);
@@ -327,13 +331,13 @@ namespace Tetris {
                     x=cx;
                     y=cy;
                     z=(cz+5)%4;
-                    this.ready_wending =Tetris.WENDING;
+                    tge.Timer.cancel(this.index+"ready-wending", true);
                     break;
                 case ElsMove.TURN_CCW:
                     x=cx;
                     y=cy;
                     z=(cz+3)%4;
-                    this.ready_wending =Tetris.WENDING;
+                    tge.Timer.cancel(this.index+"ready-wending", true);
                     break;
                 case ElsMove.DOWN:
                 case ElsMove.DDOWN:
@@ -341,11 +345,11 @@ namespace Tetris {
                     break;
                 case ElsMove.LEFT:
                     x=cx-1,y=cy,z=cz;
-                    this.ready_wending =Tetris.WENDING;
+                    tge.Timer.cancel(this.index+"ready-wending", true);
                     break;
                 case ElsMove.RIGHT:
                     x=cx+1,y=cy,z=cz;
-                    this.ready_wending =Tetris.WENDING;
+                    tge.Timer.cancel(this.index+"ready-wending", true);
                     break;
                 case ElsMove.SET:
                     x=cx,y=cy,z=cz;
@@ -357,27 +361,25 @@ namespace Tetris {
 
 
             //不稳定块置0,100以上为已经下落稳定的块
-            for(i=0; i<4; i++) 
-                for(j=0; j<4; j++) 
+            for(i=0; i<4; i++)
+                for(j=0; j<4; j++)
                     if(this.isInGrid(cy+i, cx+j) && mc.grid[(cy+i)*GRIDW + cx+j]<100)
                         mc.grid[(cy+i) * GRIDW + cx+j]=0;
 
-            if (dir == ElsMove.CLEAR) 
+            if (dir == ElsMove.CLEAR)
                 return ElsMoveRet.NORMAL; //清除漂浮的块
 
             for(i=0; i<4; i++) {
                 for(j=0; j<4; j++) {
                     //检测到了碰撞,可能是到底,到边,或者遇到了别的块,无法下落
                     if(mc.grid[(y+i)*GRIDW + x+j] && md[blk][z][i*4+j]) {
-                        let gv = mc.grid[(y+i)*GRIDW + x+j];
-                        let mv = md[blk][z][i*4+j];
-                        if (dir == ElsMove.DOWN || dir ==ElsMove.DDOWN) {
-                            if (dir ==ElsMove.DOWN) {
+                        if (dir == ElsMove.DOWN || dir == ElsMove.DDOWN) {
+                            if (dir == ElsMove.DOWN) {
                                 //普通下落（非直落）还没粘住的情况
-                                if(this.ready_wending>=0) {
-                                    //触发UpdateELS开始对ready_wending计数
-                                    if (this.ready_wending == WENDING)
-                                        this.ready_wending--;
+                                if(!this.need_zhanzhu) {
+                                    let rws = tge.Timer.getStage(this.index+"ready-wending");
+                                    if(rws==0)
+                                        tge.Timer.fire(this.index+"ready-wending", null);
                                     for(m=0; m<4; m++) {
                                         for(n=0; n<4; n++) {
                                             if(this.isInGrid(cy+m, cx+n) && md[blk][z][m*4+n])
@@ -385,10 +387,10 @@ namespace Tetris {
                                         }
                                     }
                                     return ElsMoveRet.READY_BOTTOM;
-                                } else {
-                                    this.ready_wending = WENDING;
                                 }
                             }
+
+                            this.need_zhanzhu = false;
 
                             //加100设置为稳定块，并统计需要显示粘住光晕的块位置
                             if (!ai) {
@@ -469,8 +471,8 @@ namespace Tetris {
                         } else if (dir == ElsMove.LEFT || dir == ElsMove.RIGHT) {
                             for(i=0; i<4; i++){
                                 for(j=0; j<4; j++) {
-                                    if(this.isInGrid(cy+i, cx+j) && mc.grid[(cy+i) * GRIDW + cx+j] == 0)
-                                        mc.grid[(cy+i) * GRIDW + cx+j]+=md[blk][z][i*4+j];
+                                    if(this.isInGrid(cy+i, cx+j) && mc.grid[(cy+i)*GRIDW + cx+j] == 0)
+                                        mc.grid[(cy+i)*GRIDW + cx+j]+=md[blk][z][i*4+j];
                                 }
                             }
                             return ElsMoveRet.REACH_BORDER;
@@ -486,7 +488,6 @@ namespace Tetris {
                             //调用NextBlk会调用MoveBlk(SET),
                             //此时方块刚出来就有碰撞表明Game Over了
                             if (dir == ElsMove.SET && !ai) {
-                                //console.log("TRIGGER OVER");
                                 this.stat.isko = true;
                                 tge.Timer.fire(this.index+"game-over", 0.12);
                             }
@@ -603,12 +604,6 @@ namespace Tetris {
                 //DumpELS(idx, "ATTACK add fullrows!!!");
             }
             //TODO:攻击影响col_hole
-        }
-
-        update(dt: number) {
-            if (this.ready_wending != WENDING) {
-                this.ready_wending--;
-            }
         }
     }
 }

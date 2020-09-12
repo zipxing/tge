@@ -25,12 +25,14 @@ namespace tge {
             tmo.exdata = exdata;
         }
 
-        static cancel(name: string) {
+        static cancel(name: string, nocall: boolean = false) {
             let tmo: TimerData = Timer.timers[name];
             if (!tmo) return;
             tmo.time = 0;
-            if(tmo.endcall)
-                tmo.endcall();
+            if(!nocall) {
+                if(tmo.endcall)
+                    tmo.endcall();
+            }
         }
 
         static getExData(name: string) {
@@ -41,7 +43,8 @@ namespace tge {
 
         static getStage(name: string) {
             let tmo: TimerData = Timer.timers[name];
-            if (!tmo) return;
+            if (!tmo) 
+                return 0;
             return tmo.time;
         }
 
