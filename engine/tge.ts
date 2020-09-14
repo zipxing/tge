@@ -13,11 +13,14 @@ namespace tge {
         tscreen: any;
     }
 
-    export interface CocosRun {
-        kind: "COCOS";
+    export interface WebTermRun {
+        kind: "WEBTERM";
+        blessed: any;
+        program: any;
+        tscreen: any;
     }
 
-    type RunEnv = WebRun | TermRun | CocosRun;
+    type RunEnv = WebRun | TermRun | WebTermRun;
     export var env:RunEnv;
 
     //Init environment...
@@ -30,21 +33,43 @@ namespace tge {
                     canvas:{}
                 };
                 break;
-            case "TERM":
+            case "WEBTERM":
                 let b = require('blessed');
-                let p = b.program();
+                let tjs = require('term.js');
+                const Terminal = tjs.Terminal;
+                const term = new Terminal({
+                    cols: 80,
+                    rows: 24,
+                    useStyle: true,
+                    screenKeys: true,
+                });
+                term.open(document.body);
+                term.columns = term.cols;
+                term.isTTY = true;
+                term.resize(100,36);
+                let opts = { input: term, output: term, tput: false };
+
+                let p = b.program(opts);
                 //smartCSR or fastCSR...
-                let s = b.screen({smartCSR: true});
+                let s = b.screen({smartCSR: true, ...opts});
                 //let s = b.screen({fastCSR: true});
-                env = <TermRun>{
+                env = <WebTermRun>{
                         kind:runenv,
                         blessed:b, 
                         program:p, 
                         tscreen:s
                 };
                 break;
-            case "COCOS":
-                env = <CocosRun>{kind:runenv};
+            case "TERM":
+                let bt = require('blessed');
+                let pt = bt.program();
+                let st = bt.screen({smartCSR:true});
+                env = <TermRun>{
+                    kind:runenv,
+                    blessed:bt,
+                    program:pt,
+                    tscreen:st
+                };
                 break;
             default:
                 console.log("ERROR:error runenv string...");
@@ -121,6 +146,7 @@ namespace tge {
         loop() {
             switch(env.kind) {
                 case "TERM":
+                case "WEBTERM":
                     let now = Date.now();
                     Game._actualTicks++;
                     if (Game._previousTick + Game._tickLengthMs <= now) {
@@ -154,7 +180,7 @@ namespace tge {
     export abstract class Render {
         static game: Game;
         constructor() {
-            if(env.kind=="TERM") {
+            if(env.kind=="TERM" || env.kind=="WEBTERM") {
                 let mp = env.program;
                 mp.key('q', function(ch:any, key:any) {
                     mp.clear();

@@ -7,6 +7,8 @@ namespace tge {
     }
 
     export function bindLogPath(fpath: string) {
+        if(tge.env.kind == "WEBTERM")
+            return;
         let fs=require('fs');
         let util = require('util');
         let logFile = fs.createWriteStream(fpath, {flags:'a'});

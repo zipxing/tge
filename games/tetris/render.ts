@@ -208,20 +208,27 @@ namespace Tetris {
         }
 
         drawTitle() {
-            let s = tge.AscIIManager.getArt("tetrislogo").blessed_lines;
+            let a = tge.AscIIManager.getArt("tetrislogo");
+            if(!a) return;
+            let s = a.blessed_lines;
             this.titlebox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}`);
         }
 
         drawLogo() {
-            let s = tge.AscIIManager.getArt("tgelogo").blessed_lines;
+            let a = tge.AscIIManager.getArt("tgelogo");
+            if(!a) return;
+            let s=a.blessed_lines;
             this.logobox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}`);
         }
 
         drawBack() {
-            let s = tge.AscIIManager.getArt("tback").blessed_lines;
-            this.backbox.setContent(s.join('\n'));
-            let h = tge.AscIIManager.getArt("thelp").blessed_lines;
-            this.helpbox.setContent(`${h[0]}`);
+            let a1 = tge.AscIIManager.getArt("tback");
+            if(!a1) return;
+            let s = a1.blessed_lines;
+            if(s) this.backbox.setContent(s.join('\n'));
+            let a2 = tge.AscIIManager.getArt("thelp");
+            let h = a2.blessed_lines;
+            if(h) this.helpbox.setContent(`${h[0]}`);
         }
 
         redrawMsg() {
