@@ -30,23 +30,15 @@ var box = blessed.box({
   left: 'center',
   width: '50%',
   height: '50%',
-  content: 'Hello {bold}world{/bold}!',
+  content: '{232-bg}Hello {bold}world{/bold}{/}',
   tags: true,
   border: {
     type: 'line'
   },
   style: {
-    fg: 'white',
-    bg: 'magenta',
-    border: {
-      fg: '#f0f0f0'
-    },
-    hover: {
-      bg: 'green'
-    }
+    transparent: false
   }
 });
-
 // Append our box to the screen.
 s.append(box);
 s.render();

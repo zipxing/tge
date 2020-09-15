@@ -96,8 +96,7 @@ def make_cmd_line(name, is_build):
             artjs+=' tmp/'+arts[a]+'.ts '
         cmds.append("tsc --outfile tmp/"+name+".js "+ \
                 pe+pe.join(se)+artjs+pg+pg.join(sg))
-        cmds.append("browserify tmp/"+name+".js --ignore-missing -o \
-                tmp/bundle.js")
+        cmds.append("browserify tmp/"+name+".js --ignore-missing -o tmp/bundle.js")
         return cmds
     else:
         return ["node tmp/"+name+".js "]
@@ -106,11 +105,11 @@ if __name__ == "__main__":
     b = make_cmd_line(sys.argv[2], True)
     r = make_cmd_line(sys.argv[2], False)
     if 'b' in sys.argv[1] and b:
-        print(b)
         for c in b:
+            print(c)
             os.system(c);
     if 'r' in sys.argv[1] and r:
-        print(r)
         for c in r:
+            print(c)
             os.system(c);
 

@@ -51,7 +51,7 @@ namespace tge {
 
                 let p = b.program(opts);
                 //smartCSR or fastCSR...
-                let s = b.screen({smartCSR: true, ...opts});
+                let s = b.screen({focusable: true, sendFocus: true, smartCSR: true, ...opts});
                 //let s = b.screen({fastCSR: true});
                 env = <WebTermRun>{
                         kind:runenv,

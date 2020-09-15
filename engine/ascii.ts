@@ -37,6 +37,9 @@ namespace tge {
                     blessed_lines[blessed_lines.length] = 
                         line.replace(/\x1b\[38;5;(\d+)m\x1b\[48;5;(\d+)m(.*?)\x1b\[0m/g,
                         "{$1-fg}{$2-bg}$3{/}");
+                    /*for(let sss in blessed_lines) {
+                        blessed_lines[sss] = blessed_lines[sss].replace(/0-bg/g, "232-bg");
+                    }*/
                     let ocount = 0;
                     while(true) {
                         let m = line.match(/\x1b\[38;5;(\d+)m\x1b\[48;5;(\d+)m(.*?)\x1b\[0m/);
