@@ -10,6 +10,7 @@ namespace tge {
         static height:number = 24;
 
         private static arts:{[artname: string]: any} = {};
+        static arts_jsdef:{[artname: string]: any} = {};
 
         static loadArtFile(fpath: string, name: string) {
             try {
@@ -134,6 +135,15 @@ namespace tge {
         }
 
         static getArt(name: string) {
+            if(name in AscIIManager.arts_jsdef) {
+                let ls = [];
+                let a = AscIIManager.arts_jsdef[name];
+                for(let d in a) {
+                    let rs = Buffer.from(a[d], 'base64').toString('utf-8');
+                    ls[ls.length]=rs;
+                }
+                return {blessed_lines: ls};
+            }
             return AscIIManager.arts[name];
         }
     }

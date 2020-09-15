@@ -1,11 +1,25 @@
 #!/usr/bin/env python3
 
 import os
+import re
 import sys
+import subprocess
+
+def grepArt(path):
+    art_dict = {}
+    arts = subprocess.getstatusoutput('grep "loadArtFile(" -R '+path)
+    ats = arts[1].split('\n')
+    for a in ats:
+        m = re.match(r'.*\"(.*)\".*\"(.*)\".*', a)
+        if m:
+            p, n = m.group(1), m.group(2)
+            art_dict[p]=n
+    return art_dict
 
 games = {
     "engine" : {
         "path": "engine",
+        "namespace": "tge",
         "src" : [
             "tge.ts",
             "log.ts",
@@ -16,6 +30,7 @@ games = {
     },
     "tetris" : {
         "path": "games/tetris",
+        "namespace": "Tetris",
         "src": [
             "constant.ts",
             "block.ts",
@@ -33,6 +48,7 @@ games = {
     },
     "snake" : {
         "path": "games/snake",
+        "namespace": "Snake",
         "src": [
             "model.ts",
             "render.ts",
@@ -42,39 +58,57 @@ games = {
     },
     "ascii" : {
         "path": "tool/asc2editor",
+        "namespace": "AscIIEditor",
         "src": [
             "model.ts",
             "render.ts",
             "game.ts",
             "main.ts"
         ]
+    },
+    "art2js" : {
+        "path": "tool/art2js",
+        "namespace": "Art2Js",
+        "src": [
+            "main.ts"
+        ]
     }
 }
 
 def make_cmd_line(name, is_build):
+    cmds = []
     if name not in games:
         print("Game:"+name+" not in list...");
-        return None;
+        return cmds;
     if name == "engine":
         print("Engine can't build independent...")
-        return None;
+        return cmds;
     if is_build:
         pe = ' '+games["engine"]["path"]+'/'
         pg = ' '+games[name]["path"]+'/'
         se = games["engine"]["src"]
         sg = games[name]["src"]
-        return "tsc --outfile tmp/"+name+".js "+ \
-                pe+pe.join(se)+pg+pg.join(sg)
+        arts = grepArt(pg)
+        artjs = ''
+        for a in arts:
+            cmds.append("node tmp/art2js.js "+a+' '+games[name]["namespace"]+ \
+                    ' '+arts[a]+' tmp/'+arts[a]+'.ts')
+            artjs+=' tmp/'+arts[a]+'.ts '
+        cmds.append("tsc --outfile tmp/"+name+".js "+ \
+                pe+pe.join(se)+artjs+pg+pg.join(sg))
+        return cmds
     else:
-        return "node tmp/"+name+".js "
+        return ["node tmp/"+name+".js "]
 
 if __name__ == "__main__":
     b = make_cmd_line(sys.argv[2], True)
     r = make_cmd_line(sys.argv[2], False)
     if 'b' in sys.argv[1] and b:
         print(b)
-        os.system(b);
+        for c in b:
+            os.system(c);
     if 'r' in sys.argv[1] and r:
         print(r)
-        os.system(r);
+        for c in r:
+            os.system(c);
 
