@@ -1,5 +1,7 @@
 # tge
-A typescript(tiny) game engine and games...
+A typescript | tiny | terminal game engine and games...
+
+![tge](https://raw.githubusercontent.com/zipxing/tge/master/screen/tetris.gif)
 
 
 TODO:
