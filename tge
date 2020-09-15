@@ -97,6 +97,7 @@ def make_cmd_line(name, is_build):
         cmds.append("tsc --outfile tmp/"+name+".js "+ \
                 pe+pe.join(se)+artjs+pg+pg.join(sg))
         cmds.append("browserify tmp/"+name+".js --ignore-missing -o tmp/bundle.js")
+        cmds.append("cp games/"+name+"/"+name+".html tmp/")
         return cmds
     else:
         return ["node tmp/"+name+".js "]
