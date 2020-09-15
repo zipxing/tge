@@ -91,7 +91,7 @@ namespace Tetris {
                 height:6,
                 top:8,
                 left:43,
-                border:{type:'line', fg:232},
+                border:{type:'line', fg:238},
                 label:{text:'{238-fg}Hold{/}'},
                 tags:true
             });
@@ -125,7 +125,7 @@ namespace Tetris {
                 height:6,
                 top:8,
                 left:30,
-                border:{type:'line', fg:232},
+                border:{type:'line', fg:238},
                 label:{text:'{238-fg}Next{/}'},
                 tags:true
             });
