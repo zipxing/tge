@@ -1,7 +1,7 @@
 //Main entry...
 namespace Tetris {
-    window.onload=function() {
-        tge.initEnvironment("WEBTERM");
+    export function main(runtype: string) {
+        tge.initEnvironment(runtype);
         tge.bindLogPath('tmp/tetris.log');
 
         let m1 = new Tetris.Model();
@@ -19,5 +19,12 @@ namespace Tetris {
             's':'S'
         });
         g1.loop();
+    }
+
+    if((typeof window) !== 'undefined') {
+        //browser term...
+        window.onload = () => { main("WEBTERM"); }
+    } else {
+        main("TERM");
     }
 }
