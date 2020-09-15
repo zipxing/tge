@@ -1,0 +1,30 @@
+{
+  "name": "tge",
+  "version": "1.0.0",
+  "description": "A typescript | tiny | terminal game engine and games...",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zipxing/tge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zipxing/tge/issues"
+  },
+  "homepage": "https://github.com/zipxing/tge#readme",
+  "devDependencies": {
+    "@types/node": "^14.10.2",
+    "blessed": "^0.1.81",
+    "browserify": "^16.5.2",
+    "fs": "0.0.1-security",
+    "term.js": "0.0.7"
+  }
+}
