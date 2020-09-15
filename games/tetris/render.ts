@@ -287,26 +287,28 @@ namespace Tetris {
             g2.style.transparent = false;
             switch(c) {
                 case 0: //空白
-                    g1.setContent('{black-bg}{/}');
-                    g2.setContent('{black-bg}{/}');
-                    g1.style.transparent = true;
-                    g2.style.transparent = true;
+                    g1.setContent('{232-bg}{/}');
+                    g2.setContent('{232-bg}{/}');
+                    if(tge.env.kind=="TERM") {
+                        g1.style.transparent = true;
+                        g2.style.transparent = true;
+                    }
                     break;
                 case 11: //被攻击出来的
-                    g1.setContent('{240-fg}{0-bg}█{/}');
-                    g2.setContent('{240-fg}{0-bg}█{/}');
+                    g1.setContent('{240-fg}{232-bg}█{/}');
+                    g2.setContent('{240-fg}{232-bg}█{/}');
                     break;
                 case 20: //投影
-                    g1.setContent('{242-fg}{0-bg}░{/}');
-                    g2.setContent('{242-fg}{0-bg}░{/}');
+                    g1.setContent('{242-fg}{232-bg}░{/}');
+                    g2.setContent('{242-fg}{232-bg}░{/}');
                     break;
                 case 30: //满行闪烁
-                    g1.setContent('{231-fg}{0-bg}-{/}');
-                    g2.setContent('{231-fg}{0-bg}={/}');
+                    g1.setContent('{231-fg}{232-bg}-{/}');
+                    g2.setContent('{231-fg}{232-bg}={/}');
                     break;
                 default: //正常方块
-                    g1.setContent(`{${fgs[c%fgs.length]}-fg}{0-bg}[{/}`);
-                    g2.setContent(`{${fgs[c%fgs.length]}-fg}{0-bg}]{/}`);
+                    g1.setContent(`{${fgs[c%fgs.length]}-fg}{232-bg}[{/}`);
+                    g2.setContent(`{${fgs[c%fgs.length]}-fg}{232-bg}]{/}`);
             }
         }
 
