@@ -5,6 +5,14 @@ import re
 import sys
 import subprocess
 
+
+Color={'black':30, 'red':31, 'green':32, 'yellow':33, 'blue':34, \
+       'mag':35, 'cyan':36, 'white':37}
+def printColor(color, msg, crlf=True):
+    sys.stdout.write('\033[0;'+str(Color[color])+';m'+msg+'\033[0m')
+    if crlf: sys.stdout.write('\n')
+    sys.stdout.flush()
+
 def grepArt(path):
     art_dict = {}
     arts = subprocess.getstatusoutput('grep "loadArtFile(" -R '+path)
@@ -80,13 +88,13 @@ games = {
     }
 }
 
-def make_cmd_line(name, is_build):
+def make_cmd_line(name, is_build, oa=[]):
     cmds = []
     if name not in games:
-        print("Game:"+name+" not in list...");
+        printColor("red", "Game:"+name+" not in list...");
         return cmds;
     if name == "engine":
-        print("Engine can't build independent...")
+        printColor("red", "Engine can't build independent...")
         return cmds;
     if is_build:
         pe = ' '+games["engine"]["path"]+'/'
@@ -96,28 +104,61 @@ def make_cmd_line(name, is_build):
         artjs = ''
         if games[name]["web"]:
             arts = grepArt(pg)
+            if len(arts)>0:
+                cmds.append("echo|green|🍀Art2Js...")
             for a in arts:
-                cmds.append("node tmp/art2js.js "+a+' '+games[name]["namespace"]+ \
+                cmds.append("node tmp/art2js.js "+a+' '+ \
+                        games[name]["namespace"]+ \
                         ' '+arts[a]+' tmp/'+arts[a]+'.ts')
                 artjs+=' tmp/'+arts[a]+'.ts '
+        cmds.append("echo|green|🍀TSC...")
         cmds.append("tsc --outfile tmp/"+name+".js "+ \
                 pe+pe.join(se)+artjs+pg+pg.join(sg))
         if games[name]["web"]:
-            cmds.append("browserify tmp/"+name+".js --ignore-missing -o tmp/bundle.js")
+            cmds.append("echo|green|🍀Browserify for web...")
+            cmds.append("browserify tmp/"+name+ \
+                    ".js --ignore-missing -o tmp/bundle.js")
             cmds.append("cp games/"+name+"/"+name+".html tmp/")
         return cmds
     else:
-        return ["node tmp/"+name+".js "]
+        rcs = ["node tmp/"+name+".js "+' '.join(oa)]
+        if games[name]["web"]:
+            rcs.append("open tmp/"+name+".html")
+        return rcs
+
+def printUsage():
+    printColor('yellow', '🏖 TGE building script usage:')
+    printColor('mag', 'Build game:')
+    printColor('green', './tge b <game-name>')
+    printColor('mag', 'Run in terminal:')
+    printColor('green', './tge r <game-name> <...>')
+    printColor('mag', 'Run in browser:')
+    printColor('green', './tge rw <game-name> <...>')
+    printColor('mag', 'Build & run:')
+    printColor('green', './tge br <game-name> <...>')
+    printColor('green', './tge brw <game-name> <...>')
+    print('')
 
 if __name__ == "__main__":
+    if len(sys.argv)<3:
+        printUsage()
+        sys.exit(0)
+    os.chdir(sys.path[0])
     b = make_cmd_line(sys.argv[2], True)
-    r = make_cmd_line(sys.argv[2], False)
+    r = make_cmd_line(sys.argv[2], False, sys.argv[3:])
     if 'b' in sys.argv[1] and b:
         for c in b:
-            print(c)
-            os.system(c);
+            if c.startswith('echo'):
+                printColor(*c.split('|')[1:])
+            else:
+                print(c)
+                os.system(c);
+        printColor('yellow', 'Build ok...🍺')
     if 'r' in sys.argv[1] and r:
-        for c in r:
-            print(c)
-            os.system(c);
+        if 'w' in sys.argv[1] and games[sys.argv[2]]["web"]:
+            printColor('green', r[1])
+            os.system(r[1])
+        else:
+            printColor('green', r[0])
+            os.system(r[0])
 
