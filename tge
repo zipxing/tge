@@ -127,16 +127,16 @@ def make_cmd_line(name, is_build, oa=[]):
         return rcs
 
 def printUsage():
-    printColor('yellow', '🏖 TGE building script usage:')
-    printColor('mag', 'Build game:')
-    printColor('green', './tge b <game-name>')
-    printColor('mag', 'Run in terminal:')
-    printColor('green', './tge r <game-name> <...>')
-    printColor('mag', 'Run in browser:')
-    printColor('green', './tge rw <game-name> <...>')
-    printColor('mag', 'Build & run:')
-    printColor('green', './tge br <game-name> <...>')
-    printColor('green', './tge brw <game-name> <...>')
+    printColor('yellow', '🏖  TGE building script usage:')
+    printColor('white', '\nBuild game:')
+    printColor('green', '  ./tge b <game-name>')
+    printColor('white', '\nRun in terminal:')
+    printColor('green', '  ./tge r <game-name> <...>')
+    printColor('white', '\nRun in browser:')
+    printColor('green', '  ./tge rw <game-name> <...>')
+    printColor('white', '\nBuild & run:')
+    printColor('green', '  ./tge br <game-name> <...>')
+    printColor('green', '  ./tge brw <game-name> <...>')
     print('')
 
 if __name__ == "__main__":
