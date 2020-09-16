@@ -20,6 +20,7 @@ games = {
     "engine" : {
         "path": "engine",
         "namespace": "tge",
+        "web": False,
         "src" : [
             "tge.ts",
             "log.ts",
@@ -31,6 +32,7 @@ games = {
     "tetris" : {
         "path": "games/tetris",
         "namespace": "Tetris",
+        "web": True,
         "src": [
             "constant.ts",
             "block.ts",
@@ -49,6 +51,7 @@ games = {
     "snake" : {
         "path": "games/snake",
         "namespace": "Snake",
+        "web": True,
         "src": [
             "model.ts",
             "render.ts",
@@ -59,6 +62,7 @@ games = {
     "ascii" : {
         "path": "tool/asc2editor",
         "namespace": "AscIIEditor",
+        "web": False,
         "src": [
             "model.ts",
             "render.ts",
@@ -69,6 +73,7 @@ games = {
     "art2js" : {
         "path": "tool/art2js",
         "namespace": "Art2Js",
+        "web": False,
         "src": [
             "main.ts"
         ]
@@ -88,16 +93,18 @@ def make_cmd_line(name, is_build):
         pg = ' '+games[name]["path"]+'/'
         se = games["engine"]["src"]
         sg = games[name]["src"]
-        arts = grepArt(pg)
         artjs = ''
-        for a in arts:
-            cmds.append("node tmp/art2js.js "+a+' '+games[name]["namespace"]+ \
-                    ' '+arts[a]+' tmp/'+arts[a]+'.ts')
-            artjs+=' tmp/'+arts[a]+'.ts '
+        if games[name]["web"]:
+            arts = grepArt(pg)
+            for a in arts:
+                cmds.append("node tmp/art2js.js "+a+' '+games[name]["namespace"]+ \
+                        ' '+arts[a]+' tmp/'+arts[a]+'.ts')
+                artjs+=' tmp/'+arts[a]+'.ts '
         cmds.append("tsc --outfile tmp/"+name+".js "+ \
                 pe+pe.join(se)+artjs+pg+pg.join(sg))
-        cmds.append("browserify tmp/"+name+".js --ignore-missing -o tmp/bundle.js")
-        cmds.append("cp games/"+name+"/"+name+".html tmp/")
+        if games[name]["web"]:
+            cmds.append("browserify tmp/"+name+".js --ignore-missing -o tmp/bundle.js")
+            cmds.append("cp games/"+name+"/"+name+".html tmp/")
         return cmds
     else:
         return ["node tmp/"+name+".js "]
