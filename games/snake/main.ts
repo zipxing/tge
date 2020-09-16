@@ -6,7 +6,8 @@ namespace Snake {
         let r = new Snake.TermRender();
         let g = new Snake.Game(m, r);
         g.initGame();
-        g.regKeyAction({'up':'W', 'down':'S', 'left':'A', 'right':'D', 'r':'R'});
+        g.regKeyAction({
+            'i':'W', 'k':'S', 'j':'A', 'l':'D', 'r':'R'});
         g.loop();
     }
     if((typeof window) !== 'undefined') {
