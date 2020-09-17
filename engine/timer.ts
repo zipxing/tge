@@ -48,6 +48,14 @@ namespace tge {
             return tmo.time;
         }
 
+        static getRStage(name: string) {
+            let tmo: TimerData = Timer.timers[name];
+            if (!tmo) 
+                return 0;
+            return tmo.count - tmo.time;
+        }
+
+
         static getPercent(name: string) {
             let tmo: TimerData = Timer.timers[name];
             if (!tmo) return;

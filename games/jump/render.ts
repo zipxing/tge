@@ -3,8 +3,8 @@ namespace Jump {
         titlebox: any;
         logobox: any;
         gamebox: any;
-        gridboxes: any[][];
-        msgbox: any;
+        carbox: any;
+        //msgbox: any;
 
         constructor() {
             super();
@@ -15,7 +15,7 @@ namespace Jump {
             let nb = (<tge.TermRun>tge.env);
 
             this.titlebox = nb.blessed.box({
-                width:Model.snakew+2,
+                width:Model.gamew+2,
                 height:4,
                 top:0,
                 left:3,
@@ -27,52 +27,31 @@ namespace Jump {
                 width:12,
                 height:4,
                 top:0,
-                left:Model.snakew+16,
+                left:Model.gamew+16,
                 tags:true
             });
             nb.tscreen.append(this.logobox);
 
-            this.gamebox = nb.blessed.box({
-                width:Model.snakew+2,
-                height:Model.snakeh+2,
-                top:4,
-                left:0,
+            this.carbox = nb.blessed.box({
+                width:Model.carw,
+                height:Model.carh,
+                top: 20 + 4,
+                left: 3,
                 border:{type:'line', fg:238},
-                tags:true
             });
-            nb.tscreen.append(this.gamebox);
+            nb.tscreen.append(this.carbox);
 
-            this.gridboxes=[];
-            for(let i=0;i<Model.snakeh;i++) {
-                this.gridboxes[i]=[];
-                for(let j=0;j<Model.snakew;j++) {
-                    this.gridboxes[i][j]=nb.blessed.box({
-                        width:1,
-                        height:1,
-                        top:i+5,
-                        left:j+1,
-                        tags:true
-                    });
-                    nb.tscreen.append(this.gridboxes[i][j]);
-                }
-            }
-
-            this.msgbox = nb.blessed.box({
+            /*this.msgbox = nb.blessed.box({
                 width:23,
-                height:Model.snakeh+2,
+                height:Model.carh+2,
                 top:4,
-                left:Model.snakew+3,
+                left:Model.carw+3,
                 border:{type:'line', fg:238},
                 tags:true
             });
-            nb.tscreen.append(this.msgbox);
+            nb.tscreen.append(this.msgbox);*/
 
-            tge.Emitter.register("Jump.REDRAW_MSG", this.redrawMsg, this);
-            tge.Emitter.register("Jump.REDRAW_GRID", this.redrawGrid, this);
-            tge.Timer.register("Jump.Timer.Title", 1.0, ()=>{
-                tge.Timer.fire("Jump.Timer.Title", 0);
-            });
-            tge.Timer.fire("Jump.Timer.Title", 0);
+            //tge.Emitter.register("Jump.REDRAW_MSG", this.redrawMsg, this);
         }
 
         drawTitle() {
@@ -91,66 +70,20 @@ namespace Jump {
                 'Game over,press {green-fg}r{/} restart...',
                 'Game over,press {green-fg}r{/} restart...'];
             let g = TermRender.game;
-            this.msgbox.setContent(msg[g.gameover]);
+            //this.msgbox.setContent(msg[g.gameover]);
         }
 
-        setPoint(box: any, bg:string, fg:string, cchar:string) {
-            box.setContent(`{${bg}-bg}{${fg}-fg}${cchar}{/}`);
-        }
-
-        setPoint256(box: any, bg:number, fg:number, cchar:string) {
-            box.setContent(`{${bg}-bg}{${fg}-fg}${cchar}{/}`);
-        }
-
-        redrawGrid() {
-            //let c = ['magenta', 'blue', 'red', 'green', 'yellow', 'cyan'];
-            let c = [27, 33, 39, 45, 51, 50, 44, 38, 32, 26,
-                     128, 134, 140, 146, 152, 147, 141, 135, 129];
+        redrawCar() {
             let g = TermRender.game;
             let m = <Jump.Model>g.model;
-
-            for(let i=0;i<Model.snakeh;i++) {
-                for(let j=0;j<Model.snakew;j++) {
-                    let gv = m.grid[i][j];
-                    let gb = this.gridboxes[i][j];
-                    switch(gv) {
-                        case 0:
-                            if(g.gameover==Jump.GameState.Ok) 
-                                this.setPoint256(gb, 0, 15, " ");
-                            else
-                                this.setPoint256(gb, 239, 15, " ");
-                            break;
-                        case 10000:
-                            break;
-                        default:
-                            if(g.gameover==Jump.GameState.Ok) {
-                                if(gv==1)
-                                    this.setPoint256(gb, 0, 196, "█");
-                                else
-                                    this.setPoint256(gb, 0, c[gv%c.length], "▒");
-                            }
-                            else
-                                this.setPoint256(gb, 15, c[gv%c.length], "█");
-                    }
-                }
-            }
-        }
-
-        drawSeed() {
-            let g = TermRender.game;
-            let m = <Jump.Model>g.model;
-            let gb = this.gridboxes[m.seed.y][m.seed.x];
-            let tc = 18 + Math.floor((g.stage / 2)) % 212;
-            if(g.gameover==Jump.GameState.Ok) 
-                this.setPoint256(gb, 0, tc, "∙");
-            else
-                this.setPoint256(gb, 239, 203, "∙");
+            let s = m.car_pos;
+            this.carbox.top = s.y;
         }
 
         draw() {
             this.drawTitle();
             this.drawLogo();
-            this.drawSeed();
+            this.redrawCar();
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
         }

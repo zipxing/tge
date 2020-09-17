@@ -8,8 +8,9 @@ namespace Jump {
         initGame() {
             let m = <Jump.Model>this.model;
             this.gameover=GameState.Ok;
-            tge.Emitter.fire("Jump.REDRAW_GRID");
-            tge.Emitter.fire("Jump.REDRAW_MSG");
+            tge.Timer.register("JUMP", 1.0, ()=>{});
+            //tge.Emitter.fire("Jump.REDRAW_GRID");
+            //tge.Emitter.fire("Jump.REDRAW_MSG");
         }
 
         restartGame() {
@@ -24,7 +25,7 @@ namespace Jump {
         playAutoAction(dt: number) {
             let m = <Jump.Model>this.model;
             if(this.timeout_auto>400.0) {
-                this.doAction('');
+                //this.doAction('');
             } else {
                 this.timeout_auto+=dt;
             }
@@ -40,16 +41,26 @@ namespace Jump {
                     this.initGame();
                 return;
             }
-            let dx, dy, cx, cy: number;
             switch(act) {
                 case 'W':
-                    dx=0,dy=-1;
+                    let s = tge.Timer.getStage("JUMP");
+                    if(s==0) tge.Timer.fire("JUMP", 0);
                     break;
                 default:
-                    dx=0,dy=0;
+                    ;
                     //console.log('error act!');
             }
-            this.timeout_auto=0.0;
+        }
+
+        scheduleUpdate(dt: number) {
+            super.scheduleUpdate(dt);
+            let m = <Jump.Model>this.model;
+            let t = tge.Timer.getRStage("JUMP");
+            if(t!=0) {
+                m.car_pos.y = 20 + Math.floor((m.jump_speed*t - 0.5*Model.carg*t*t)/10.0);
+            } else {
+                m.car_pos.y = 20;
+            }
         }
     }
 }

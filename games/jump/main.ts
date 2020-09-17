@@ -7,7 +7,9 @@ namespace Jump {
         let g = new Jump.Game(m, r);
         g.initGame();
         g.regKeyAction({
-            'i':'W', 'k':'S', 'j':'A', 'l':'D', 'r':'R'});
+            'space':'W', 
+            'r':'R'
+        });
         g.loop();
     }
     if((typeof window) !== 'undefined') {
