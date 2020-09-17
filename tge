@@ -9,7 +9,7 @@ import subprocess
 Color={'black':30, 'red':31, 'green':32, 'yellow':33, 'blue':34, \
        'mag':35, 'cyan':36, 'white':37}
 def printColor(color, msg, crlf=True):
-    sys.stdout.write('\033[0;'+str(Color[color])+';m'+msg+'\033[0m')
+    sys.stdout.write('\033[1;'+str(Color[color])+'m'+msg+'\033[0m')
     if crlf: sys.stdout.write('\n')
     sys.stdout.flush()
 
