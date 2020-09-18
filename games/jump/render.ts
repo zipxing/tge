@@ -1,27 +1,19 @@
 namespace Jump {
     export class TermRender extends tge.Render {
-        titlebox: any;
         logobox: any;
-        //gamebox: any;
-        carbox: any;
+        carboxes: any[];
         //msgbox: any;
 
         constructor() {
             super();
 
             tge.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
-            tge.AscIIManager.loadArtFile("ascii_art/jump.txt", "jump");
+            tge.AscIIManager.loadArtFile("ascii_art/jump1.txt", "car1");
+            tge.AscIIManager.loadArtFile("ascii_art/jump2.txt", "car2");
+            tge.AscIIManager.loadArtFile("ascii_art/jump3.txt", "car3");
+            tge.AscIIManager.loadArtFile("ascii_art/jump4.txt", "car4");
 
             let nb = (<tge.TermRun>tge.env);
-
-            this.titlebox = nb.blessed.box({
-                width:Model.gamew+2,
-                height:6,
-                top:0,
-                left:3,
-                tags:true
-            });
-            nb.tscreen.append(this.titlebox);
 
             this.logobox = nb.blessed.box({
                 width:12,
@@ -32,14 +24,19 @@ namespace Jump {
             });
             nb.tscreen.append(this.logobox);
 
-            this.carbox = nb.blessed.box({
-                width:Model.carw,
-                height:Model.carh,
-                top: 20 + 4,
-                left: 3,
-                border:{type:'line', fg:38},
-            });
-            nb.tscreen.append(this.carbox);
+            this.carboxes = [];
+            for(let i=0; i<4; i++) {
+                this.carboxes[i] = nb.blessed.box({
+                    width:Model.carw,
+                    height:Model.carh,
+                    top: 20 + 4,
+                    left: 3+i*Model.carw,
+                    tags:true
+                });
+                let bls = tge.AscIIManager.getArt("car"+(i+1)).blessed_lines;
+                this.carboxes[i].setContent(bls.join('\n'));
+                nb.tscreen.append(this.carboxes[i]);
+            }
 
             /*this.msgbox = nb.blessed.box({
                 width:23,
@@ -52,12 +49,6 @@ namespace Jump {
             nb.tscreen.append(this.msgbox);*/
 
             //tge.Emitter.register("Jump.REDRAW_MSG", this.redrawMsg, this);
-        }
-
-        drawTitle() {
-            let s = tge.AscIIManager.getArt("jump").blessed_lines;
-            //let st = tge.Timer.getStage("Jump.Timer.Title");
-            this.titlebox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}\n${s[5]}`);
         }
 
         drawLogo() {
@@ -77,11 +68,12 @@ namespace Jump {
             let g = TermRender.game;
             let m = <Jump.Model>g.model;
             let s = m.car_pos;
-            this.carbox.top = s.y;
+            for(let i=0; i<4; i++) {
+                this.carboxes[i].top = s.y;
+            }
         }
 
         draw() {
-            this.drawTitle();
             this.drawLogo();
             this.redrawCar();
             let nb = (<tge.TermRun>tge.env);

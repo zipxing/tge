@@ -18,7 +18,7 @@ def grepArt(path):
     arts = subprocess.getstatusoutput('grep "loadArtFile(" -R '+path)
     ats = arts[1].split('\n')
     for a in ats:
-        m = re.match(r'.*\"(.*)\".*\"(.*)\".*', a)
+        m = re.match(r'.*[\"|\'](.*)[\"|\'].*[\"|\'](.*)[\"|\'].*', a)
         if m:
             p, n = m.group(1), m.group(2)
             art_dict[p]=n
