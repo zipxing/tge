@@ -116,17 +116,17 @@ def make_cmd_line(name, is_build, oa=[]):
         if games[name]["web"]:
             arts = grepArt(pg)
             if len(arts)>0:
-                cmds.append("echo|green|🍀Art2Js...")
+                cmds.append("echo|green|🍀 Art2Js...")
             for a in arts:
                 cmds.append("node tmp/art2js.js "+a+' '+ \
                         games[name]["namespace"]+ \
                         ' '+arts[a]+' tmp/'+arts[a]+'.ts')
                 artjs+=' tmp/'+arts[a]+'.ts '
-        cmds.append("echo|green|🍀TSC...")
+        cmds.append("echo|green|🍀 TSC...")
         cmds.append("tsc --outfile tmp/"+name+".js "+ \
                 pe+pe.join(se)+artjs+pg+pg.join(sg))
         if games[name]["web"]:
-            cmds.append("echo|green|🍀Browserify for web...")
+            cmds.append("echo|green|🍀 Browserify for web...")
             cmds.append("browserify tmp/"+name+ \
                     ".js --ignore-missing -o tmp/bundle.js")
             cmds.append("cp games/"+name+"/"+name+".html tmp/")
