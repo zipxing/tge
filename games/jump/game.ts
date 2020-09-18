@@ -8,7 +8,7 @@ namespace Jump {
         initGame() {
             let m = <Jump.Model>this.model;
             this.gameover=GameState.Ok;
-            tge.Timer.register("JUMP", 1.0, ()=>{});
+            tge.Timer.register("JUMP", 0.5, ()=>{});
             //tge.Emitter.fire("Jump.REDRAW_GRID");
             //tge.Emitter.fire("Jump.REDRAW_MSG");
         }
