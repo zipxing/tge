@@ -8,7 +8,7 @@ namespace Jump {
         initGame() {
             let m = <Jump.Model>this.model;
             this.gameover=GameState.Ok;
-            tge.Timer.register("JUMP", 0.5, ()=>{});
+            tge.Timer.register("JUMP", 0.8333333333333, ()=>{});
             //tge.Emitter.fire("Jump.REDRAW_GRID");
             //tge.Emitter.fire("Jump.REDRAW_MSG");
         }
@@ -48,18 +48,24 @@ namespace Jump {
                     break;
                 default:
                     ;
-                    //console.log('error act!');
             }
         }
 
         scheduleUpdate(dt: number) {
             super.scheduleUpdate(dt);
             let m = <Jump.Model>this.model;
-            let t = tge.Timer.getRStage("JUMP");
-            if(t!=0) {
-                m.car_pos.y = 20 + Math.floor((m.jump_speed*t - 0.5*Model.carg*t*t)/10.0);
-            } else {
-                m.car_pos.y = 20;
+            if(tge.Timer.getStage("JUMP")==0) {
+                for(let i=0; i<4; i++) m.car_pos[i].y = 20;
+                return;
+            }
+            let rt = tge.Timer.getRStage("JUMP");
+            for(let i=0; i<4; i++) {
+                let t = rt-i*4;
+                if(t>0) {
+                    m.car_pos[i].y = 20 - Math.floor((m.jump_speed*t - 0.5*Model.carg*t*t)/10.0);
+                } else {
+                    m.car_pos[i].y = 20;
+                }
             }
         }
     }

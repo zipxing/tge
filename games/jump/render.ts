@@ -53,7 +53,7 @@ namespace Jump {
 
         drawLogo() {
             let s = tge.AscIIManager.getArt("tgelogo").blessed_lines;
-            this.logobox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}`);
+            this.logobox.setContent(s.join('\n'));
         }
 
         redrawMsg() {
@@ -69,7 +69,7 @@ namespace Jump {
             let m = <Jump.Model>g.model;
             let s = m.car_pos;
             for(let i=0; i<4; i++) {
-                this.carboxes[i].top = s.y;
+                this.carboxes[i].top = s[i].y;
             }
         }
 
