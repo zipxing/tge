@@ -17,7 +17,7 @@ namespace Tetris {
             this.seed = tge.rand();
             m.init(this.bmp, this.seed);
             this.useract = [];
-            this.playActionBase(0, 'D');
+            this.doAction('D', 0);
             tge.Emitter.fire("Tetris.REDRAW_MSG");
         }
 
@@ -41,7 +41,7 @@ namespace Tetris {
                     if(m.grids[0].core.game_over || m.grids[1].core.game_over) {
                         for(let i=0;i<this.useract.length;i++) {
                             if(this.useract[i] == 'I')
-                                this.playActionBase(0, this.useract[i]);
+                                this.doAction(this.useract[i], 0);
                         }
                         return;
                     }
@@ -72,7 +72,7 @@ namespace Tetris {
                 //如果正在直落，不进行以下处理
                 if(tge.Timer.getStage("0fall")!=0) 
                     return;
-                this.playActionBase(0, 'D');
+                this.doAction('D', 0);
             } else {
                 this.timeout_auto+=dt;
             }
@@ -86,7 +86,7 @@ namespace Tetris {
             if(this.timeout_ai>AI_SPEED[0]*300) {
                 //if(this.timeout_ai>0.0) {   //AIWORK
                 let aiact = m.mai.getAIAct(m.grids[1]);
-                this.playActionBase(1, aiact);
+                this.doAction(aiact, 1);
                 if(aiact=='W')
                     tge.log(tge.LogLevel.DEBUG, "play ai action.....");
                 this.timeout_ai=0;
@@ -99,7 +99,7 @@ namespace Tetris {
         playUserAction(dt: number) {
             for(let i=0;i<this.useract.length;i++) {
                 //tge.log(tge.LogLevel.INFO, "PLAYUSERACT:", this.useract[i]);
-                this.playActionBase(0, this.useract[i]);
+                this.doAction(this.useract[i], 0);
             }
             this.useract=[];
         }
@@ -135,7 +135,7 @@ namespace Tetris {
         }
 
         //执行动作码的基础方法
-        playActionBase(index: number, act: string) {
+        doAction(act: string, index: number) {
             let dir;
             let pg = (<Model>this.model).grids[index];
 

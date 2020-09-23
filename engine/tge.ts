@@ -121,7 +121,7 @@ namespace tge {
         abstract playUserAction(dt: number): any;
         abstract playAutoAction(dt: number): any;
         abstract playAiAction(dt: number): any;
-        //abstract doAction(act: any): any;
+        abstract doAction(act: any, ...arg: any[]): any;
 
         scheduleUpdate(dt: number) {
             this.stage++;
