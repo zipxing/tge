@@ -134,10 +134,10 @@ namespace tge {
 
         regKeyAction(keyDefine: { [key: string]: any }) {
             if(env.kind == "TERM" || env.kind == "WEBTERM") {
-                let that = this;
                 for (let k in keyDefine) {
-                    env.program.key(k, function(ch: any, key: any) {
-                        that.useract.splice(0,0,keyDefine[key.name]);
+                    env.program.key(k, (ch: any, key: any) => {
+                        if(key.name in keyDefine)
+                            this.useract.splice(0,0,keyDefine[key.name]);
                     });
                 }
             }

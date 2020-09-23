@@ -17,6 +17,7 @@ namespace Snake {
             m.makeGrid();
             m.dir='D';
             this.gameover=GameState.Ok;
+            this.useract=[];
             tge.Emitter.fire("Snake.REDRAW_GRID");
             tge.Emitter.fire("Snake.REDRAW_MSG");
         }
@@ -69,6 +70,7 @@ namespace Snake {
                     break;
                 default:
                     dx=0,dy=0;
+                    //return;
                     //console.log('error act!');
             }
             cx = m.body[0].x+dx;
