@@ -128,7 +128,7 @@ def make_cmd_line(name, is_build, oa=[]):
         if games[name]["web"]:
             cmds.append("echo|green|🍀 Browserify for web...")
             cmds.append("browserify tmp/"+name+ \
-                    ".js --ignore-missing -o tmp/bundle.js")
+                    ".js --ignore-missing -o tmp/"+name+"_bundle.js")
             cmds.append("cp games/"+name+"/"+name+".html tmp/")
         return cmds
     else:
