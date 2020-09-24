@@ -116,7 +116,7 @@ namespace Snake {
                     switch(gv) {
                         case 0:
                             if(g.gameover==Snake.GameState.Ok) 
-                                this.setPoint256(gb, 0, 15, " ");
+                                this.setPoint256(gb, 232, 15, " ");
                             else
                                 this.setPoint256(gb, 239, 15, " ");
                             break;
@@ -142,7 +142,7 @@ namespace Snake {
             let gb = this.gridboxes[m.seed.y][m.seed.x];
             let tc = 18 + Math.floor((g.stage / 2)) % 212;
             if(g.gameover==Snake.GameState.Ok) 
-                this.setPoint256(gb, 0, tc, "∙");
+                this.setPoint256(gb, 232, tc, "∙");
             else
                 this.setPoint256(gb, 239, 203, "∙");
         }
