@@ -78,6 +78,17 @@ games = {
             "main.ts"
         ]
     },
+    "city" : {
+        "path": "games/city",
+        "namespace": "City",
+        "web": False,
+        "src": [
+            "model.ts",
+#            "render.ts",
+#            "game.ts",
+            "main.ts"
+        ]
+    },
     "ascii" : {
         "path": "tool/asc2editor",
         "namespace": "AscIIEditor",
