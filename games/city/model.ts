@@ -1,12 +1,21 @@
 namespace City {
     export interface Cell {
         id: number;
+        fromid: number;
+        toid: number;
         color: number;
         level: number;
+        fromlevel: number;
+        tolevel: number;
     }
     export interface Unit {
         id: number;
         cells: {[key: number]: any};
+    }
+    export interface MergeFill {
+        objCell: Cell;
+        mergeCells: Cell[];
+        dropCells: Cell[];
     }
     export class Model extends tge.Model {
         static cityw:number = 5;
@@ -24,8 +33,9 @@ namespace City {
                 for(let j=0; j<Model.cityw; j++)
                     this.grid[i][j]={
                         id: i*Model.cityw+j,
+                        fromid: 0, toid: 0,
                         color: (Math.floor((Math.random()*4)+1)),
-                        level: 0
+                        level: 0, fromlevel: 0, tolevel: 0
                     };
             }
         }
@@ -38,6 +48,28 @@ namespace City {
                 this.unit_map[c.id] = u;
                 u.cells[c.id] = c.id;
             }
+        }
+
+        mergeAndFill(id:number) {
+            let x = id % Model.cityw;
+            let y = Math.floor(id / Model.cityw);
+            let u = this.unit_map[id];
+            let c = this.grid[y][x];
+            let ret:MergeFill = {objCell:c, mergeCells:[], dropCells:[]};
+            if(Object.keys(u.cells).length==1) 
+                return ret;
+            let nl = 0;
+            for(let cid in u.cells) {
+                let cx = parseInt(cid) % Model.cityw;
+                let cy = Math.floor(parseInt(cid) / Model.cityw);
+                let cc = this.grid[cy][cx];
+                nl += cc.level;
+                if(parseInt(cid) == id) continue;
+                ret.mergeCells.push(cc);
+                cc.fromid = parseInt(cid);
+                cc.toid = id;
+            }
+
         }
 
         searchUnit() {
@@ -55,8 +87,8 @@ namespace City {
                         cur_unit.cells[c.id] = c.id;
                         this.unit_map[c.id] = cur_unit;
                     }
-                    let y = Math.floor(c.id / Model.cityw);
                     let x = c.id % Model.cityw;
+                    let y = Math.floor(c.id / Model.cityw);
                     let dd = [
                         [0, -1], //up
                         [0, 1],  //down
