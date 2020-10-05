@@ -129,10 +129,14 @@ namespace City {
                     h.color = (Math.floor((tge.rand()%Model.citycolor)+1));
                     h.fromid = (i-holes.length)*Model.cityw+x;
                     h.toid = i*Model.cityw+x;
+                    h.id = h.toid;
                     this.grid[i][x]=h;
+                    this.grid[i][x].id = i*Model.cityw + x;
                 }
                 for(let i=0; i<blocks.length; i++) {
+                    let h = this.grid[i+holes.length][x];
                     this.grid[i+holes.length][x] = blocks[i];
+                    this.grid[i+holes.length][x].id = (i+holes.length)*Model.cityw + x;
                 }
             }
         }
