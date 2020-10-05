@@ -12,21 +12,23 @@ namespace City {
         id: number;
         cells: {[key: number]: any};
     }
-    export interface MergeFill {
+    export interface Merge {
         objCell: Cell;
         mergeCells: Cell[];
-        dropCells: Cell[];
     }
     export class Model extends tge.Model {
         static cityw:number = 5;
         static cityh:number = 5;
+        static citycolor:number = 4;
 
         unit_map: { [key: number]: Unit} = {};
         units: {[key: number]: Unit} = {};
         grid: Cell[][];
+        merges: Merge;
 
         constructor() {
             super();
+            tge.srand(0);
             this.grid = [];
             for(let i=0; i<Model.cityh; i++) {
                 this.grid[i]=[];
@@ -34,9 +36,26 @@ namespace City {
                     this.grid[i][j]={
                         id: i*Model.cityw+j,
                         fromid: 0, toid: 0,
-                        color: (Math.floor((Math.random()*4)+1)),
+                        color: (Math.floor((tge.rand()%(Model.citycolor-1))+1)),
                         level: 0, fromlevel: 0, tolevel: 0
                     };
+            }
+            this.merges = {objCell: this.grid[0][0], mergeCells:[]};
+        }
+
+        debug = function(...arg: any[]) {
+            let util = require('util');
+            process.stdout.write(util.format.apply(null, arguments));
+        }
+
+        dumpGrid() {
+            for(let i=0; i<Model.cityh; i++) {
+                for(let j=0; j<Model.cityw; j++) {
+                    let c = this.grid[i][j];
+                    let ids = c.id<10?'0'+c.id:c.id;
+                    this.debug('|', ids, c.color, c.fromid, c.toid, c.level, '|    ');
+                }
+                process.stdout.write('\n');
             }
         }
 
@@ -50,26 +69,72 @@ namespace City {
             }
         }
 
-        mergeAndFill(id:number) {
+        merge(id:number) {
             let x = id % Model.cityw;
             let y = Math.floor(id / Model.cityw);
             let u = this.unit_map[id];
             let c = this.grid[y][x];
-            let ret:MergeFill = {objCell:c, mergeCells:[], dropCells:[]};
-            if(Object.keys(u.cells).length==1) 
-                return ret;
-            let nl = 0;
+            let ret:Merge= {objCell:c, mergeCells:[]};
+            if(Object.keys(u.cells).length==1) {
+                this.merges = ret;
+                return;
+            }
             for(let cid in u.cells) {
                 let cx = parseInt(cid) % Model.cityw;
                 let cy = Math.floor(parseInt(cid) / Model.cityw);
                 let cc = this.grid[cy][cx];
-                nl += cc.level;
                 if(parseInt(cid) == id) continue;
                 ret.mergeCells.push(cc);
                 cc.fromid = parseInt(cid);
                 cc.toid = id;
             }
+            this.merges = ret;
+        }
 
+        postMerge() {
+            let c = this.merges.objCell;
+            let ms = this.merges.mergeCells;
+            for(let cc of ms) {
+                c.level += cc.level;
+                cc.color = -1;
+            }
+        }
+
+        drop() {
+            for(let x=0; x<Model.cityw; x++) {
+                let holes=[], blocks=[];
+                //count holes...
+                for(let y=0; y<Model.cityh; y++) {
+                    let c = this.grid[y][x];
+                    if(c.color==-1)
+                        holes.push(c);
+                }
+                if(holes.length==0) continue;
+                //set blocks...
+                for(let y=0; y<Model.cityh-1; y++) {
+                    let c = this.grid[y][x];
+                    if(c.color==-1) continue;
+                    let dropcnt = 0;
+                    for(let n=y+1; n<Model.cityh; n++) {
+                        let cc = this.grid[n][x];
+                        if(cc.color==-1) dropcnt++;
+                    }
+                    c.fromid = c.id;
+                    c.toid = c.id+dropcnt*Model.cityw;
+                    blocks.push(c);
+                }
+                //set new block(reuse hole)...
+                for(let i=0; i<holes.length; i++) {
+                    let h = holes[i];
+                    h.color = (Math.floor((tge.rand()%Model.citycolor)+1));
+                    h.fromid = (i-holes.length)*Model.cityw+x;
+                    h.toid = i*Model.cityw+x;
+                    this.grid[i][x]=h;
+                }
+                for(let i=0; i<blocks.length; i++) {
+                    this.grid[i+holes.length][x] = blocks[i];
+                }
+            }
         }
 
         searchUnit() {

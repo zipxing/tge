@@ -14,6 +14,7 @@ namespace City {
         console.log(m.unit_map);
         console.log("--------------");
         console.log(m.units);
+        m.dumpGrid();
     }
     if((typeof window) !== 'undefined') {
         //browser term...
