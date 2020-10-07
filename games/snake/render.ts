@@ -91,7 +91,7 @@ namespace Snake {
                 'Game over,press {green-fg}r{/} restart...',
                 'Game over,press {green-fg}r{/} restart...'];
             let g = TermRender.game;
-            this.msgbox.setContent(msg[g.gameover]);
+            this.msgbox.setContent(msg[g.gamestate]);
         }
 
         setPoint(box: any, bg:string, fg:string, cchar:string) {
@@ -115,7 +115,7 @@ namespace Snake {
                     let gb = this.gridboxes[i][j];
                     switch(gv) {
                         case 0:
-                            if(g.gameover==Snake.GameState.Ok) 
+                            if(g.gamestate==Snake.GameState.Ok) 
                                 this.setPoint256(gb, 232, 15, " ");
                             else
                                 this.setPoint256(gb, 239, 15, " ");
@@ -123,7 +123,7 @@ namespace Snake {
                         case 10000:
                             break;
                         default:
-                            if(g.gameover==Snake.GameState.Ok) {
+                            if(g.gamestate==Snake.GameState.Ok) {
                                 if(gv==1)
                                     this.setPoint256(gb, 0, 196, "█");
                                 else
@@ -141,7 +141,7 @@ namespace Snake {
             let m = <Snake.Model>g.model;
             let gb = this.gridboxes[m.seed.y][m.seed.x];
             let tc = 18 + Math.floor((g.stage / 2)) % 212;
-            if(g.gameover==Snake.GameState.Ok) 
+            if(g.gamestate==Snake.GameState.Ok) 
                 this.setPoint256(gb, 232, tc, "∙");
             else
                 this.setPoint256(gb, 239, 203, "∙");

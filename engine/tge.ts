@@ -92,7 +92,7 @@ namespace tge {
 
     export abstract class Game {
         useract: any[];
-        gameover: number;
+        gamestate: number;
         stage: number;
         render: Render;
         model: Model;
@@ -109,7 +109,7 @@ namespace tge {
             Render.game = this;
             this.model = m;
             this.useract = [];
-            this.gameover = 0;
+            this.gamestate = 0;
             this.stage = 0;
             this.timeout_auto = 0;
             this.timeout_ai = 0;

@@ -28,7 +28,7 @@ namespace City {
 
         constructor() {
             super();
-            tge.srand(0);
+            tge.srand(8);
             this.grid = [];
             for(let i=0; i<Model.cityh; i++) {
                 this.grid[i]=[];
@@ -69,6 +69,23 @@ namespace City {
             }
         }
 
+        getUnit(x:number, y:number, color:number) {
+            if(x<0 || y<0 || x>=Model.cityw || y>=Model.cityh)
+                return null;
+            let c = this.grid[y][x];
+            if(c.color == color) {
+                if(c.id in this.unit_map)
+                    return this.unit_map[c.id];
+            }
+            return null;
+        }
+
+        checkBorder(x:number, y:number, u:Unit) {
+            if(x<0 || y<0 || x>=Model.cityw || y>=Model.cityh)
+                return true;
+            return !((''+(y*Model.cityw+x)) in u.cells);
+        }
+
         merge(id:number) {
             let x = id % Model.cityw;
             let y = Math.floor(id / Model.cityw);
@@ -77,7 +94,7 @@ namespace City {
             let ret:Merge= {objCell:c, mergeCells:[]};
             if(Object.keys(u.cells).length==1) {
                 this.merges = ret;
-                return;
+                return false;
             }
             for(let cid in u.cells) {
                 let cx = parseInt(cid) % Model.cityw;
@@ -89,6 +106,7 @@ namespace City {
                 cc.toid = id;
             }
             this.merges = ret;
+            return true;
         }
 
         postMerge() {
@@ -146,16 +164,6 @@ namespace City {
                 for(let j=0; j<Model.cityw; j++) {
                     let c = this.grid[i][j];
                     let cur_unit = null;
-                    if(c.id in this.unit_map) {
-                        cur_unit = this.unit_map[c.id];
-                    } else {
-                        cur_unit = <Unit> {
-                            id: c.id,
-                            cells:{}
-                        };
-                        cur_unit.cells[c.id] = c.id;
-                        this.unit_map[c.id] = cur_unit;
-                    }
                     let x = c.id % Model.cityw;
                     let y = Math.floor(c.id / Model.cityw);
                     let dd = [
@@ -164,6 +172,21 @@ namespace City {
                         [-1, 0], //left
                         [1, 0]   //right
                     ];
+                    for(let n=0; n<4; n++) {
+                        let u = this.getUnit(x+dd[n][0], y+dd[n][1], c.color);
+                        if(u!=null) {
+                            cur_unit = u;
+                            break;
+                        }
+                    }
+                    if(cur_unit == null) {
+                        cur_unit = <Unit> {
+                            id: c.id,
+                            cells:{}
+                        };
+                        cur_unit.cells[c.id] = c.id;
+                        this.unit_map[c.id] = cur_unit;
+                    }
                     for(let n=0; n<4; n++)
                         this.checkLianTong(x+dd[n][0], y+dd[n][1], c.color, cur_unit);
                 }
@@ -174,6 +197,28 @@ namespace City {
                     this.units[uid] = this.unit_map[o];
                 }
             }
+            for(let i in this.units) {
+                let cs = this.units[i];
+                for(let j in cs.cells) {
+                    let jd = parseInt(j);
+                    let x = jd % Model.cityw;
+                    let y = Math.floor(jd / Model.cityw);
+                    let dd = [
+                        [0, -1], //up
+                        [0, 1],  //down
+                        [-1, 0], //left
+                        [1, 0]   //right
+                    ];
+                    let nd = [8, 4, 2, 1];
+                    let r = 0;
+                    for(let n=0; n<4; n++) {
+                        if(this.checkBorder(x+dd[n][0], y+dd[n][1], cs))
+                            r+=nd[n];
+                    }
+                    cs.cells[j] = r;
+                }
+            }
+            tge.log(tge.LogLevel.DEBUG, this.unit_map, this.units);
         }
     }
 }

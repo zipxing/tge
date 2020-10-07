@@ -84,8 +84,8 @@ games = {
         "web": False,
         "src": [
             "model.ts",
-#            "render.ts",
-#            "game.ts",
+            "render.ts",
+            "game.ts",
             "main.ts"
         ]
     },

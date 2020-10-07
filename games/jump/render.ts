@@ -61,7 +61,7 @@ namespace Jump {
                 'Game over,press {green-fg}r{/} restart...',
                 'Game over,press {green-fg}r{/} restart...'];
             let g = TermRender.game;
-            //this.msgbox.setContent(msg[g.gameover]);
+            //this.msgbox.setContent(msg[g.gamestate]);
         }
 
         redrawCar() {

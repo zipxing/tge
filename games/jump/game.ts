@@ -7,7 +7,7 @@ namespace Jump {
     export class Game extends tge.Game {
         initGame() {
             let m = <Jump.Model>this.model;
-            this.gameover=GameState.Ok;
+            this.gamestate=GameState.Ok;
             tge.Timer.register("JUMP", 0.8333333333333, ()=>{});
             //tge.Emitter.fire("Jump.REDRAW_GRID");
             //tge.Emitter.fire("Jump.REDRAW_MSG");
@@ -36,7 +36,7 @@ namespace Jump {
 
         doAction(act: any) {
             let m = <Jump.Model>this.model;
-            if(this.gameover!=GameState.Ok) {
+            if(this.gamestate!=GameState.Ok) {
                 if(act=='R')
                     this.initGame();
                 return;

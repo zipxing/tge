@@ -16,7 +16,7 @@ namespace Snake {
             };
             m.makeGrid();
             m.dir='D';
-            this.gameover=GameState.Ok;
+            this.gamestate=GameState.Ok;
             this.useract=[];
             tge.Emitter.fire("Snake.REDRAW_GRID");
             tge.Emitter.fire("Snake.REDRAW_MSG");
@@ -45,7 +45,7 @@ namespace Snake {
 
         doAction(act: any) {
             let m = <Snake.Model>this.model;
-            if(this.gameover!=GameState.Ok) {
+            if(this.gamestate!=GameState.Ok) {
                 if(act=='R')
                     this.initGame();
                 return;
@@ -76,7 +76,7 @@ namespace Snake {
             cx = m.body[0].x+dx;
             cy = m.body[0].y+dy;
             if(cx>=Model.snakew || cy>=Model.snakeh || cx<0 || cy<0) {
-                this.gameover=GameState.OverBorder;
+                this.gamestate=GameState.OverBorder;
                 tge.Emitter.fire("Snake.REDRAW_MSG");
                 tge.Emitter.fire("Snake.REDRAW_GRID");
                 return;
@@ -99,7 +99,7 @@ namespace Snake {
                 }
             } else {
                 if(m.grid[cy][cx]!=0) {
-                    this.gameover=GameState.OverSelf;
+                    this.gamestate=GameState.OverSelf;
                     tge.Emitter.fire("Snake.REDRAW_MSG");
                     tge.Emitter.fire("Snake.REDRAW_GRID");
                     return;
