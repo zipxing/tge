@@ -90,35 +90,79 @@ namespace City {
             return !((''+(y*Model.cityw+x)) in u.cells);
         }
 
-        merge(id:number) {
-            let x = id % Model.cityw;
-            let y = Math.floor(id / Model.cityw);
-            let u = this.unit_map[id];
-            let c = this.grid[y][x];
-            let ret:Merge= {objCell:c, mergeCells:[]};
-            if(Object.keys(u.cells).length==1) {
-                this.merges = ret;
-                return false;
+        mergeUnit(us: any) {
+            if(us.length==0)
+                return null;
+            if(us.length==1)
+                return us[0];
+            for(let i=1; i<us.length; i++) {
+                for(let c in us[i].cells) {
+                    us[0].cells[c] = 1;
+                    this.unit_map[parseInt(c)] = us[0];
+                }
             }
-            for(let cid in u.cells) {
-                let cx = parseInt(cid) % Model.cityw;
-                let cy = Math.floor(parseInt(cid) / Model.cityw);
-                let cc = this.grid[cy][cx];
-                if(parseInt(cid) == id) continue;
-                ret.mergeCells.push(cc);
-                cc.fromid = parseInt(cid);
-                cc.toid = id;
-            }
-            this.merges = ret;
-            return true;
+            return us[0];
         }
 
-        postMerge() {
-            let c = this.merges.objCell;
-            let ms = this.merges.mergeCells;
-            for(let cc of ms) {
-                c.level += cc.level;
-                cc.color = -1;
+        searchUnit() {
+            this.unit_map = {};
+            this.units = {};
+            for(let i=0; i<Model.cityh; i++) {
+                for(let j=0; j<Model.cityw; j++) {
+                    let c = this.grid[i][j];
+                    let cur_unit = null;
+                    let x = c.id % Model.cityw;
+                    let y = Math.floor(c.id / Model.cityw);
+                    let dd = [
+                        [0, -1], //up
+                        [0, 1],  //down
+                        [-1, 0], //left
+                        [1, 0]   //right
+                    ];
+                    let us = [];
+                    for(let n=0; n<4; n++) {
+                        let u = this.getUnit(x+dd[n][0], y+dd[n][1], c.color);
+                        if(u!=null) us.push(u);
+                    }
+                    cur_unit = this.mergeUnit(us);
+                    if(cur_unit == null) {
+                        cur_unit = <Unit> {
+                            id: c.id,
+                            cells:{}
+                        };
+                        cur_unit.cells[c.id] = c.id;
+                        this.unit_map[c.id] = cur_unit;
+                    }
+                    for(let n=0; n<4; n++)
+                        this.checkLianTong(x+dd[n][0], y+dd[n][1], c.color, cur_unit);
+                }
+            }
+            for(let o in this.unit_map) {
+                let uid = this.unit_map[o].id;
+                if(!(uid in this.units)) {
+                    this.units[uid] = this.unit_map[o];
+                }
+            }
+            for(let i in this.units) {
+                let cs = this.units[i];
+                for(let j in cs.cells) {
+                    let jd = parseInt(j);
+                    let x = jd % Model.cityw;
+                    let y = Math.floor(jd / Model.cityw);
+                    let dd = [
+                        [0, -1], //up
+                        [0, 1],  //down
+                        [-1, 0], //left
+                        [1, 0]   //right
+                    ];
+                    let nd = [8, 4, 2, 1];
+                    let r = 0;
+                    for(let n=0; n<4; n++) {
+                        if(this.checkBorder(x+dd[n][0], y+dd[n][1], cs))
+                            r+=nd[n];
+                    }
+                    cs.cells[j] = r;
+                }
             }
         }
 
@@ -184,84 +228,38 @@ namespace City {
             tge.log(tge.LogLevel.DEBUG, "AFTER DROP", this.unit_map, this.units);
         }
 
-        mergeUnit(us: any) {
-            if(us.length==0)
-                return null;
-            if(us.length==1)
-                return us[0];
-            for(let i=1; i<us.length; i++) {
-                for(let c in us[i].cells) {
-                    us[0].cells[c] = 1;
-                    this.unit_map[parseInt(c)] = us[0];
-                }
+        //merge cells in a unit...
+        merge(id:number) {
+            let x = id % Model.cityw;
+            let y = Math.floor(id / Model.cityw);
+            let u = this.unit_map[id];
+            let c = this.grid[y][x];
+            let ret:Merge= {objCell:c, mergeCells:[]};
+            if(Object.keys(u.cells).length==1) {
+                this.merges = ret;
+                return false;
             }
-            return us[0];
+            for(let cid in u.cells) {
+                let cx = parseInt(cid) % Model.cityw;
+                let cy = Math.floor(parseInt(cid) / Model.cityw);
+                let cc = this.grid[cy][cx];
+                if(parseInt(cid) == id) continue;
+                ret.mergeCells.push(cc);
+                cc.fromid = parseInt(cid);
+                cc.toid = id;
+            }
+            this.merges = ret;
+            return true;
         }
 
-        searchUnit() {
-            this.unit_map = {};
-            this.units = {};
-            for(let i=0; i<Model.cityh; i++) {
-                for(let j=0; j<Model.cityw; j++) {
-                    let c = this.grid[i][j];
-                    let cur_unit = null;
-                    let x = c.id % Model.cityw;
-                    let y = Math.floor(c.id / Model.cityw);
-                    let dd = [
-                        [0, -1], //up
-                        [0, 1],  //down
-                        [-1, 0], //left
-                        [1, 0]   //right
-                    ];
-                    let us = [];
-                    for(let n=0; n<4; n++) {
-                        let u = this.getUnit(x+dd[n][0], y+dd[n][1], c.color);
-                        if(u!=null) {
-                            us.push(u);
-                            //cur_unit = u;
-                            //break;
-                        }
-                    }
-                    cur_unit = this.mergeUnit(us);
-                    if(cur_unit == null) {
-                        cur_unit = <Unit> {
-                            id: c.id,
-                            cells:{}
-                        };
-                        cur_unit.cells[c.id] = c.id;
-                        this.unit_map[c.id] = cur_unit;
-                    }
-                    for(let n=0; n<4; n++)
-                        this.checkLianTong(x+dd[n][0], y+dd[n][1], c.color, cur_unit);
-                }
-            }
-            for(let o in this.unit_map) {
-                let uid = this.unit_map[o].id;
-                if(!(uid in this.units)) {
-                    this.units[uid] = this.unit_map[o];
-                }
-            }
-            for(let i in this.units) {
-                let cs = this.units[i];
-                for(let j in cs.cells) {
-                    let jd = parseInt(j);
-                    let x = jd % Model.cityw;
-                    let y = Math.floor(jd / Model.cityw);
-                    let dd = [
-                        [0, -1], //up
-                        [0, 1],  //down
-                        [-1, 0], //left
-                        [1, 0]   //right
-                    ];
-                    let nd = [8, 4, 2, 1];
-                    let r = 0;
-                    for(let n=0; n<4; n++) {
-                        if(this.checkBorder(x+dd[n][0], y+dd[n][1], cs))
-                            r+=nd[n];
-                    }
-                    cs.cells[j] = r;
-                }
+        postMerge() {
+            let c = this.merges.objCell;
+            let ms = this.merges.mergeCells;
+            for(let cc of ms) {
+                c.level += cc.level;
+                cc.color = -1;
             }
         }
+
     }
 }
