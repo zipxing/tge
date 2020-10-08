@@ -23,11 +23,17 @@ namespace City {
 
         unit_map: { [key: number]: Unit} = {};
         units: {[key: number]: Unit} = {};
-        grid: Cell[][];
+        grid: Cell[][] = [];
         merges: Merge;
 
         constructor() {
             super();
+            this.reset();
+            this.merges = {objCell: this.grid[0][0], mergeCells:[]};
+        }
+
+        reset() {
+            //tge.srand(new Date().valueOf());
             tge.srand(8);
             this.grid = [];
             for(let i=0; i<Model.cityh; i++) {
@@ -43,20 +49,18 @@ namespace City {
             this.merges = {objCell: this.grid[0][0], mergeCells:[]};
         }
 
-        debug = function(...arg: any[]) {
-            let util = require('util');
-            process.stdout.write(util.format.apply(null, arguments));
-        }
-
         dumpGrid() {
+            let dgs = '---------------DUMPGRID-----------------\n';
             for(let i=0; i<Model.cityh; i++) {
                 for(let j=0; j<Model.cityw; j++) {
                     let c = this.grid[i][j];
                     let ids = c.id<10?'0'+c.id:c.id;
-                    this.debug('|', ids, c.color, c.fromid, c.toid, c.level, '|    ');
+                    dgs+=('| '+ids+' '+c.color+' '+c.fromid+' '+c.toid+' '+c.level+' |    ');
                 }
-                process.stdout.write('\n');
+                dgs+='\n';
             }
+            dgs+='------------------------------------';
+            tge.log(tge.LogLevel.DEBUG, dgs);
         }
 
         checkLianTong(x:number, y:number, color:number, u:Unit) {
@@ -118,6 +122,16 @@ namespace City {
             }
         }
 
+        copyCell(s: Cell, d: Cell) {
+            d.id = s.id;
+            d.fromid = s.fromid;
+            d.toid = s.toid;
+            d.color = s.color;
+            d.level = s.level;
+            d.fromlevel = s.fromlevel;
+            d.tolevel = s.tolevel;
+        }
+
         drop() {
             for(let x=0; x<Model.cityw; x++) {
                 let holes=[], blocks=[];
@@ -128,8 +142,16 @@ namespace City {
                         holes.push(c);
                 }
                 if(holes.length==0) continue;
+                let tmpcs:Cell[] = [];
+                for(let i=0; i<Model.cityh; i++) {
+                    tmpcs[i] = {
+                        id: 0, fromid: 0, toid: 0,
+                        color: 0, level: 0, fromlevel: 0, tolevel: 0
+                    };
+                }
+                //this.dumpGrid();
                 //set blocks...
-                for(let y=0; y<Model.cityh-1; y++) {
+                for(let y=0; y<Model.cityh; y++) {
                     let c = this.grid[y][x];
                     if(c.color==-1) continue;
                     let dropcnt = 0;
@@ -148,18 +170,37 @@ namespace City {
                     h.fromid = (i-holes.length)*Model.cityw+x;
                     h.toid = i*Model.cityw+x;
                     h.id = h.toid;
-                    this.grid[i][x]=h;
-                    this.grid[i][x].id = i*Model.cityw + x;
+                    this.copyCell(h, tmpcs[i]);
                 }
                 for(let i=0; i<blocks.length; i++) {
-                    let h = this.grid[i+holes.length][x];
-                    this.grid[i+holes.length][x] = blocks[i];
-                    this.grid[i+holes.length][x].id = (i+holes.length)*Model.cityw + x;
+                    blocks[i].id = (i+holes.length)*Model.cityw + x;
+                    this.copyCell(blocks[i], tmpcs[i+holes.length]);
+                }
+                for(let i=0; i<Model.cityh; i++) 
+                    this.copyCell(tmpcs[i], this.grid[i][x]);
+                //this.dumpGrid();
+            }
+            this.searchUnit();
+            tge.log(tge.LogLevel.DEBUG, "AFTER DROP", this.unit_map, this.units);
+        }
+
+        mergeUnit(us: any) {
+            if(us.length==0)
+                return null;
+            if(us.length==1)
+                return us[0];
+            for(let i=1; i<us.length; i++) {
+                for(let c in us[i].cells) {
+                    us[0].cells[c] = 1;
+                    this.unit_map[parseInt(c)] = us[0];
                 }
             }
+            return us[0];
         }
 
         searchUnit() {
+            this.unit_map = {};
+            this.units = {};
             for(let i=0; i<Model.cityh; i++) {
                 for(let j=0; j<Model.cityw; j++) {
                     let c = this.grid[i][j];
@@ -172,13 +213,16 @@ namespace City {
                         [-1, 0], //left
                         [1, 0]   //right
                     ];
+                    let us = [];
                     for(let n=0; n<4; n++) {
                         let u = this.getUnit(x+dd[n][0], y+dd[n][1], c.color);
                         if(u!=null) {
-                            cur_unit = u;
-                            break;
+                            us.push(u);
+                            //cur_unit = u;
+                            //break;
                         }
                     }
+                    cur_unit = this.mergeUnit(us);
                     if(cur_unit == null) {
                         cur_unit = <Unit> {
                             id: c.id,
@@ -218,7 +262,6 @@ namespace City {
                     cs.cells[j] = r;
                 }
             }
-            tge.log(tge.LogLevel.DEBUG, this.unit_map, this.units);
         }
     }
 }

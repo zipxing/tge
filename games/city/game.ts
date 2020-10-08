@@ -2,6 +2,7 @@ namespace City {
     export enum GameState {
         Normal = 0,
         MergeMovie,
+        LevelUpMovie,
         DropMovie,
         NoMove
     }
@@ -11,9 +12,16 @@ namespace City {
             let m = <City.Model>this.model;
             this.gamestate=GameState.Normal;
             this.useract=[];
+            m.searchUnit();
+            tge.log(tge.LogLevel.DEBUG, m.unit_map, m.units);
             tge.Emitter.fire("City.REDRAW_GRID");
             tge.Timer.register("merge", 1.0, ()=>{
                 m.postMerge();
+                tge.Emitter.fire("City.REDRAW_GRID");
+                tge.Timer.fire("levelup", 0);
+            });
+            tge.Timer.register("levelup", 0.2, ()=>{
+                m.drop();
                 tge.Emitter.fire("City.REDRAW_GRID");
             });
         }
@@ -46,8 +54,8 @@ namespace City {
                 case "M":
                     if(m.merge(i*City.Model.cityw+j)) {
                         tge.Timer.fire("merge", 0);
+                        this.gamestate = GameState.MergeMovie;
                     }
-                    //m.postMerge();
                     break;
                 case 'W':
                     m.searchUnit();

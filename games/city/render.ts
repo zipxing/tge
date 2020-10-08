@@ -129,7 +129,6 @@ namespace City {
                 s.push('');
             }
             b.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}`);
-
         }
 
         redrawGridUnitMode() {
@@ -171,8 +170,8 @@ namespace City {
         }
 
         redrawGrid() {
-            this.redrawGridCellMode();
-            //this.redrawGridUnitMode();
+            //this.redrawGridCellMode();
+            this.redrawGridUnitMode();
         }
 
         draw() {
