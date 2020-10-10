@@ -148,6 +148,24 @@ def make_cmd_line(name, is_build, oa=[]):
             rcs.append("open tmp/"+name+".html")
         return rcs
 
+def prepareTool():
+    if not os.path.exists('tmp/art2js.js'):
+        r = make_cmd_line('art2js', True)
+        for c in r:
+            if c.startswith('echo'):
+                printColor(*c.split('|')[1:])
+            else:
+                print(c)
+                os.system(c);
+    if not os.path.exists('tmp/ascii.js'):
+        r = make_cmd_line('ascii', True)
+        for c in r:
+            if c.startswith('echo'):
+                printColor(*c.split('|')[1:])
+            else:
+                print(c)
+                os.system(c);
+
 def printUsage():
     printColor('yellow', '🏖  TGE building script usage:')
     printColor('white', '\nBuild game:')
@@ -166,6 +184,7 @@ if __name__ == "__main__":
         printUsage()
         sys.exit(0)
     os.chdir(sys.path[0])
+    prepareTool()
     b = make_cmd_line(sys.argv[2], True)
     r = make_cmd_line(sys.argv[2], False, sys.argv[3:])
     if 'b' in sys.argv[1] and b:

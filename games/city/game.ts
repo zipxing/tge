@@ -18,10 +18,17 @@ namespace City {
             tge.Timer.register("merge", 1.0, ()=>{
                 m.postMerge();
                 tge.Emitter.fire("City.REDRAW_GRID");
-                tge.Timer.fire("levelup", 0);
+                tge.Timer.fire("levelup");
+                this.gamestate = GameState.LevelUpMovie;
             });
             tge.Timer.register("levelup", 0.2, ()=>{
-                m.drop();
+                //m.drop();
+                //tge.Timer.fire("drop");
+                //this.gamestate = GameState.DropMovie;
+            });
+            tge.Timer.register("drop", 0.2, ()=>{
+                this.gamestate = GameState.Normal;
+                m.searchUnit();
                 tge.Emitter.fire("City.REDRAW_GRID");
             });
         }
@@ -53,14 +60,13 @@ namespace City {
             switch(ag[0]) {
                 case "M":
                     if(m.merge(i*City.Model.cityw+j)) {
-                        tge.Timer.fire("merge", 0);
+                        tge.Timer.fire("merge");
                         this.gamestate = GameState.MergeMovie;
                     }
                     break;
                 case 'W':
                     m.searchUnit();
                     break;
-
                 default:
                     break;
             }

@@ -41,7 +41,7 @@ namespace City {
                 for(let j=0; j<Model.cityw; j++)
                     this.grid[i][j]={
                         id: i*Model.cityw+j,
-                        fromid: 0, toid: 0,
+                        fromid: -1, toid: -1,
                         color: (Math.floor((tge.rand()%(Model.citycolor-1))+1)),
                         level: 0, fromlevel: 0, tolevel: 0
                     };
@@ -49,6 +49,7 @@ namespace City {
             this.merges = {objCell: this.grid[0][0], mergeCells:[]};
         }
 
+        //debug...
         dumpGrid() {
             let dgs = '---------------DUMPGRID-----------------\n';
             for(let i=0; i<Model.cityh; i++) {
@@ -59,7 +60,7 @@ namespace City {
                 }
                 dgs+='\n';
             }
-            dgs+='------------------------------------';
+            dgs+='-----------------------------------------';
             tge.log(tge.LogLevel.DEBUG, dgs);
         }
 
@@ -93,8 +94,8 @@ namespace City {
         mergeUnit(us: any) {
             if(us.length==0)
                 return null;
-            if(us.length==1)
-                return us[0];
+            //if(us.length==1)
+            //    return us[0];
             for(let i=1; i<us.length; i++) {
                 for(let c in us[i].cells) {
                     us[0].cells[c] = 1;
@@ -110,6 +111,8 @@ namespace City {
             for(let i=0; i<Model.cityh; i++) {
                 for(let j=0; j<Model.cityw; j++) {
                     let c = this.grid[i][j];
+                    c.fromid = -1;
+                    c.toid = -1;
                     let cur_unit = null;
                     let x = c.id % Model.cityw;
                     let y = Math.floor(c.id / Model.cityw);
@@ -189,7 +192,7 @@ namespace City {
                 let tmpcs:Cell[] = [];
                 for(let i=0; i<Model.cityh; i++) {
                     tmpcs[i] = {
-                        id: 0, fromid: 0, toid: 0,
+                        id: 0, fromid: -1, toid: -1,
                         color: 0, level: 0, fromlevel: 0, tolevel: 0
                     };
                 }
@@ -224,8 +227,8 @@ namespace City {
                     this.copyCell(tmpcs[i], this.grid[i][x]);
                 //this.dumpGrid();
             }
-            this.searchUnit();
-            tge.log(tge.LogLevel.DEBUG, "AFTER DROP", this.unit_map, this.units);
+            //this.searchUnit();
+            //tge.log(tge.LogLevel.DEBUG, "AFTER DROP", this.unit_map, this.units);
         }
 
         //merge cells in a unit...
@@ -258,8 +261,9 @@ namespace City {
             for(let cc of ms) {
                 c.level += cc.level;
                 cc.color = -1;
+                cc.fromid = -1;
+                cc.toid = -1;
             }
         }
-
     }
 }

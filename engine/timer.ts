@@ -18,7 +18,7 @@ namespace tge {
             }
         }
 
-        static fire(name: string, exdata: any) {
+        static fire(name: string, exdata: any = 0) {
             let tmo: TimerData = Timer.timers[name];
             if (!tmo) return;
             tmo.time = tmo.count;
@@ -55,10 +55,9 @@ namespace tge {
             return tmo.count - tmo.time;
         }
 
-
         static getPercent(name: string) {
             let tmo: TimerData = Timer.timers[name];
-            if (!tmo) return;
+            if (!tmo) return 0;
             let t = tmo;
             return t.time*1.0/t.count*1.0;
         }

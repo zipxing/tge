@@ -150,7 +150,7 @@ namespace City {
             }
         }
 
-        redrawGridCellMode() {
+        redrawGridCellMode(per:number) {
             let bdr = '┌┐└┘─│'
             let c = [27, 51, 26, 128, 146, 152, 147, 141, 135, 129];
             let g = TermRender.game;
@@ -160,6 +160,20 @@ namespace City {
                 for(let j=0; j<Model.cityw; j++) {
                     let b = this.gridboxes[i][j];
                     let bd = m.grid[i][j];
+                    if(bd.fromid!=-1 && bd.toid!=-1) {
+                        let fx = bd.fromid % Model.cityw;
+                        let fy = Math.floor(bd.fromid / Model.cityw);
+                        let tx = bd.toid % Model.cityw;
+                        let ty = Math.floor(bd.toid / Model.cityw)
+                        let x = (fx + (tx-fx)*per);
+                        let y = (fy+(ty-fy)*per);
+                        tge.log(tge.LogLevel.DEBUG, fx, fy, tx, ty, x, y, per);
+                        b.top = Math.round(x*5.0+5.0);
+                        b.left = Math.round(y*10.0+1.0);
+                    } else {
+                        b.top = i*5+5;
+                        b.left = j*10+1;
+                    }
                     b.style.fg = c[bd.color];
                     if(bd.color>=0)
                         this.drawCell(b, 15);
@@ -169,15 +183,36 @@ namespace City {
             }
         }
 
+        drawMovie() {
+            let g = TermRender.game;
+            let m = <City.Model>g.model;
+            let p = 0;
+            switch(g.gamestate) {
+                case GameState.MergeMovie:
+                    p = tge.Timer.getPercent("merge");
+                    this.redrawGridCellMode(p);
+                    break;
+                case GameState.LevelUpMovie:
+                    p = tge.Timer.getPercent("levelup");
+                    this.redrawGridCellMode(p);
+                    break;
+                case GameState.DropMovie:
+                    p = tge.Timer.getPercent("drop");
+                    this.redrawGridCellMode(p);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         redrawGrid() {
-            //this.redrawGridCellMode();
             this.redrawGridUnitMode();
         }
 
         draw() {
             this.drawTitle();
             this.drawLogo();
-            //this.redrawGrid();
+            this.drawMovie();
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
         }
