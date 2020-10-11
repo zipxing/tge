@@ -140,8 +140,7 @@ namespace City {
                 let cs = m.units[i];
                 for(let j in cs.cells) {
                     let jd = parseInt(j);
-                    let x = jd % Model.cityw;
-                    let y = Math.floor(jd / Model.cityw);
+                    let [x, y] = m.getxyById(jd);
                     let b = this.gridboxes[y][x];
                     b.top = Math.floor(y*5.0+5.0);
                     b.left = Math.floor(x*10.0+1.0);
@@ -163,13 +162,11 @@ namespace City {
                     let b = this.gridboxes[i][j];
                     let bd = m.grid[i][j];
                     if(bd.fromid!=-1 && bd.toid!=-1) {
-                        let fx = bd.fromid % Model.cityw;
-                        let fy = Math.floor(bd.fromid / Model.cityw);
-                        let tx = bd.toid % Model.cityw;
-                        let ty = Math.floor(bd.toid / Model.cityw)
+                        let [fx, fy] = m.getxyById(bd.fromid);
+                        let [tx, ty] = m.getxyById(bd.toid);
                         let x = fx + (tx-fx)*(1.0-per);
                         let y = fy + (ty-fy)*(1.0-per);
-                        tge.log(tge.LogLevel.DEBUG, fx, fy, tx, ty, x, y, per);
+                        tge.log(tge.LogLevel.DEBUG, bd.fromid, bd.toid, fx, fy, tx, ty, x, y, per);
                         b.top = Math.floor(y*5.0+5.0);
                         b.left = Math.floor(x*10.0+1.0);
                     } else {

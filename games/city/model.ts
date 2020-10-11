@@ -105,6 +105,14 @@ namespace City {
             return us[0];
         }
 
+        getxyById(id:number) {
+            let x = 0;
+            let y = 0;
+            x = (id+25) % Model.cityw;
+            y = Math.floor(id / Model.cityw);
+            return [x, y];
+        }
+
         searchUnit() {
             this.unit_map = {};
             this.units = {};
@@ -114,8 +122,7 @@ namespace City {
                     c.fromid = -1;
                     c.toid = -1;
                     let cur_unit = null;
-                    let x = c.id % Model.cityw;
-                    let y = Math.floor(c.id / Model.cityw);
+                    let [x, y] = this.getxyById(c.id);
                     let dd = [
                         [0, -1], //up
                         [0, 1],  //down
@@ -150,8 +157,7 @@ namespace City {
                 let cs = this.units[i];
                 for(let j in cs.cells) {
                     let jd = parseInt(j);
-                    let x = jd % Model.cityw;
-                    let y = Math.floor(jd / Model.cityw);
+                    let [x, y] = this.getxyById(jd);
                     let dd = [
                         [0, -1], //up
                         [0, 1],  //down
@@ -196,7 +202,7 @@ namespace City {
                         color: 0, level: 0, fromlevel: 0, tolevel: 0
                     };
                 }
-                //this.dumpGrid();
+                this.dumpGrid();
                 //set blocks...
                 for(let y=0; y<Model.cityh; y++) {
                     let c = this.grid[y][x];
@@ -207,15 +213,15 @@ namespace City {
                         if(cc.color==-1) dropcnt++;
                     }
                     c.fromid = c.id;
-                    c.toid = c.id+dropcnt*Model.cityw;
+                    c.toid =   c.id + dropcnt*Model.cityw;
                     blocks.push(c);
                 }
                 //set new block(reuse hole)...
                 for(let i=0; i<holes.length; i++) {
                     let h = holes[i];
-                    h.color = (Math.floor((tge.rand()%Model.citycolor)+1));
-                    h.fromid = (i-holes.length)*Model.cityw+x;
-                    h.toid = i*Model.cityw+x;
+                    h.color = (tge.rand()%Model.citycolor)+1;
+                    h.fromid = (i-holes.length)*Model.cityw + x;
+                    h.toid = i*Model.cityw + x;
                     h.id = h.toid;
                     this.copyCell(h, tmpcs[i]);
                 }
@@ -225,7 +231,7 @@ namespace City {
                 }
                 for(let i=0; i<Model.cityh; i++) 
                     this.copyCell(tmpcs[i], this.grid[i][x]);
-                //this.dumpGrid();
+                this.dumpGrid();
             }
             //this.searchUnit();
             //tge.log(tge.LogLevel.DEBUG, "AFTER DROP", this.unit_map, this.units);
@@ -233,8 +239,7 @@ namespace City {
 
         //merge cells in a unit...
         merge(id:number) {
-            let x = id % Model.cityw;
-            let y = Math.floor(id / Model.cityw);
+            let [x, y] = this.getxyById(id);
             let u = this.unit_map[id];
             let c = this.grid[y][x];
             let ret:Merge= {objCell:c, mergeCells:[]};
@@ -243,8 +248,7 @@ namespace City {
                 return false;
             }
             for(let cid in u.cells) {
-                let cx = parseInt(cid) % Model.cityw;
-                let cy = Math.floor(parseInt(cid) / Model.cityw);
+                let [cx, cy] = this.getxyById(parseInt(cid));
                 let cc = this.grid[cy][cx];
                 if(parseInt(cid) == id) continue;
                 ret.mergeCells.push(cc);
