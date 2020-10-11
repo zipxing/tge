@@ -34,8 +34,8 @@ namespace City {
         }
 
         reset() {
-            //tge.srand(new Date().valueOf());
-            tge.srand(8);
+            tge.srand(new Date().valueOf());
+            //tge.srand(8);
             this.grid = [];
             for(let i=0; i<Model.cityh; i++) {
                 this.grid[i]=[];

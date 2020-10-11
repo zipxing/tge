@@ -131,8 +131,10 @@ namespace City {
             let ss = s[2];
             let pad = ' ';
             if(index!=0) {
-                if(level<30) {
-                    let slv = ''+Math.floor(level/3.0);
+                if(level==-1) 
+                    ss = s[2];
+                if(level<30 && level!=-1) {
+                    let slv = ''+(Math.floor(level/3.0));
                     for(let i=0; i<4-slv.length; i++) 
                         slv=pad+slv;
                     ss = s[2].slice(0,3) + slv + s[2].slice(6);
@@ -143,7 +145,7 @@ namespace City {
                 if(level>30) {
                     let slv = ''+(level/30);
                     for(let i=0; i<4-slv.length; i++) 
-                        slv=pad+slv;
+                        slv+=pad;
                     ss = s[2].slice(0,3)+'W'+slv+s[2].slice(7);
                 }
 
@@ -197,7 +199,7 @@ namespace City {
                     if(bd.color>=0)
                         this.drawCell(b, 15, bd.level);
                     else
-                        this.drawCell(b, 0, bd.level);
+                        this.drawCell(b, 0, -1);
                 }
             }
         }
