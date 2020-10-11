@@ -42,8 +42,8 @@ namespace City {
                     this.grid[i][j]={
                         id: i*Model.cityw+j,
                         fromid: -1, toid: -1,
-                        color: (Math.floor((tge.rand()%(Model.citycolor-1))+1)),
-                        level: 0, fromlevel: 0, tolevel: 0
+                        color: tge.rand() % (Model.citycolor-1) + 1,
+                        level: tge.rand()%2, fromlevel: 0, tolevel: 0
                     };
             }
             this.merges = {objCell: this.grid[0][0], mergeCells:[]};

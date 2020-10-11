@@ -15,18 +15,18 @@ namespace City {
             m.searchUnit();
             tge.log(tge.LogLevel.DEBUG, m.unit_map, m.units);
             tge.Emitter.fire("City.REDRAW_GRID");
-            tge.Timer.register("merge", 1.0, ()=>{
+            tge.Timer.register("merge", 0.3, ()=>{
                 m.postMerge();
                 tge.Emitter.fire("City.REDRAW_GRID");
                 tge.Timer.fire("levelup");
                 this.gamestate = GameState.LevelUpMovie;
             });
             tge.Timer.register("levelup", 0.2, ()=>{
-                //m.drop();
-                //tge.Timer.fire("drop");
-                //this.gamestate = GameState.DropMovie;
+                m.drop();
+                tge.Timer.fire("drop");
+                this.gamestate = GameState.DropMovie;
             });
-            tge.Timer.register("drop", 0.2, ()=>{
+            tge.Timer.register("drop", 0.4, ()=>{
                 this.gamestate = GameState.Normal;
                 m.searchUnit();
                 tge.Emitter.fire("City.REDRAW_GRID");
