@@ -120,6 +120,8 @@ namespace City {
             for(let i=0; i<Model.cityh; i++) {
                 for(let j=0; j<Model.cityw; j++) {
                     let c = this.grid[i][j];
+                    if(c.color>100)
+                        c.color-=100;
                     c.fromid = -1;
                     c.toid = -1;
                     let cur_unit = null;
@@ -278,6 +280,20 @@ namespace City {
                 } else {
                     c.color = Model.citycolor + (c.level / 30);
                 }
+            }
+        }
+
+        delCell(id:number) {
+            tge.log(tge.LogLevel.DEBUG, "DELCELL!!!!!");
+            let [x, y] = this.getxyById(id);
+            let c = this.grid[y][x];
+            if(c.color<100) {
+                c.color+=100;
+                return false;
+            } else {
+                c.color=-1;
+                this.drop();
+                return true;
             }
         }
     }

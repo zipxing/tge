@@ -122,7 +122,8 @@ namespace City {
             this.msgbox.setContent(msg[g.gamestate]);
         }
 
-        drawCell(b:any, index:number, level:number) {
+        drawCell(b:any, index:number, bd:Cell) {
+            let level = bd.level;
             let s = tge.AscIIManager.getArt(`cc${index}`).blessed_lines;
             let sl = 5 - s.length;
             for(let i=0; i<sl; i++) {
@@ -131,10 +132,11 @@ namespace City {
             let ss = s[2];
             let pad = ' ';
             if(index!=0) {
-                if(level==-1) 
+                if(bd.color==-1) 
                     ss = s[2];
-                if(level<30 && level!=-1) {
-                    let slv = ''+(Math.floor(level/3.0));
+                if(level<30 && bd.color!=-1) {
+                    //let slv = ''+(Math.floor(level/3.0));
+                    let slv = ''+level;
                     for(let i=0; i<4-slv.length; i++) 
                         slv=pad+slv;
                     ss = s[2].slice(0,3) + slv + s[2].slice(6);
@@ -148,7 +150,9 @@ namespace City {
                         slv+=pad;
                     ss = s[2].slice(0,3)+'W'+slv+s[2].slice(7);
                 }
-
+                if(bd.color>100) {
+                    ss = s[2].slice(0,3)+'D??'+s[2].slice(7);
+                }
             }
             b.setContent(`${s[0]}\n${s[1]}\n${ss}\n${s[3]}\n${s[4]}`);
         }
@@ -168,7 +172,7 @@ namespace City {
                     b.left = Math.floor(x*10.0+1.0);
                     let bd = m.grid[y][x];
                     b.style.fg = c[bd.color];
-                    this.drawCell(b, parseInt(cs.cells[j]), bd.level);
+                    this.drawCell(b, parseInt(cs.cells[j]), bd);
                 }
             }
         }
@@ -197,9 +201,9 @@ namespace City {
                     }
                     b.style.fg = c[bd.color];
                     if(bd.color>=0)
-                        this.drawCell(b, 15, bd.level);
+                        this.drawCell(b, 15, bd);
                     else
-                        this.drawCell(b, 0, -1);
+                        this.drawCell(b, 0, bd);
                 }
             }
         }

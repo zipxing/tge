@@ -59,9 +59,17 @@ namespace City {
             let m = <City.Model>this.model;
             switch(ag[0]) {
                 case "M":
-                    if(m.mergeCell(i*City.Model.cityw+j)) {
+                    let cid = i*City.Model.cityw+j;
+                    if(m.mergeCell(cid)) {
                         tge.Timer.fire("merge");
                         this.gamestate = GameState.MergeMovie;
+                    } else {
+                        if(!m.delCell(cid)) {
+                            tge.Emitter.fire("City.REDRAW_GRID");
+                        } else {
+                            tge.Timer.fire("drop");
+                            this.gamestate = GameState.DropMovie;
+                        }
                     }
                     break;
                 case 'W':
