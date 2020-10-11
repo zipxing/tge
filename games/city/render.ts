@@ -122,13 +122,33 @@ namespace City {
             this.msgbox.setContent(msg[g.gamestate]);
         }
 
-        drawCell(b:any, index:number) {
+        drawCell(b:any, index:number, level:number) {
             let s = tge.AscIIManager.getArt(`cc${index}`).blessed_lines;
             let sl = 5 - s.length;
             for(let i=0; i<sl; i++) {
                 s.push('');
             }
-            b.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}`);
+            let ss = s[2];
+            let pad = ' ';
+            if(index!=0) {
+                if(level<30) {
+                    let slv = ''+Math.floor(level/3.0);
+                    for(let i=0; i<4-slv.length; i++) 
+                        slv=pad+slv;
+                    ss = s[2].slice(0,3) + slv + s[2].slice(6);
+                } 
+                if(level==30) {
+                    ss = s[2].slice(0,4)+'T'+s[2].slice(5);
+                }
+                if(level>30) {
+                    let slv = ''+(level/30);
+                    for(let i=0; i<4-slv.length; i++) 
+                        slv=pad+slv;
+                    ss = s[2].slice(0,3)+'W'+slv+s[2].slice(7);
+                }
+
+            }
+            b.setContent(`${s[0]}\n${s[1]}\n${ss}\n${s[3]}\n${s[4]}`);
         }
 
         redrawGridUnitMode() {
@@ -146,7 +166,7 @@ namespace City {
                     b.left = Math.floor(x*10.0+1.0);
                     let bd = m.grid[y][x];
                     b.style.fg = c[bd.color];
-                    this.drawCell(b, parseInt(cs.cells[j]));
+                    this.drawCell(b, parseInt(cs.cells[j]), bd.level);
                 }
             }
         }
@@ -175,9 +195,9 @@ namespace City {
                     }
                     b.style.fg = c[bd.color];
                     if(bd.color>=0)
-                        this.drawCell(b, 15);
+                        this.drawCell(b, 15, bd.level);
                     else
-                        this.drawCell(b, 0);
+                        this.drawCell(b, 0, bd.level);
                 }
             }
         }
