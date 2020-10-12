@@ -10,7 +10,7 @@ namespace City {
             super();
 
             tge.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
-            tge.AscIIManager.loadArtFile("ascii_art/snake.txt", "snake");
+            tge.AscIIManager.loadArtFile("ascii_art/city.txt", "city");
             tge.AscIIManager.loadArtFile("ascii_art/cc0.txt", "cc0");
             tge.AscIIManager.loadArtFile("ascii_art/cc1.txt", "cc1");
             tge.AscIIManager.loadArtFile("ascii_art/cc2.txt", "cc2");
@@ -31,10 +31,10 @@ namespace City {
             let nb = (<tge.TermRun>tge.env);
 
             this.titlebox = nb.blessed.box({
-                width:Model.cityw*10+2,
-                height:4,
+                width:Model.cityw*10+10,
+                height:7,
                 top:0,
-                left:3,
+                left:8,
                 tags:true
             });
             nb.tscreen.append(this.titlebox);
@@ -42,7 +42,7 @@ namespace City {
             this.logobox = nb.blessed.box({
                 width:12,
                 height:4,
-                top:0,
+                top:3,
                 left:Model.cityw*10+16,
                 tags:true
             });
@@ -51,7 +51,7 @@ namespace City {
             this.gamebox = nb.blessed.box({
                 width:Model.cityw*10+2,
                 height:Model.cityh*5+2,
-                top:4,
+                top:7,
                 left:0,
                 border:{type:'line', fg:238},
                 tags:true
@@ -65,7 +65,7 @@ namespace City {
                     this.gridboxes[i][j]=nb.blessed.box({
                         width:10,
                         height:5,
-                        top:i*5+5,
+                        top:i*5+8,
                         left:j*10+1,
                         tags:true
                     });
@@ -79,7 +79,7 @@ namespace City {
             this.msgbox = nb.blessed.box({
                 width:23,
                 height:Model.cityh*5+2,
-                top:4,
+                top:7,
                 left:Model.cityw*10+3,
                 border:{type:'line', fg:238},
                 tags:true
@@ -87,13 +87,6 @@ namespace City {
             nb.tscreen.append(this.msgbox);
 
             tge.Emitter.register("City.REDRAW_GRID", this.redrawGrid, this);
-
-            /*tge.Emitter.register("Snake.REDRAW_MSG", this.redrawMsg, this);
-            tge.Emitter.register("Snake.REDRAW_GRID", this.redrawGrid, this);
-            tge.Timer.register("Snake.Timer.Title", 1.0, ()=>{
-                tge.Timer.fire("Snake.Timer.Title", 0);
-            });
-            tge.Timer.fire("Snake.Timer.Title", 0);*/
         }
 
         touchCell(t:string, i:number, j:number) {
@@ -105,8 +98,8 @@ namespace City {
         }
 
         drawTitle() {
-            let s = tge.AscIIManager.getArt("snake").blessed_lines;
-            this.titlebox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}`);
+            let s = tge.AscIIManager.getArt("city").blessed_lines;
+            this.titlebox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}\n${s[5]}\n${s[6]}`);
         }
 
         drawLogo() {
@@ -122,39 +115,48 @@ namespace City {
             this.msgbox.setContent(msg[g.gamestate]);
         }
 
-        drawCell(b:any, index:number, bd:Cell) {
+        drawMsgInCell(b:any, lineno:number, start:number, msg:string, color:number = -1) {
+            let s = b.getLine(lineno);
+            let cs = '', ce = '';
+            if(color>=0) {
+                cs = `{${color}-fg}`;
+                ce = '{/}'
+            }
+            let os = s.slice(0, start) + cs + msg + ce + s.slice(start+msg.length);
+            b.setLine(lineno, os);
+        }
+
+        drawCell(b:any, index:number, bd:Cell, cellmode:boolean = false) {
             let level = bd.level;
             let s = tge.AscIIManager.getArt(`cc${index}`).blessed_lines;
-            let sl = 5 - s.length;
-            for(let i=0; i<sl; i++) {
-                s.push('');
-            }
-            let ss = s[2];
+            b.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}`);
+
+            let ss = '';
             let pad = ' ';
             if(index!=0) {
-                if(bd.color==-1) 
-                    ss = s[2];
+                //if(bd.color==-1) 
+                //    ss = s[2];
                 if(level<30 && bd.color!=-1) {
-                    //let slv = ''+(Math.floor(level/3.0));
                     let slv = ''+level;
                     for(let i=0; i<4-slv.length; i++) 
                         slv=pad+slv;
-                    ss = s[2].slice(0,3) + slv + s[2].slice(6);
+                    ss = slv;
                 } 
                 if(level==30) {
-                    ss = s[2].slice(0,4)+'T'+s[2].slice(5);
+                    ss = ' T ';
                 }
                 if(level>30) {
                     let slv = ''+(level/30);
                     for(let i=0; i<4-slv.length; i++) 
                         slv+=pad;
-                    ss = s[2].slice(0,3)+'W'+slv+s[2].slice(7);
+                    ss = 'W'+slv;
                 }
-                if(bd.color>100) {
-                    ss = s[2].slice(0,3)+'D??'+s[2].slice(7);
+                this.drawMsgInCell(b, 2, 3, ss);
+                if(bd.color>100 && !cellmode) {
+                    ss = 'DEL?';
+                    this.drawMsgInCell(b, 3, 2, ss, 197);
                 }
             }
-            b.setContent(`${s[0]}\n${s[1]}\n${ss}\n${s[3]}\n${s[4]}`);
         }
 
         redrawGridUnitMode() {
@@ -168,10 +170,10 @@ namespace City {
                     let jd = parseInt(j);
                     let [x, y] = m.getxyById(jd);
                     let b = this.gridboxes[y][x];
-                    b.top = Math.floor(y*5.0+5.0);
+                    b.top = Math.floor(y*5.0+8.0);
                     b.left = Math.floor(x*10.0+1.0);
                     let bd = m.grid[y][x];
-                    b.style.fg = c[bd.color];
+                    b.style.fg = c[bd.color%100];
                     this.drawCell(b, parseInt(cs.cells[j]), bd);
                 }
             }
@@ -192,18 +194,18 @@ namespace City {
                         let [tx, ty] = m.getxyById(bd.toid);
                         let x = fx + (tx-fx)*(1.0-per);
                         let y = fy + (ty-fy)*(1.0-per);
-                        tge.log(tge.LogLevel.DEBUG, bd.fromid, bd.toid, fx, fy, tx, ty, x, y, per);
-                        b.top = Math.floor(y*5.0+5.0);
+                        //tge.log(tge.LogLevel.DEBUG, bd.fromid, bd.toid, fx, fy, tx, ty, x, y, per);
+                        b.top = Math.floor(y*5.0+8.0);
                         b.left = Math.floor(x*10.0+1.0);
                     } else {
-                        b.top = i*5+5;
+                        b.top = i*5+8;
                         b.left = j*10+1;
                     }
-                    b.style.fg = c[bd.color];
+                    b.style.fg = c[bd.color%100];
                     if(bd.color>=0)
-                        this.drawCell(b, 15, bd);
+                        this.drawCell(b, 15, bd, true);
                     else
-                        this.drawCell(b, 0, bd);
+                        this.drawCell(b, 0, bd, true);
                 }
             }
         }

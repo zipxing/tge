@@ -12,6 +12,7 @@ namespace City {
     export interface Unit {
         id: number;
         cells: {[key: number]: any};
+        ready2T: boolean;
     }
     export interface Merge {
         objCell: Cell;
@@ -158,9 +159,11 @@ namespace City {
             }
             for(let i in this.units) {
                 let cs = this.units[i];
+                let tl = 0;
                 for(let j in cs.cells) {
                     let jd = parseInt(j);
                     let [x, y] = this.getxyById(jd);
+                    tl+=this.grid[y][x].level;
                     let dd = [
                         [0, -1], //up
                         [0, 1],  //down
@@ -175,6 +178,7 @@ namespace City {
                     }
                     cs.cells[j] = r;
                 }
+                cs.ready2T = (tl>=30);
             }
         }
 
@@ -289,11 +293,11 @@ namespace City {
             let c = this.grid[y][x];
             if(c.color<100) {
                 c.color+=100;
-                return false;
+                return id;
             } else {
                 c.color=-1;
                 this.drop();
-                return true;
+                return -1;
             }
         }
     }

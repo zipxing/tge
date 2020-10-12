@@ -6,8 +6,7 @@ namespace City {
         let r = new City.TermRender();
         let g = new City.Game(m, r);
         g.initGame();
-        g.regKeyAction({
-            'i':'W', 'k':'S', 'j':'A', 'l':'D', 'r':'R'});
+        g.regKeyAction({'r':'R'});
         g.loop();
         /*
         let m = new City.Model();
