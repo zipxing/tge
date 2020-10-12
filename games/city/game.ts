@@ -8,8 +8,6 @@ namespace City {
     }
 
     export class Game extends tge.Game {
-        readyDel:number = -1;
-
         initGame() {
             let m = <City.Model>this.model;
             this.gamestate=GameState.Normal;
@@ -66,19 +64,9 @@ namespace City {
                         tge.Timer.fire("merge");
                         this.gamestate = GameState.MergeMovie;
                     } else {
-                        let dcid = m.delCell(cid);
-                        if(dcid!=-1) {
-                            if(this.readyDel != dcid) {
-                                if(this.readyDel!=-1) {
-                                    let [x, y] = m.getxyById(this.readyDel);
-                                    let c = m.grid[y][x];
-                                    c.color-=100;
-                                }
-                                this.readyDel = dcid;
-                            }
+                        if(!m.delCell(cid)) {
                             tge.Emitter.fire("City.REDRAW_GRID");
                         } else {
-                            this.readyDel = -1;
                             tge.Timer.fire("drop");
                             this.gamestate = GameState.DropMovie;
                         }

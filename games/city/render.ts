@@ -138,7 +138,7 @@ namespace City {
                 //    ss = s[2];
                 if(level<30 && bd.color!=-1) {
                     let slv = ''+level;
-                    for(let i=0; i<4-slv.length; i++) 
+                    for(let i=0; i<3-slv.length; i++) 
                         slv=pad+slv;
                     ss = slv;
                 } 
@@ -149,7 +149,7 @@ namespace City {
                     let slv = ''+(level/30);
                     for(let i=0; i<4-slv.length; i++) 
                         slv+=pad;
-                    ss = 'W'+slv;
+                    ss = ' W'+slv;
                 }
                 this.drawMsgInCell(b, 2, 3, ss);
                 if(bd.color>100 && !cellmode) {

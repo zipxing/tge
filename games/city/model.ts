@@ -27,6 +27,7 @@ namespace City {
         units: {[key: number]: Unit} = {};
         grid: Cell[][] = [];
         merges: Merge;
+        readyDel: number = -1;
 
         constructor() {
             super();
@@ -38,6 +39,7 @@ namespace City {
             tge.srand(new Date().valueOf());
             //tge.srand(8);
             this.grid = [];
+            this.readyDel = -1;
             for(let i=0; i<Model.cityh; i++) {
                 this.grid[i]=[];
                 for(let j=0; j<Model.cityw; j++)
@@ -293,11 +295,20 @@ namespace City {
             let c = this.grid[y][x];
             if(c.color<100) {
                 c.color+=100;
-                return id;
+                if(this.readyDel != id) {
+                    if(this.readyDel != -1) {
+                        let [rx, ry] = this.getxyById(this.readyDel);
+                        let rc = this.grid[ry][rx];
+                        rc.color-=100;
+                    }
+                    this.readyDel = id;
+                }
+                return false;
             } else {
                 c.color=-1;
+                this.readyDel = -1;
                 this.drop();
-                return -1;
+                return true;
             }
         }
     }
