@@ -28,6 +28,7 @@ namespace City {
         grid: Cell[][] = [];
         merges: Merge;
         readyDel: number = -1;
+        ready2TUnits: number[] = [];
 
         constructor() {
             super();
@@ -159,6 +160,7 @@ namespace City {
                     this.units[uid] = this.unit_map[o];
                 }
             }
+            this.ready2TUnits = [];
             for(let i in this.units) {
                 let cs = this.units[i];
                 let tl = 0;
@@ -180,7 +182,9 @@ namespace City {
                     }
                     cs.cells[j] = r;
                 }
-                cs.ready2T = (tl>=30);
+                cs.ready2T = (tl>=30) && (tl<60) && (Object.keys(cs.cells).length>1);
+                if(cs.ready2T) 
+                    this.ready2TUnits.push(parseInt(i));
             }
         }
 
@@ -211,7 +215,7 @@ namespace City {
                         color: 0, level: 0, fromlevel: 0, tolevel: 0
                     };
                 }
-                this.dumpGrid();
+                //this.dumpGrid();
                 //set blocks...
                 for(let y=0; y<Model.cityh; y++) {
                     let c = this.grid[y][x];
@@ -241,7 +245,7 @@ namespace City {
                 }
                 for(let i=0; i<Model.cityh; i++) 
                     this.copyCell(tmpcs[i], this.grid[i][x]);
-                this.dumpGrid();
+                //this.dumpGrid();
             }
             //this.searchUnit();
             //tge.log(tge.LogLevel.DEBUG, "AFTER DROP", this.unit_map, this.units);

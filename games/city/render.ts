@@ -126,6 +126,20 @@ namespace City {
             b.setLine(lineno, os);
         }
 
+        drawReady2TUnits() {
+            let g = TermRender.game;
+            let m = <City.Model>g.model;
+            for(let i of m.ready2TUnits) {
+                let cs = m.units[i].cells;
+                for(let j in cs) {
+                    let jd = parseInt(j);
+                    let [x, y] = m.getxyById(jd);
+                    let b = this.gridboxes[y][x];
+                    this.drawMsgInCell(b, 1, 3, 't');
+                }
+            }
+        }
+
         drawCell(b:any, index:number, bd:Cell, cellmode:boolean = false) {
             let level = bd.level;
             let s = tge.AscIIManager.getArt(`cc${index}`).blessed_lines;
@@ -177,6 +191,7 @@ namespace City {
                     this.drawCell(b, parseInt(cs.cells[j]), bd);
                 }
             }
+            this.drawReady2TUnits();
         }
 
         redrawGridCellMode(per:number) {
