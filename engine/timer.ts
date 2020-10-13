@@ -18,6 +18,12 @@ namespace tge {
             }
         }
 
+        static setTime(name: string, time: number) {
+            let tmo: TimerData = Timer.timers[name];
+            if (!tmo) return;
+            tmo.count = Math.ceil(time*tge.Game._frameHz);
+        }
+
         static fire(name: string, exdata: any = 0) {
             let tmo: TimerData = Timer.timers[name];
             if (!tmo) return;

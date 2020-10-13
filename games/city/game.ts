@@ -16,12 +16,13 @@ namespace City {
             tge.log(tge.LogLevel.DEBUG, m.unit_map, m.units);
             tge.Emitter.fire("City.REDRAW_GRID");
             tge.Timer.register("merge", 0.3, ()=>{
-                m.postMerge();
+                let lc = m.postMerge();
                 tge.Emitter.fire("City.REDRAW_GRID");
+                tge.Timer.setTime("levelup", lc*0.05);
                 tge.Timer.fire("levelup");
                 this.gamestate = GameState.LevelUpMovie;
             });
-            tge.Timer.register("levelup", 0.2, ()=>{
+            tge.Timer.register("levelup", 0.8, ()=>{
                 m.drop();
                 tge.Timer.fire("drop");
                 this.gamestate = GameState.DropMovie;

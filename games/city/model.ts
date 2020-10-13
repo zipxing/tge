@@ -3,11 +3,10 @@ namespace City {
         id: number;
         fromid: number;
         toid: number;
+        //1,2,3,4:base, 5:T, 6,7,8,9...:W
         color: number;
         //1~29:base, 30:tower, 60,90,120...:wonder
         level: number;
-        fromlevel: number;
-        tolevel: number;
     }
     export interface Unit {
         id: number;
@@ -17,6 +16,10 @@ namespace City {
     export interface Merge {
         objCell: Cell;
         mergeCells: Cell[];
+    }
+    export interface LevelUp {
+        cellid: number;
+        from: number, to: number;
     }
     export class Model extends tge.Model {
         static cityw:number = 5;
@@ -29,11 +32,13 @@ namespace City {
         merges: Merge;
         readyDel: number = -1;
         ready2TUnits: number[] = [];
+        levelUp: LevelUp;
 
         constructor() {
             super();
             this.reset();
             this.merges = {objCell: this.grid[0][0], mergeCells:[]};
+            this.levelUp = {cellid:-1, from:-1, to:-1};
         }
 
         reset() {
@@ -48,10 +53,11 @@ namespace City {
                         id: i*Model.cityw+j,
                         fromid: -1, toid: -1,
                         color: tge.rand() % (Model.citycolor-1) + 1,
-                        level: tge.rand()%2 + 1, fromlevel: 0, tolevel: 0
+                        level: tge.rand()%2 + 1
                     };
             }
             this.merges = {objCell: this.grid[0][0], mergeCells:[]};
+            this.levelUp = {cellid:-1, from:-1, to:-1};
         }
 
         //debug...
@@ -99,8 +105,6 @@ namespace City {
         mergeUnit(us: any) {
             if(us.length==0)
                 return null;
-            //if(us.length==1)
-            //    return us[0];
             for(let i=1; i<us.length; i++) {
                 for(let c in us[i].cells) {
                     us[0].cells[c] = 1;
@@ -130,12 +134,7 @@ namespace City {
                     c.toid = -1;
                     let cur_unit = null;
                     let [x, y] = this.getxyById(c.id);
-                    let dd = [
-                        [0, -1], //up
-                        [0, 1],  //down
-                        [-1, 0], //left
-                        [1, 0]   //right
-                    ];
+                    let dd = [ [0, -1], [0, 1], [-1, 0], [1, 0] ];
                     let us = [];
                     for(let n=0; n<4; n++) {
                         let u = this.getUnit(x+dd[n][0], y+dd[n][1], c.color);
@@ -164,16 +163,14 @@ namespace City {
             for(let i in this.units) {
                 let cs = this.units[i];
                 let tl = 0;
+                let allisT = true;
                 for(let j in cs.cells) {
                     let jd = parseInt(j);
                     let [x, y] = this.getxyById(jd);
-                    tl+=this.grid[y][x].level;
-                    let dd = [
-                        [0, -1], //up
-                        [0, 1],  //down
-                        [-1, 0], //left
-                        [1, 0]   //right
-                    ];
+                    let gl = this.grid[y][x].level;
+                    if(gl!=30) allisT = false;
+                    tl+=gl;
+                    let dd = [ [0, -1], [0, 1], [-1, 0], [1, 0] ];
                     let nd = [8, 4, 2, 1];
                     let r = 0;
                     for(let n=0; n<4; n++) {
@@ -182,8 +179,8 @@ namespace City {
                     }
                     cs.cells[j] = r;
                 }
-                cs.ready2T = (tl>=30) && (tl<60) && (Object.keys(cs.cells).length>1);
-                if(cs.ready2T) 
+                cs.ready2T = (tl>=30 && !allisT)  && (Object.keys(cs.cells).length>1);
+                if(cs.ready2T)
                     this.ready2TUnits.push(parseInt(i));
             }
         }
@@ -194,8 +191,6 @@ namespace City {
             d.toid = s.toid;
             d.color = s.color;
             d.level = s.level;
-            d.fromlevel = s.fromlevel;
-            d.tolevel = s.tolevel;
         }
 
         drop() {
@@ -212,7 +207,7 @@ namespace City {
                 for(let i=0; i<Model.cityh; i++) {
                     tmpcs[i] = {
                         id: 0, fromid: -1, toid: -1,
-                        color: 0, level: 0, fromlevel: 0, tolevel: 0
+                        color: 0, level: 0
                     };
                 }
                 //this.dumpGrid();
@@ -277,6 +272,8 @@ namespace City {
             let c = this.merges.objCell;
             let ms = this.merges.mergeCells;
             let isbase = (c.level < 30);
+            this.levelUp.cellid = c.id;
+            this.levelUp.from = c.level;
             for(let cc of ms) {
                 c.level += cc.level;
                 cc.color = -1;
@@ -287,9 +284,16 @@ namespace City {
                 if(isbase) {
                     c.level = 30;
                     c.color = Model.citycolor + 1;
+                    this.levelUp.to = c.level;
+                    return c.level - this.levelUp.from;
                 } else {
                     c.color = Model.citycolor + (c.level / 30);
+                    this.levelUp.to = c.level;
+                    return Math.floor(c.level/30 - 1);
                 }
+            } else {
+                this.levelUp.to = c.level;
+                return c.level - this.levelUp.from;
             }
         }
 

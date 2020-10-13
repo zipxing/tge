@@ -5,6 +5,7 @@ namespace City {
         gamebox: any;
         gridboxes: any[][];
         msgbox: any;
+        static colors: number[] = [0, 71, 22, 94, 241, 51, 141, 135, 129];
 
         constructor() {
             super();
@@ -86,6 +87,9 @@ namespace City {
             });
             nb.tscreen.append(this.msgbox);
 
+            this.drawTitle();
+            this.drawLogo();
+
             tge.Emitter.register("City.REDRAW_GRID", this.redrawGrid, this);
         }
 
@@ -116,7 +120,7 @@ namespace City {
         }
 
         drawMsgInCell(b:any, lineno:number, start:number, msg:string, color:number = -1) {
-            let s = b.getLine(lineno);
+            let s = b.getLine(lineno).replace(/\{.*?\}/g, '').replace(/\x1b\[[\d;]*m/g, '');
             let cs = '', ce = '';
             if(color>=0) {
                 cs = `{${color}-fg}`;
@@ -129,52 +133,69 @@ namespace City {
         drawReady2TUnits() {
             let g = TermRender.game;
             let m = <City.Model>g.model;
+            if(g.gamestate != GameState.Normal)
+                return;
             for(let i of m.ready2TUnits) {
                 let cs = m.units[i].cells;
                 for(let j in cs) {
                     let jd = parseInt(j);
                     let [x, y] = m.getxyById(jd);
                     let b = this.gridboxes[y][x];
-                    this.drawMsgInCell(b, 1, 3, 't');
+                    let mc = 18 + Math.floor((g.stage / 2)) % 212;
+                    this.drawMsgInCell(b, 1, 4, '∙', mc);
                 }
             }
+        }
+
+        drawLevelUp(s: number) {
+            let g = TermRender.game;
+            let m = <City.Model>g.model;
+            if(g.gamestate != GameState.LevelUpMovie)
+                return;
+            let [x, y] = m.getxyById(m.levelUp.cellid);
+            let b = this.gridboxes[y][x];
+            let l = m.levelUp.from + Math.floor(s*1.0/(tge.Game._frameHz/10.0));
+            let ss = this.getLevelInfo(15, 1, l, true);
+            this.drawMsgInCell(b, 2, 3, ss);
+        }
+
+        getLevelInfo(index:number, c:number, level:number, cellmode:boolean) {
+            let ss = '';
+            let pad = ' ';
+            if(index==0 && cellmode) return '';
+            if(level<30 && c!=-1) {
+                let slv = ''+level;
+                if(level<10) slv=slv+' ';
+                for(let i=0; i<3-slv.length; i++) slv=pad+slv;
+                ss = slv;
+            }
+            if(level==30)
+                ss = ' T ';
+            if(level>30) {
+                let slv = ''+(level/30);
+                for(let i=0; i<4-slv.length; i++) slv+=pad;
+                ss = ' W'+slv;
+            }
+            return ss;
         }
 
         drawCell(b:any, index:number, bd:Cell, cellmode:boolean = false) {
             let level = bd.level;
             let s = tge.AscIIManager.getArt(`cc${index}`).blessed_lines;
+            b.style.fg = TermRender.colors[bd.color%100];
             b.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}`);
 
-            let ss = '';
-            let pad = ' ';
+            let ss = this.getLevelInfo(index, bd.color, bd.level, cellmode);
+            this.drawMsgInCell(b, 2, 3, ss);
             if(index!=0) {
-                //if(bd.color==-1) 
-                //    ss = s[2];
-                if(level<30 && bd.color!=-1) {
-                    let slv = ''+level;
-                    for(let i=0; i<3-slv.length; i++) 
-                        slv=pad+slv;
-                    ss = slv;
-                } 
-                if(level==30) {
-                    ss = ' T ';
-                }
-                if(level>30) {
-                    let slv = ''+(level/30);
-                    for(let i=0; i<4-slv.length; i++) 
-                        slv+=pad;
-                    ss = ' W'+slv;
-                }
-                this.drawMsgInCell(b, 2, 3, ss);
                 if(bd.color>100 && !cellmode) {
                     ss = 'DEL?';
-                    this.drawMsgInCell(b, 3, 2, ss, 197);
+                    this.drawMsgInCell(b, 3, 3, ss, 197);
                 }
             }
         }
 
         redrawGridUnitMode() {
-            let c = [27, 51, 26, 128, 146, 152, 147, 141, 135, 129];
             let g = TermRender.game;
             let m = <City.Model>g.model;
 
@@ -187,16 +208,12 @@ namespace City {
                     b.top = Math.floor(y*5.0+8.0);
                     b.left = Math.floor(x*10.0+1.0);
                     let bd = m.grid[y][x];
-                    b.style.fg = c[bd.color%100];
                     this.drawCell(b, parseInt(cs.cells[j]), bd);
                 }
             }
-            this.drawReady2TUnits();
         }
 
         redrawGridCellMode(per:number) {
-            let bdr = '┌┐└┘─│'
-            let c = [27, 51, 26, 128, 146, 152, 147, 141, 135, 129];
             let g = TermRender.game;
             let m = <City.Model>g.model;
 
@@ -209,14 +226,12 @@ namespace City {
                         let [tx, ty] = m.getxyById(bd.toid);
                         let x = fx + (tx-fx)*(1.0-per);
                         let y = fy + (ty-fy)*(1.0-per);
-                        //tge.log(tge.LogLevel.DEBUG, bd.fromid, bd.toid, fx, fy, tx, ty, x, y, per);
                         b.top = Math.floor(y*5.0+8.0);
                         b.left = Math.floor(x*10.0+1.0);
                     } else {
                         b.top = i*5+8;
                         b.left = j*10+1;
                     }
-                    b.style.fg = c[bd.color%100];
                     if(bd.color>=0)
                         this.drawCell(b, 15, bd, true);
                     else
@@ -229,6 +244,7 @@ namespace City {
             let g = TermRender.game;
             let m = <City.Model>g.model;
             let p = 0;
+            let s = 0;
             switch(g.gamestate) {
                 case GameState.MergeMovie:
                     p = tge.Timer.getPercent("merge");
@@ -236,7 +252,9 @@ namespace City {
                     break;
                 case GameState.LevelUpMovie:
                     p = tge.Timer.getPercent("levelup");
+                    s = tge.Timer.getRStage("levelup");
                     this.redrawGridCellMode(p);
+                    this.drawLevelUp(s);
                     break;
                 case GameState.DropMovie:
                     p = tge.Timer.getPercent("drop");
@@ -245,6 +263,7 @@ namespace City {
                 default:
                     break;
             }
+            this.drawReady2TUnits();
         }
 
         redrawGrid() {
@@ -252,8 +271,6 @@ namespace City {
         }
 
         draw() {
-            this.drawTitle();
-            this.drawLogo();
             this.drawMovie();
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
