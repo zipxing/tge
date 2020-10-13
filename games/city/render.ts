@@ -154,7 +154,11 @@ namespace City {
                 return;
             let [x, y] = m.getxyById(m.levelUp.cellid);
             let b = this.gridboxes[y][x];
-            let l = m.levelUp.from + Math.floor(s*1.0/(tge.Game._frameHz/10.0));
+            let l = 0, step = tge.Game._frameHz*0.05;
+            if(m.levelUp.from==30)
+                l = m.levelUp.from + Math.floor(s/step)*30;
+            else
+                l = m.levelUp.from + Math.floor(s/step);
             let ss = this.getLevelInfo(15, 1, l, true);
             this.drawMsgInCell(b, 2, 3, ss);
         }
@@ -172,7 +176,7 @@ namespace City {
             if(level==30)
                 ss = ' T ';
             if(level>30) {
-                let slv = ''+(level/30);
+                let slv = ''+Math.floor(level/30);
                 for(let i=0; i<4-slv.length; i++) slv+=pad;
                 ss = ' W'+slv;
             }
