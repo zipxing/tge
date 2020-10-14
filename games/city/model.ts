@@ -75,8 +75,8 @@ namespace City {
             tge.log(tge.LogLevel.DEBUG, dgs);
         }
 
-        checkLianTong(x:number, y:number, ic:Cell, u:Unit) {
-            if(x<0 || y<0 || x>=Model.cityw || y>=Model.cityh)
+        checkLianTong(x:number, y:number, ic:Cell, u:Unit, sx:number, ex:number) {
+            if(x<sx || y<0 || x>=ex || y>=Model.cityh)
                 return;
             let c = this.grid[y][x];
             if((c.color == ic.color) && c.level<=30 && ic.level<=30) {
@@ -85,8 +85,8 @@ namespace City {
             }
         }
 
-        getUnit(x:number, y:number, color:number) {
-            if(x<0 || y<0 || x>=Model.cityw || y>=Model.cityh)
+        getUnit(x:number, y:number, color:number, sx:number, ex:number) {
+            if(x<sx || y<0 || x>=ex || y>=Model.cityh)
                 return null;
             let c = this.grid[y][x];
             if(c.color == color) {
@@ -96,8 +96,8 @@ namespace City {
             return null;
         }
 
-        checkBorder(x:number, y:number, u:Unit) {
-            if(x<0 || y<0 || x>=Model.cityw || y>=Model.cityh)
+        checkBorder(x:number, y:number, u:Unit, sx:number, ex:number) {
+            if(x<sx || y<0 || x>=ex || y>=Model.cityh)
                 return true;
             return !((''+(y*Model.cityw+x)) in u.cells);
         }
@@ -125,8 +125,14 @@ namespace City {
         searchUnit() {
             this.unit_map = {};
             this.units = {};
+            this.ready2TUnits = [];
+            //this.searchUnitByXRange(0, Model.cityw);
+            this.searchUnitByXRange(0, Model.cityw-1);
+        }
+
+        searchUnitByXRange(startx: number, endx: number) {
             for(let i=0; i<Model.cityh; i++) {
-                for(let j=0; j<Model.cityw; j++) {
+                for(let j=startx; j<endx; j++) {
                     let c = this.grid[i][j];
                     if(c.color>100)
                         c.color-=100;
@@ -137,7 +143,7 @@ namespace City {
                     let dd = [ [0, -1], [0, 1], [-1, 0], [1, 0] ];
                     let us = [];
                     for(let n=0; n<4; n++) {
-                        let u = this.getUnit(x+dd[n][0], y+dd[n][1], c.color);
+                        let u = this.getUnit(x+dd[n][0], y+dd[n][1], c.color, startx, endx);
                         if(u!=null) us.push(u);
                     }
                     cur_unit = this.mergeUnit(us);
@@ -150,7 +156,7 @@ namespace City {
                         this.unit_map[c.id] = cur_unit;
                     }
                     for(let n=0; n<4; n++)
-                        this.checkLianTong(x+dd[n][0], y+dd[n][1], c, cur_unit);
+                        this.checkLianTong(x+dd[n][0], y+dd[n][1], c, cur_unit, startx, endx);
                 }
             }
             for(let o in this.unit_map) {
@@ -159,7 +165,6 @@ namespace City {
                     this.units[uid] = this.unit_map[o];
                 }
             }
-            this.ready2TUnits = [];
             for(let i in this.units) {
                 let cs = this.units[i];
                 let tl = 0;
@@ -174,7 +179,7 @@ namespace City {
                     let nd = [8, 4, 2, 1];
                     let r = 0;
                     for(let n=0; n<4; n++) {
-                        if(this.checkBorder(x+dd[n][0], y+dd[n][1], cs))
+                        if(this.checkBorder(x+dd[n][0], y+dd[n][1], cs, startx, endx))
                             r+=nd[n];
                     }
                     cs.cells[j] = r;
