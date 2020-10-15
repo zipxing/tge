@@ -8,19 +8,24 @@ namespace City {
         //1~29:base, 30:tower, 60,90,120...:wonder
         level: number;
     }
+
     export interface Unit {
         id: number;
         cells: {[key: number]: any};
+        mergeing: boolean;
         ready2T: boolean;
     }
+
     export interface Merge {
         objCell: Cell;
         mergeCells: Cell[];
     }
+
     export interface LevelUp {
         cellid: number;
         from: number, to: number;
     }
+
     export class Model extends tge.Model {
         static cityw:number = 5;
         static cityh:number = 5;
@@ -32,6 +37,7 @@ namespace City {
         merges: Merge;
         readyDel: number = -1;
         ready2TUnits: number[] = [];
+        moveCellIds: number[] = [];
         levelUp: LevelUp;
 
         constructor() {
@@ -126,8 +132,7 @@ namespace City {
             this.unit_map = {};
             this.units = {};
             this.ready2TUnits = [];
-            //this.searchUnitByXRange(0, Model.cityw);
-            this.searchUnitByXRange(0, Model.cityw-1);
+            this.searchUnitByXRange(0, Model.cityw);
         }
 
         searchUnitByXRange(startx: number, endx: number) {
@@ -199,6 +204,7 @@ namespace City {
         }
 
         drop() {
+            this.moveCellIds = [];
             for(let x=0; x<Model.cityw; x++) {
                 let holes=[], blocks=[];
                 //count holes...
@@ -243,12 +249,15 @@ namespace City {
                     blocks[i].id = (i+holes.length)*Model.cityw + x;
                     this.copyCell(blocks[i], tmpcs[i+holes.length]);
                 }
-                for(let i=0; i<Model.cityh; i++) 
+                for(let i=0; i<Model.cityh; i++) {
                     this.copyCell(tmpcs[i], this.grid[i][x]);
+                    let c = this.grid[i][x];
+                    if(c.fromid != c.toid) {
+                        this.moveCellIds.push(c.id);
+                    }
+                }
                 //this.dumpGrid();
             }
-            //this.searchUnit();
-            //tge.log(tge.LogLevel.DEBUG, "AFTER DROP", this.unit_map, this.units);
         }
 
         //merge cells in a unit...
@@ -261,7 +270,9 @@ namespace City {
                 this.merges = ret;
                 return false;
             }
+            this.moveCellIds = [];
             for(let cid in u.cells) {
+                this.moveCellIds.push(parseInt(cid));
                 let [cx, cy] = this.getxyById(parseInt(cid));
                 let cc = this.grid[cy][cx];
                 if(parseInt(cid) == id) continue;
@@ -270,6 +281,7 @@ namespace City {
                 cc.toid = id;
             }
             this.merges = ret;
+            u.mergeing = true;
             return true;
         }
 

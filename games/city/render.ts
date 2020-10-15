@@ -199,12 +199,14 @@ namespace City {
             }
         }
 
-        redrawGridUnitMode() {
+        drawUnits() {
             let g = TermRender.game;
             let m = <City.Model>g.model;
 
             for(let i in m.units) {
                 let cs = m.units[i];
+                if(cs.mergeing)
+                    continue;
                 for(let j in cs.cells) {
                     let jd = parseInt(j);
                     let [x, y] = m.getxyById(jd);
@@ -217,30 +219,29 @@ namespace City {
             }
         }
 
-        redrawGridCellMode(per:number) {
+        drawMovingCells(per:number) {
             let g = TermRender.game;
             let m = <City.Model>g.model;
 
-            for(let i=0; i<Model.cityh; i++) {
-                for(let j=0; j<Model.cityw; j++) {
-                    let b = this.gridboxes[i][j];
-                    let bd = m.grid[i][j];
-                    if(bd.fromid!=-1 && bd.toid!=-1) {
-                        let [fx, fy] = m.getxyById(bd.fromid);
-                        let [tx, ty] = m.getxyById(bd.toid);
-                        let x = fx + (tx-fx)*(1.0-per);
-                        let y = fy + (ty-fy)*(1.0-per);
-                        b.top = Math.floor(y*5.0+8.0);
-                        b.left = Math.floor(x*10.0+1.0);
-                    } else {
-                        b.top = i*5+8;
-                        b.left = j*10+1;
-                    }
-                    if(bd.color>=0)
-                        this.drawCell(b, 15, bd, true);
-                    else
-                        this.drawCell(b, 0, bd, true);
+            for(let cid of m.moveCellIds) {
+                let [j, i] = m.getxyById(cid);
+                let b = this.gridboxes[i][j];
+                let bd = m.grid[i][j];
+                if(bd.fromid!=-1 && bd.toid!=-1) {
+                    let [fx, fy] = m.getxyById(bd.fromid);
+                    let [tx, ty] = m.getxyById(bd.toid);
+                    let x = fx + (tx-fx)*(1.0-per);
+                    let y = fy + (ty-fy)*(1.0-per);
+                    b.top = Math.floor(y*5.0+8.0);
+                    b.left = Math.floor(x*10.0+1.0);
+                } else {
+                    b.top = i*5+8;
+                    b.left = j*10+1;
                 }
+                if(bd.color>=0)
+                    this.drawCell(b, 15, bd, true);
+                else
+                    this.drawCell(b, 0, bd, true);
             }
         }
 
@@ -252,17 +253,17 @@ namespace City {
             switch(g.gamestate) {
                 case GameState.MergeMovie:
                     p = tge.Timer.getPercent("merge");
-                    this.redrawGridCellMode(p);
+                    this.drawMovingCells(p);
                     break;
                 case GameState.LevelUpMovie:
                     p = tge.Timer.getPercent("levelup");
                     s = tge.Timer.getRStage("levelup");
-                    this.redrawGridCellMode(p);
+                    this.drawMovingCells(p);
                     this.drawLevelUp(s);
                     break;
                 case GameState.DropMovie:
                     p = tge.Timer.getPercent("drop");
-                    this.redrawGridCellMode(p);
+                    this.drawMovingCells(p);
                     break;
                 default:
                     break;
@@ -271,7 +272,7 @@ namespace City {
         }
 
         redrawGrid() {
-            this.redrawGridUnitMode();
+            this.drawUnits();
         }
 
         draw() {
