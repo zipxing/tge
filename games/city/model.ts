@@ -302,7 +302,7 @@ namespace City {
                     c.level = 30;
                     c.color = Model.citycolor + 1;
                     this.levelUp.to = c.level;
-                    return c.level - this.levelUp.from;
+                    return Math.ceil((c.level-this.levelUp.from)/3.0);
                 } else {
                     c.color = Model.citycolor + (c.level / 30);
                     this.levelUp.to = c.level;

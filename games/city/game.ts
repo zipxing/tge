@@ -7,6 +7,8 @@ namespace City {
         NoMove
     }
 
+    export const LEVELUP_STEP_TIME = 0.05;
+
     export class Game extends tge.Game {
         initGame() {
             let m = <City.Model>this.model;
@@ -20,7 +22,7 @@ namespace City {
                 this.gamestate = GameState.LevelUpMovie;
                 let lc = m.postMerge();
                 tge.Emitter.fire("City.REDRAW_GRID");
-                tge.Timer.setTime("levelup", lc*0.05);
+                tge.Timer.setTime("levelup", lc*LEVELUP_STEP_TIME);
                 tge.Timer.fire("levelup");
             });
 

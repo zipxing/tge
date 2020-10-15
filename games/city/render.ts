@@ -35,7 +35,7 @@ namespace City {
                 width:Model.cityw*10+10,
                 height:7,
                 top:0,
-                left:8,
+                left:2,
                 tags:true
             });
             nb.tscreen.append(this.titlebox);
@@ -154,33 +154,46 @@ namespace City {
                 return;
             let [x, y] = m.getxyById(m.levelUp.cellid);
             let b = this.gridboxes[y][x];
-            let l = 0, step = tge.Game._frameHz*0.05;
+            let l = 0, step = tge.Game._frameHz*City.LEVELUP_STEP_TIME;
             if(m.levelUp.from==30)
                 l = m.levelUp.from + Math.floor(s/step)*30;
             else
                 l = m.levelUp.from + Math.floor(s/step);
-            let ss = this.getLevelInfo(15, 1, l, true);
-            this.drawMsgInCell(b, 2, 3, ss);
+            let ss = this.drawLevelInfo(b, 15, 1, l, true);
         }
 
-        getLevelInfo(index:number, c:number, level:number, cellmode:boolean) {
+        drawLevelInfo(b:any, index:number, c:number, level:number, cellmode:boolean) {
             let ss = '';
             let pad = ' ';
             if(index==0 && cellmode) return '';
+            //Base level...
             if(level<30 && c!=-1) {
-                let slv = ''+level;
-                if(level<10) slv=slv+' ';
-                for(let i=0; i<3-slv.length; i++) slv=pad+slv;
+                let ll = Math.ceil(level/3.0);
+                let slv = ''+ll;
+                if(ll<10) slv=' '+slv;
+                //for(let i=0; i<2-slv.length; i++) slv=pad+slv;
                 ss = slv;
+                this.drawMsgInCell(b, 1, 1, '  ___ ' );
+                this.drawMsgInCell(b, 2, 1, ' /\\__\\');
+                this.drawMsgInCell(b, 3, 1, ' ||'+ss+'|');
             }
-            if(level==30)
+            //Tower
+            if(level==30) {
                 ss = ' T ';
-            if(level>30) {
-                let slv = ''+Math.floor(level/30);
-                for(let i=0; i<4-slv.length; i++) slv+=pad;
-                ss = ' W'+slv;
+                this.drawMsgInCell(b, 1, 1, ' ╔═══╗ ');
+                this.drawMsgInCell(b, 2, 1, ' |~~~| ');
+                this.drawMsgInCell(b, 3, 1, ' | T | ');
             }
-            return ss;
+            //Wonder
+            if(level>30) {
+                let ll = Math.floor(level/30);
+                let slv = ''+ll;
+                if(ll<10) slv='0'+slv;
+                ss = ' W'+slv;
+                this.drawMsgInCell(b, 1, 1, ' «{Φ}» ');
+                this.drawMsgInCell(b, 2, 1, ' /   \\ ');
+                this.drawMsgInCell(b, 3, 1, '/'+ss+' \\');
+            }
         }
 
         drawCell(b:any, index:number, bd:Cell, cellmode:boolean = false) {
@@ -189,12 +202,11 @@ namespace City {
             b.style.fg = TermRender.colors[bd.color%100];
             b.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}`);
 
-            let ss = this.getLevelInfo(index, bd.color, bd.level, cellmode);
-            this.drawMsgInCell(b, 2, 3, ss);
+            this.drawLevelInfo(b, index, bd.color, bd.level, cellmode);
             if(index!=0) {
                 if(bd.color>100 && !cellmode) {
-                    ss = 'DEL?';
-                    this.drawMsgInCell(b, 3, 3, ss, 197);
+                    let ss = 'DEL?';
+                    this.drawMsgInCell(b, 0, 3, ss, 197);
                 }
             }
         }
