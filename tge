@@ -22,6 +22,14 @@ def grepArt(path):
         if m:
             p, n = m.group(1), m.group(2)
             art_dict[p]=n
+    arts = subprocess.getstatusoutput('grep "loadArtFileSEQ(" -R '+path)
+    ats = arts[1].split('\n')
+    for a in ats:
+        m = re.match(r'.*[\"|\'](.*)[\"|\'].*[\"|\'](.*)[\"|\'].*,(.*)\).*', a)
+        if m:
+            p, n, c = m.group(1), m.group(2), m.group(3)
+            for i in range(int(c)):
+                art_dict[p+n+str(i)+'.txt']=n+str(i)
     return art_dict
 
 games = {
@@ -81,7 +89,7 @@ games = {
     "city" : {
         "path": "games/city",
         "namespace": "City",
-        "web": False,
+        "web": True,
         "src": [
             "model.ts",
             "render.ts",

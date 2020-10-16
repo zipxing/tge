@@ -12,6 +12,12 @@ namespace tge {
         private static arts:{[artname: string]: any} = {};
         static arts_jsdef:{[artname: string]: any} = {};
 
+        static loadArtFileSEQ(fpath: string, name:string, count: number) {
+            for(let i=0; i<count; i++) {
+                AscIIManager.loadArtFile(fpath+name+i+'.txt', name+i);
+            }
+        }
+
         static loadArtFile(fpath: string, name: string) {
             try {
                 let fs = require("fs");

@@ -12,22 +12,7 @@ namespace City {
 
             tge.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
             tge.AscIIManager.loadArtFile("ascii_art/city.txt", "city");
-            tge.AscIIManager.loadArtFile("ascii_art/cc0.txt", "cc0");
-            tge.AscIIManager.loadArtFile("ascii_art/cc1.txt", "cc1");
-            tge.AscIIManager.loadArtFile("ascii_art/cc2.txt", "cc2");
-            tge.AscIIManager.loadArtFile("ascii_art/cc3.txt", "cc3");
-            tge.AscIIManager.loadArtFile("ascii_art/cc4.txt", "cc4");
-            tge.AscIIManager.loadArtFile("ascii_art/cc5.txt", "cc5");
-            tge.AscIIManager.loadArtFile("ascii_art/cc6.txt", "cc6");
-            tge.AscIIManager.loadArtFile("ascii_art/cc7.txt", "cc7");
-            tge.AscIIManager.loadArtFile("ascii_art/cc8.txt", "cc8");
-            tge.AscIIManager.loadArtFile("ascii_art/cc9.txt", "cc9");
-            tge.AscIIManager.loadArtFile("ascii_art/cc10.txt", "cc10");
-            tge.AscIIManager.loadArtFile("ascii_art/cc11.txt", "cc11");
-            tge.AscIIManager.loadArtFile("ascii_art/cc12.txt", "cc12");
-            tge.AscIIManager.loadArtFile("ascii_art/cc13.txt", "cc13");
-            tge.AscIIManager.loadArtFile("ascii_art/cc14.txt", "cc14");
-            tge.AscIIManager.loadArtFile("ascii_art/cc15.txt", "cc15");
+            tge.AscIIManager.loadArtFileSEQ("ascii_art/", "cc", 16);
 
             let nb = (<tge.TermRun>tge.env);
 
