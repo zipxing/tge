@@ -175,8 +175,8 @@ namespace City {
                 let slv = ''+ll;
                 if(ll<10) slv='0'+slv;
                 ss = ' W'+slv;
-                this.drawMsgInCell(b, 1, 1, ' «{Φ}» ');
-                this.drawMsgInCell(b, 2, 1, ' /   \\ ');
+                this.drawMsgInCell(b, 1, 1, ' \\≈Θ≈/ ');
+                this.drawMsgInCell(b, 2, 1, ' /÷÷÷\\ ');
                 this.drawMsgInCell(b, 3, 1, '/'+ss+' \\');
             }
         }
