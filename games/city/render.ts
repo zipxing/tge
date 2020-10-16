@@ -17,7 +17,7 @@ namespace City {
             let nb = (<tge.TermRun>tge.env);
 
             this.titlebox = nb.blessed.box({
-                width:Model.cityw*10+10,
+                width:City.WIDTH*10+10,
                 height:7,
                 top:0,
                 left:2,
@@ -29,14 +29,14 @@ namespace City {
                 width:12,
                 height:4,
                 top:3,
-                left:Model.cityw*10+16,
+                left:City.WIDTH*10+16,
                 tags:true
             });
             nb.tscreen.append(this.logobox);
 
             this.gamebox = nb.blessed.box({
-                width:Model.cityw*10+2,
-                height:Model.cityh*5+2,
+                width:City.WIDTH*10+2,
+                height:City.HEIGHT*5+2,
                 top:7,
                 left:0,
                 border:{type:'line', fg:238},
@@ -45,9 +45,9 @@ namespace City {
             nb.tscreen.append(this.gamebox);
 
             this.gridboxes=[];
-            for(let i=0;i<Model.cityh;i++) {
+            for(let i=0;i<City.HEIGHT;i++) {
                 this.gridboxes[i]=[];
-                for(let j=0;j<Model.cityw;j++) {
+                for(let j=0;j<City.WIDTH;j++) {
                     this.gridboxes[i][j]=nb.blessed.box({
                         width:10,
                         height:5,
@@ -64,9 +64,9 @@ namespace City {
 
             this.msgbox = nb.blessed.box({
                 width:23,
-                height:Model.cityh*5+2,
+                height:City.HEIGHT*5+2,
                 top:7,
-                left:Model.cityw*10+3,
+                left:City.WIDTH*10+3,
                 border:{type:'line', fg:238},
                 tags:true
             });

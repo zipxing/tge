@@ -26,11 +26,11 @@ namespace City {
         from: number, to: number;
     }
 
-    export class Model extends tge.Model {
-        static cityw:number = 5;
-        static cityh:number = 5;
-        static citycolor:number = 4;
+    export const WIDTH:number = 5;
+    export const HEIGHT:number = 5;
+    export const COLOR_COUNT:number = 4;
 
+    export class Model extends tge.Model {
         unit_map: { [key: number]: Unit} = {};
         units: {[key: number]: Unit} = {};
         grid: Cell[][] = [];
@@ -52,13 +52,13 @@ namespace City {
             //tge.srand(8);
             this.grid = [];
             this.readyDel = -1;
-            for(let i=0; i<Model.cityh; i++) {
+            for(let i=0; i<City.HEIGHT; i++) {
                 this.grid[i]=[];
-                for(let j=0; j<Model.cityw; j++)
+                for(let j=0; j<City.WIDTH; j++)
                     this.grid[i][j]={
-                        id: i*Model.cityw+j,
+                        id: i*City.WIDTH+j,
                         fromid: -1, toid: -1,
-                        color: tge.rand() % (Model.citycolor-1) + 1,
+                        color: tge.rand() % (City.COLOR_COUNT-1) + 1,
                         level: tge.rand()%2 + 1
                     };
             }
@@ -69,8 +69,8 @@ namespace City {
         //debug...
         dumpGrid() {
             let dgs = '---------------DUMPGRID-----------------\n';
-            for(let i=0; i<Model.cityh; i++) {
-                for(let j=0; j<Model.cityw; j++) {
+            for(let i=0; i<City.HEIGHT; i++) {
+                for(let j=0; j<City.WIDTH; j++) {
                     let c = this.grid[i][j];
                     let ids = c.id<10?'0'+c.id:c.id;
                     dgs+=('| '+ids+' '+c.color+' '+c.fromid+' '+c.toid+' '+c.level+' |    ');
@@ -82,7 +82,7 @@ namespace City {
         }
 
         checkLianTong(x:number, y:number, ic:Cell, u:Unit, sx:number, ex:number) {
-            if(x<sx || y<0 || x>=ex || y>=Model.cityh)
+            if(x<sx || y<0 || x>=ex || y>=City.HEIGHT)
                 return;
             let c = this.grid[y][x];
             if((c.color == ic.color) && c.level<=30 && ic.level<=30) {
@@ -92,7 +92,7 @@ namespace City {
         }
 
         getUnit(x:number, y:number, color:number, sx:number, ex:number) {
-            if(x<sx || y<0 || x>=ex || y>=Model.cityh)
+            if(x<sx || y<0 || x>=ex || y>=City.HEIGHT)
                 return null;
             let c = this.grid[y][x];
             if(c.color == color) {
@@ -103,9 +103,9 @@ namespace City {
         }
 
         checkBorder(x:number, y:number, u:Unit, sx:number, ex:number) {
-            if(x<sx || y<0 || x>=ex || y>=Model.cityh)
+            if(x<sx || y<0 || x>=ex || y>=City.HEIGHT)
                 return true;
-            return !((''+(y*Model.cityw+x)) in u.cells);
+            return !((''+(y*City.WIDTH+x)) in u.cells);
         }
 
         mergeUnit(us: any) {
@@ -123,8 +123,8 @@ namespace City {
         getxyById(id:number) {
             let x = 0;
             let y = 0;
-            x = (id+25) % Model.cityw;
-            y = Math.floor(id / Model.cityw);
+            x = (id+25) % City.WIDTH;
+            y = Math.floor(id / City.WIDTH);
             return [x, y];
         }
 
@@ -132,11 +132,11 @@ namespace City {
             this.unit_map = {};
             this.units = {};
             this.ready2TUnits = [];
-            this.searchUnitByXRange(0, Model.cityw);
+            this.searchUnitByXRange(0, City.WIDTH);
         }
 
         searchUnitByXRange(startx: number, endx: number) {
-            for(let i=0; i<Model.cityh; i++) {
+            for(let i=0; i<City.HEIGHT; i++) {
                 for(let j=startx; j<endx; j++) {
                     let c = this.grid[i][j];
                     if(c.color>100)
@@ -205,17 +205,17 @@ namespace City {
 
         drop() {
             this.moveCellIds = [];
-            for(let x=0; x<Model.cityw; x++) {
+            for(let x=0; x<City.WIDTH; x++) {
                 let holes=[], blocks=[];
                 //count holes...
-                for(let y=0; y<Model.cityh; y++) {
+                for(let y=0; y<City.HEIGHT; y++) {
                     let c = this.grid[y][x];
                     if(c.color==-1)
                         holes.push(c);
                 }
                 if(holes.length==0) continue;
                 let tmpcs:Cell[] = [];
-                for(let i=0; i<Model.cityh; i++) {
+                for(let i=0; i<City.HEIGHT; i++) {
                     tmpcs[i] = {
                         id: 0, fromid: -1, toid: -1,
                         color: 0, level: 0
@@ -223,33 +223,33 @@ namespace City {
                 }
                 //this.dumpGrid();
                 //set blocks...
-                for(let y=0; y<Model.cityh; y++) {
+                for(let y=0; y<City.HEIGHT; y++) {
                     let c = this.grid[y][x];
                     if(c.color==-1) continue;
                     let dropcnt = 0;
-                    for(let n=y+1; n<Model.cityh; n++) {
+                    for(let n=y+1; n<City.HEIGHT; n++) {
                         let cc = this.grid[n][x];
                         if(cc.color==-1) dropcnt++;
                     }
                     c.fromid = c.id;
-                    c.toid =   c.id + dropcnt*Model.cityw;
+                    c.toid =   c.id + dropcnt*City.WIDTH;
                     blocks.push(c);
                 }
                 //set new block(reuse hole)...
                 for(let i=0; i<holes.length; i++) {
                     let h = holes[i];
-                    h.color = tge.rand()%Model.citycolor + 1;
+                    h.color = tge.rand()%City.COLOR_COUNT + 1;
                     h.level = tge.rand()%2 + 1;
-                    h.fromid = (i-holes.length)*Model.cityw + x;
-                    h.toid = i*Model.cityw + x;
+                    h.fromid = (i-holes.length)*City.WIDTH + x;
+                    h.toid = i*City.WIDTH + x;
                     h.id = h.toid;
                     this.copyCell(h, tmpcs[i]);
                 }
                 for(let i=0; i<blocks.length; i++) {
-                    blocks[i].id = (i+holes.length)*Model.cityw + x;
+                    blocks[i].id = (i+holes.length)*City.WIDTH + x;
                     this.copyCell(blocks[i], tmpcs[i+holes.length]);
                 }
-                for(let i=0; i<Model.cityh; i++) {
+                for(let i=0; i<City.HEIGHT; i++) {
                     this.copyCell(tmpcs[i], this.grid[i][x]);
                     let c = this.grid[i][x];
                     if(c.fromid != c.toid) {
@@ -300,11 +300,11 @@ namespace City {
             if(c.level>=30) {
                 if(isbase) {
                     c.level = 30;
-                    c.color = Model.citycolor + 1;
+                    c.color = City.COLOR_COUNT + 1;
                     this.levelUp.to = c.level;
                     return Math.ceil((c.level-this.levelUp.from)/3.0);
                 } else {
-                    c.color = Model.citycolor + (c.level / 30);
+                    c.color = City.COLOR_COUNT + (c.level / 30);
                     this.levelUp.to = c.level;
                     return Math.floor(c.level/30 - 1);
                 }

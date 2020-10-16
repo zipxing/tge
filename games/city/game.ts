@@ -65,7 +65,7 @@ namespace City {
             let m = <City.Model>this.model;
             switch(ag[0]) {
                 case "M":
-                    let cid = i*City.Model.cityw+j;
+                    let cid = i*City.WIDTH+j;
                     if(m.mergeCell(cid)) {
                         tge.Timer.fire("merge");
                         this.gamestate = GameState.MergeMovie;
