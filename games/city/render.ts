@@ -147,6 +147,7 @@ namespace City {
             let ss = this.drawLevelInfo(b, 15, 1, l, true);
         }
 
+        //Some Emoji display exceptions, such as:🏛⛪️
         drawLevelInfo(b:any, index:number, c:number, level:number, cellmode:boolean) {
             let ss = '';
             let pad = ' ';
