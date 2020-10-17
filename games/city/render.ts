@@ -160,14 +160,20 @@ namespace City {
                 if(ll<10) slv=' '+slv;
                 //for(let i=0; i<2-slv.length; i++) slv=pad+slv;
                 ss = slv;
-                this.drawMsgInCell(b, 2, 2, ' 🏠 ', -1, -1);
+                if(tge.env.kind == 'TERM')
+                    this.drawMsgInCell(b, 2, 2, ' 🏠 ', -1, -1);
+                else
+                    this.drawMsgInCell(b, 2, 2, ' BB ', -1);
                 this.drawMsgInCell(b, 3, 2, ' '+ss);
 
             }
             //Tower
             if(level==30) {
                 ss = 'T';
-                this.drawMsgInCell(b, 2, 2, ' 🏡 ', -1, -1);
+                if(tge.env.kind == 'TERM')
+                    this.drawMsgInCell(b, 2, 2, ' 🏡 ', -1, -1);
+                else
+                    this.drawMsgInCell(b, 2, 2, ' TO ', -1);
                 this.drawMsgInCell(b, 3, 2, ' '+ss);
             }
             //Wonder
@@ -176,7 +182,10 @@ namespace City {
                 let slv = ''+ll;
                 if(ll<10) slv='0'+slv;
                 ss = ' W'+slv;
-                this.drawMsgInCell(b, 2, 2, ' 🏭 ', -1, -1);
+                if(tge.env.kind == 'TERM')
+                    this.drawMsgInCell(b, 2, 2, ' 🏭 ', -1, -1);
+                else
+                    this.drawMsgInCell(b, 2, 2, ' WD ', -1);
                 this.drawMsgInCell(b, 3, 1, ss);
             }
         }
