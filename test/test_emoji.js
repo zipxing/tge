@@ -30,14 +30,14 @@ var box1 = blessed.box({
   left: 12,
   width: 10,
   height: 10,
-  content: '😍 🍋 🚜 🚗 ',
+  content: '♠',
   tags: true,
   border: {
     type: 'line'
   },
   style: {
-    fg: 5,
-    bg: 8,
+    fg: 15,
+    bg: 0,
     border: {
       fg: '#ffffff'
     },
