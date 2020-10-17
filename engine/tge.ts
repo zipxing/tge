@@ -63,7 +63,7 @@ namespace tge {
             case "TERM":
                 let bt = require('blessed');
                 let pt = bt.program();
-                let st = bt.screen({smartCSR:true});
+                let st = bt.screen({smartCSR:true, fullUnicode:true});
                 env = <TermRun>{
                     kind:runenv,
                     blessed:bt,
