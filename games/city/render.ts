@@ -104,14 +104,14 @@ namespace City {
             this.msgbox.setContent(msg[g.gamestate]);
         }
 
-        drawMsgInCell(b:any, lineno:number, start:number, msg:string, color:number = -1) {
+        drawMsgInCell(b:any, lineno:number, start:number, msg:string, color:number = -1, adj:number = 0) {
             let s = b.getLine(lineno).replace(/\{.*?\}/g, '').replace(/\x1b\[[\d;]*m/g, '');
             let cs = '', ce = '';
             if(color>=0) {
                 cs = `{${color}-fg}`;
                 ce = '{/}'
             }
-            let os = s.slice(0, start) + cs + msg + ce + s.slice(start+msg.length);
+            let os = s.slice(0, start) + cs + msg + ce + s.slice(start+msg.length+adj);
             b.setLine(lineno, os);
         }
 
@@ -147,10 +147,13 @@ namespace City {
             let ss = this.drawLevelInfo(b, 15, 1, l, true);
         }
 
+        //Some Emoji display exceptions, such as:🏛⛪️
         drawLevelInfo(b:any, index:number, c:number, level:number, cellmode:boolean) {
             let ss = '';
             let pad = ' ';
             if(index==0 && cellmode) return '';
+            let s = tge.AscIIManager.getArt(`cc${index}`).blessed_lines;
+            b.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}`);
             //Base level...
             if(level<30 && c!=-1) {
                 let ll = Math.ceil(level/3.0);
@@ -158,16 +161,21 @@ namespace City {
                 if(ll<10) slv=' '+slv;
                 //for(let i=0; i<2-slv.length; i++) slv=pad+slv;
                 ss = slv;
-                this.drawMsgInCell(b, 1, 1, '  ___ ' );
-                this.drawMsgInCell(b, 2, 1, ' /\\__\\');
-                this.drawMsgInCell(b, 3, 1, ' ||'+ss+'|');
+                if(tge.env.kind == 'TERM')
+                    this.drawMsgInCell(b, 2, 2, ' 🏠 ', -1, -1);
+                else
+                    this.drawMsgInCell(b, 2, 2, ' BB ', -1);
+                this.drawMsgInCell(b, 3, 2, ' '+ss);
+
             }
             //Tower
             if(level==30) {
-                ss = ' T ';
-                this.drawMsgInCell(b, 1, 1, ' ╔═══╗ ');
-                this.drawMsgInCell(b, 2, 1, ' |~~~| ');
-                this.drawMsgInCell(b, 3, 1, ' | T | ');
+                ss = 'T';
+                if(tge.env.kind == 'TERM')
+                    this.drawMsgInCell(b, 2, 2, ' 🏡 ', -1, -1);
+                else
+                    this.drawMsgInCell(b, 2, 2, ' TO ', -1);
+                this.drawMsgInCell(b, 3, 2, ' '+ss);
             }
             //Wonder
             if(level>30) {
@@ -175,9 +183,14 @@ namespace City {
                 let slv = ''+ll;
                 if(ll<10) slv='0'+slv;
                 ss = ' W'+slv;
-                this.drawMsgInCell(b, 1, 1, ' \\≈Θ≈/ ');
+                /*this.drawMsgInCell(b, 1, 1, ' \\≈Θ≈/ ');
                 this.drawMsgInCell(b, 2, 1, ' /÷÷÷\\ ');
-                this.drawMsgInCell(b, 3, 1, '/'+ss+' \\');
+                this.drawMsgInCell(b, 3, 1, '/'+ss+' \\');*/
+                if(tge.env.kind == 'TERM')
+                    this.drawMsgInCell(b, 2, 2, ' 🏭 ', -1, -1);
+                else
+                    this.drawMsgInCell(b, 2, 2, ' WD ', -1);
+                this.drawMsgInCell(b, 3, 1, ss);
             }
         }
 

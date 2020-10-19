@@ -157,6 +157,20 @@ def make_cmd_line(name, is_build, oa=[]):
         return rcs
 
 def prepareTool():
+    if not os.path.exists('node_modules/blessed/lib/unicode.js'):
+        printColor('green', '🍀 NPM install...')
+        c = 'npm install'
+        print(c)
+        os.system(c)
+
+    patched = subprocess.getstatusoutput('grep zipxing node_modules/blessed/lib/unicode.js')
+    pt = patched[1].split('\n')
+    if len(pt[0])==0:
+        printColor('green', '🍀 Patch blessed for emoji...')
+        c = 'cp -f vendor/unicode.js node_modules/blessed/lib/unicode.js'
+        print(c)
+        os.system(c)
+
     if not os.path.exists('tmp/art2js.js'):
         r = make_cmd_line('art2js', True)
         for c in r:
