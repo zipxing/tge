@@ -161,9 +161,7 @@ namespace City {
             //Base level...
             if(level<30 && c!=-1) {
                 let ll = Math.ceil(level/3.0);
-                let slv = ''+ll;
-                if(ll<10) slv=' '+slv;
-                ss = slv;
+                let ss = (''+ll).padStart(2);
                 let emoji = ' 🏠 ';
                 if(ll<=3) 
                     emoji = ' 🏡 ';
@@ -171,7 +169,6 @@ namespace City {
                     emoji = ' 🏠 ';
                 else
                     emoji = ' 🏬 ';
-
                 if(tge.env.kind == 'TERM')
                     this.drawMsgInCell(b, 2, 2, emoji, -1, -1);
                 else
@@ -191,9 +188,7 @@ namespace City {
             //Wonder
             if(level>30) {
                 let ll = Math.floor(level/30);
-                let slv = ''+ll;
-                if(ll<10) slv='0'+slv;
-                ss = ' W'+slv;
+                ss = ' W'+ (''+ll).padStart(2, '0');
                 /*this.drawMsgInCell(b, 1, 1, ' \\≈Θ≈/ ');
                 this.drawMsgInCell(b, 2, 1, ' /÷÷÷\\ ');
                 this.drawMsgInCell(b, 3, 1, '/'+ss+' \\');*/

@@ -68,13 +68,16 @@ namespace City {
 
         //debug...
         dumpGrid(msg:string = '') {
+            return;
             let dgs = `----------DUMPGRID${msg}------------\n`;
             for(let i=0; i<City.HEIGHT; i++) {
                 for(let j=0; j<City.WIDTH; j++) {
                     let c = this.grid[i][j];
-                    let ids = c.id<10?'0'+c.id:c.id;
+                    let ids = (''+c.id).padStart(2);
+                    let ccs = (''+c.color).padStart(3);
+                    let cls = (''+c.level).padStart(3);
                     //dgs+=('| '+ids+' '+c.color+' '+c.fromid+' '+c.toid+' '+c.level+' |    ');
-                    dgs+=('| '+ids+' '+c.color+' '+c.level+' |    ');
+                    dgs+=('| '+ids+' '+ccs+' '+cls+' |    ');
                 }
                 dgs+='\n';
             }
