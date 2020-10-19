@@ -7,16 +7,17 @@ var screen = blessed.screen({fullUnicode:true});
 var box = blessed.box({
   top: 2,
   left: 2,
-  width: 10,
-  height: 10,
-  content: '😍 🍋 🏭 🚗 ',
+  width: 50,
+  height: 30,
+  // ⛺️🏕🏚🏘
+  content: '😍  🍋  🏭  🚗  🏠  🏡  🏬  🏢  🛕  🎡  🗿  🍉  ',
   tags: true,
   border: {
     type: 'line'
   },
   style: {
-    fg: 5,
-    bg: 8,
+    fg: 15,
+    bg: 0,
     border: {
       fg: '#ffffff'
     },
@@ -27,7 +28,7 @@ var box = blessed.box({
 });
 var box1 = blessed.box({
   top: 2,
-  left: 12,
+  left: 62,
   width: 10,
   height: 10,
   content: '♠',

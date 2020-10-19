@@ -67,6 +67,7 @@ namespace City {
                 case "M":
                     let cid = i*City.WIDTH+j;
                     if(m.mergeCell(cid)) {
+                        tge.Emitter.fire("City.REDRAW_GRID");
                         tge.Timer.fire("merge");
                         this.gamestate = GameState.MergeMovie;
                     } else {

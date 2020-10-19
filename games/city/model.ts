@@ -67,13 +67,14 @@ namespace City {
         }
 
         //debug...
-        dumpGrid() {
-            let dgs = '---------------DUMPGRID-----------------\n';
+        dumpGrid(msg:string = '') {
+            let dgs = `----------DUMPGRID${msg}------------\n`;
             for(let i=0; i<City.HEIGHT; i++) {
                 for(let j=0; j<City.WIDTH; j++) {
                     let c = this.grid[i][j];
                     let ids = c.id<10?'0'+c.id:c.id;
-                    dgs+=('| '+ids+' '+c.color+' '+c.fromid+' '+c.toid+' '+c.level+' |    ');
+                    //dgs+=('| '+ids+' '+c.color+' '+c.fromid+' '+c.toid+' '+c.level+' |    ');
+                    dgs+=('| '+ids+' '+c.color+' '+c.level+' |    ');
                 }
                 dgs+='\n';
             }
@@ -221,7 +222,7 @@ namespace City {
                         color: 0, level: 0
                     };
                 }
-                //this.dumpGrid();
+                this.dumpGrid('bdrop');
                 //set blocks...
                 for(let y=0; y<City.HEIGHT; y++) {
                     let c = this.grid[y][x];
@@ -256,7 +257,7 @@ namespace City {
                         this.moveCellIds.push(c.id);
                     }
                 }
-                //this.dumpGrid();
+                this.dumpGrid('adrop');
             }
         }
 
@@ -282,10 +283,18 @@ namespace City {
             }
             this.merges = ret;
             u.mergeing = true;
+            if(this.readyDel != -1) {
+                let [rx, ry] = this.getxyById(this.readyDel);
+                let rc = this.grid[ry][rx];
+                rc.color-=100;
+                this.readyDel = -1;
+            }
             return true;
         }
 
         postMerge() {
+            tge.log(tge.LogLevel.DEBUG, 'POSTMERGE..........');
+            this.dumpGrid('bpostm');
             let c = this.merges.objCell;
             let ms = this.merges.mergeCells;
             let isbase = (c.level < 30);
@@ -302,14 +311,17 @@ namespace City {
                     c.level = 30;
                     c.color = City.COLOR_COUNT + 1;
                     this.levelUp.to = c.level;
+                    this.dumpGrid('apostm1');
                     return Math.ceil((c.level-this.levelUp.from)/3.0);
                 } else {
                     c.color = City.COLOR_COUNT + (c.level / 30);
                     this.levelUp.to = c.level;
+                    this.dumpGrid('apostm2');
                     return Math.floor(c.level/30 - 1);
                 }
             } else {
                 this.levelUp.to = c.level;
+                this.dumpGrid('apostm3');
                 return c.level - this.levelUp.from;
             }
         }

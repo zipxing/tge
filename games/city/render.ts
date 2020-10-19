@@ -83,6 +83,7 @@ namespace City {
             if(!TermRender.game) return;
             let g = TermRender.game;
             let m = <City.Model>g.model;
+            if(g.gamestate!=GameState.Normal) return;
             g.useract.splice(0,0,`${t}:${i}:${j}`);
         }
 
@@ -151,18 +152,28 @@ namespace City {
         drawLevelInfo(b:any, index:number, c:number, level:number, cellmode:boolean) {
             let ss = '';
             let pad = ' ';
-            if(index==0 && cellmode) return '';
+
             let s = tge.AscIIManager.getArt(`cc${index}`).blessed_lines;
             b.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}`);
+
+            if(index==0 && cellmode) return;
+
             //Base level...
             if(level<30 && c!=-1) {
                 let ll = Math.ceil(level/3.0);
                 let slv = ''+ll;
                 if(ll<10) slv=' '+slv;
-                //for(let i=0; i<2-slv.length; i++) slv=pad+slv;
                 ss = slv;
+                let emoji = ' 🏠 ';
+                if(ll<=3) 
+                    emoji = ' 🏡 ';
+                else if(ll<=6)
+                    emoji = ' 🏠 ';
+                else
+                    emoji = ' 🏬 ';
+
                 if(tge.env.kind == 'TERM')
-                    this.drawMsgInCell(b, 2, 2, ' 🏠 ', -1, -1);
+                    this.drawMsgInCell(b, 2, 2, emoji, -1, -1);
                 else
                     this.drawMsgInCell(b, 2, 2, ' BB ', -1);
                 this.drawMsgInCell(b, 3, 2, ' '+ss);
@@ -172,10 +183,10 @@ namespace City {
             if(level==30) {
                 ss = 'T';
                 if(tge.env.kind == 'TERM')
-                    this.drawMsgInCell(b, 2, 2, ' 🏡 ', -1, -1);
+                    this.drawMsgInCell(b, 2, 2, ' 🏭 ', -1, -1);
                 else
                     this.drawMsgInCell(b, 2, 2, ' TO ', -1);
-                this.drawMsgInCell(b, 3, 2, ' '+ss);
+                this.drawMsgInCell(b, 3, 3, ' '+ss);
             }
             //Wonder
             if(level>30) {
@@ -187,18 +198,15 @@ namespace City {
                 this.drawMsgInCell(b, 2, 1, ' /÷÷÷\\ ');
                 this.drawMsgInCell(b, 3, 1, '/'+ss+' \\');*/
                 if(tge.env.kind == 'TERM')
-                    this.drawMsgInCell(b, 2, 2, ' 🏭 ', -1, -1);
+                    this.drawMsgInCell(b, 2, 2, ' 🗿 ', -1, -1);
                 else
                     this.drawMsgInCell(b, 2, 2, ' WD ', -1);
-                this.drawMsgInCell(b, 3, 1, ss);
+                this.drawMsgInCell(b, 3, 2, ss);
             }
         }
 
         drawCell(b:any, index:number, bd:Cell, cellmode:boolean = false) {
-            let level = bd.level;
-            let s = tge.AscIIManager.getArt(`cc${index}`).blessed_lines;
             b.style.fg = TermRender.colors[bd.color%100];
-            b.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}`);
 
             this.drawLevelInfo(b, index, bd.color, bd.level, cellmode);
             if(index!=0) {
