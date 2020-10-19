@@ -68,8 +68,8 @@ namespace City {
 
         //debug...
         dumpGrid(msg:string = '') {
-            return;
-            let dgs = `----------DUMPGRID${msg}------------\n`;
+            //return;
+            let dgs = `---------DUMPGRID.${msg}------------\n`;
             for(let i=0; i<City.HEIGHT; i++) {
                 for(let j=0; j<City.WIDTH; j++) {
                     let c = this.grid[i][j];

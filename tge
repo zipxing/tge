@@ -5,33 +5,6 @@ import re
 import sys
 import subprocess
 
-
-Color={'black':30, 'red':31, 'green':32, 'yellow':33, 'blue':34, \
-       'mag':35, 'cyan':36, 'white':37}
-def printColor(color, msg, crlf=True):
-    sys.stdout.write('\033[1;'+str(Color[color])+'m'+msg+'\033[0m')
-    if crlf: sys.stdout.write('\n')
-    sys.stdout.flush()
-
-def grepArt(path):
-    art_dict = {}
-    arts = subprocess.getstatusoutput('grep "loadArtFile(" -R '+path)
-    ats = arts[1].split('\n')
-    for a in ats:
-        m = re.match(r'.*[\"|\'](.*)[\"|\'].*[\"|\'](.*)[\"|\'].*', a)
-        if m:
-            p, n = m.group(1), m.group(2)
-            art_dict[p]=n
-    arts = subprocess.getstatusoutput('grep "loadArtFileSEQ(" -R '+path)
-    ats = arts[1].split('\n')
-    for a in ats:
-        m = re.match(r'.*[\"|\'](.*)[\"|\'].*[\"|\'](.*)[\"|\'].*,(.*)\).*', a)
-        if m:
-            p, n, c = m.group(1), m.group(2), m.group(3)
-            for i in range(int(c)):
-                art_dict[p+n+str(i)+'.txt']=n+str(i)
-    return art_dict
-
 games = {
     "engine" : {
         "path": "engine",
@@ -117,6 +90,32 @@ games = {
         ]
     }
 }
+
+Color={'black':30, 'red':31, 'green':32, 'yellow':33, 'blue':34, \
+       'mag':35, 'cyan':36, 'white':37}
+def printColor(color, msg, crlf=True):
+    sys.stdout.write('\033[1;'+str(Color[color])+'m'+msg+'\033[0m')
+    if crlf: sys.stdout.write('\n')
+    sys.stdout.flush()
+
+def grepArt(path):
+    art_dict = {}
+    arts = subprocess.getstatusoutput('grep "loadArtFile(" -R '+path)
+    ats = arts[1].split('\n')
+    for a in ats:
+        m = re.match(r'.*[\"|\'](.*)[\"|\'].*[\"|\'](.*)[\"|\'].*', a)
+        if m:
+            p, n = m.group(1), m.group(2)
+            art_dict[p]=n
+    arts = subprocess.getstatusoutput('grep "loadArtFileSEQ(" -R '+path)
+    ats = arts[1].split('\n')
+    for a in ats:
+        m = re.match(r'.*[\"|\'](.*)[\"|\'].*[\"|\'](.*)[\"|\'].*,(.*)\).*', a)
+        if m:
+            p, n, c = m.group(1), m.group(2), m.group(3)
+            for i in range(int(c)):
+                art_dict[p+n+str(i)+'.txt']=n+str(i)
+    return art_dict
 
 def make_cmd_line(name, is_build, oa=[]):
     cmds = []
