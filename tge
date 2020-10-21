@@ -70,6 +70,18 @@ games = {
             "main.ts"
         ]
     },
+    "unblock" : {
+        "path": "games/unblock",
+        "namespace": "Unblock",
+        "web": False,
+        "src": [
+            "constant.ts",
+            "model.ts",
+            "render.ts",
+            "game.ts",
+            "main.ts"
+        ]
+    },
     "ascii" : {
         "path": "tool/asc2editor",
         "namespace": "AscIIEditor",

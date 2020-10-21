@@ -172,6 +172,18 @@ namespace tge {
         y: number;
     }
 
+    export interface Rect {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    }
+
+    export function pointInRect(rect:tge.Rect, point:tge.Point) {
+        return (point.x >= rect.x && point.x <= rect.x + rect.width &&
+            point.y >= rect.y && point.y <= rect.y + rect.height);
+    }
+
     export abstract class Model {
         constructor() {
         }

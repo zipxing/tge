@@ -1,13 +1,22 @@
 namespace Unblock {
+    export interface Cell {
+        x: number;
+        y: number;
+        kind: number; //see ascii_art/cc0.txt ... cc16.txt
+    }
+
     export interface Piece {
         kind: number;
         x: number;
         y: number;
+        cells: Cell[];
     }
+
     export interface Layout {
         moves: number;
         pieces: Piece[];
     }
+
     export class Model extends tge.Model {
         map_index: number = 0;
         layout_origin: Layout = {moves:0, pieces:[]};
@@ -39,7 +48,31 @@ namespace Unblock {
                 let x = parseInt(d[i][0]);
                 let y = parseInt(d[i][1]);
                 let k = parseInt(d[i][2]);
-                let b:Piece = {kind:k, x:x, y:y};
+                let cs:Cell[] = [];
+                switch(k) {
+                    case 1:
+                    case 2:
+                        cs.push({x:x, y:y, kind:14});
+                        cs.push({x:x+1, y:y, kind:13});
+                        break;
+                    case 3:
+                        cs.push({x:x, y:y, kind:11});
+                        cs.push({x:x, y:y+1, kind:7});
+                        break;
+                    case 4:
+                        cs.push({x:x, y:y, kind:14});
+                        cs.push({x:x+1, y:y, kind:12});
+                        cs.push({x:x+2, y:y, kind:13});
+                        break;
+                    case 5:
+                        cs.push({x:x, y:y, kind:11});
+                        cs.push({x:x, y:y+1, kind:3});
+                        cs.push({x:x, y:y+2, kind:7});
+                        break;
+                    default:
+                        break;
+                }
+                let b:Piece = {kind:k, x:x, y:y, cells:cs};
                 r.pieces.push(b);
             }
             return r;

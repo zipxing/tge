@@ -1,6 +1,6 @@
 namespace Unblock {
-    export const COL:number = 6;
-    export const ROW:number = 6;
+    export const WIDTH:number = 6;
+    export const HEIGHT:number = 6;
     export const CELLSIZEX:number = 10;
     export const CELLSIZEY:number = 5;
     export const PADJ:number[][] = [[2, 1], [2, 1], [1, 2], [3, 1], [1, 3]];
