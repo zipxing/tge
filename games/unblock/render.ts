@@ -64,6 +64,7 @@ namespace Unblock {
                         height:5,
                         top:i*5+5,
                         left:j*10+1,
+                        hidden: true,
                         tags:true
                     });
                     nb.tscreen.append(this.gridboxes[i][j]);
@@ -81,6 +82,7 @@ namespace Unblock {
             nb.tscreen.append(this.msgbox);
 
             tge.Emitter.register("Unblock.REDRAW_GRID", this.redrawGrid, this);
+            tge.Emitter.register("Unblock.RESET_GRID", this.resetGrid, this);
 
             let adjx = 1, adjy = 5;
             nb.tscreen.on("mousedown", (data:any)=>{
@@ -98,6 +100,16 @@ namespace Unblock {
 
             this.drawTitle();
             this.drawLogo();
+        }
+
+        resetGrid() {
+            for(let i=0;i<Unblock.HEIGHT;i++) {
+                for(let j=0;j<Unblock.WIDTH;j++) {
+                    this.gridboxes[i][j].hidden = true;
+                }
+            }
+            this.redrawGrid();
+            this.redrawMsg();
         }
 
         mouseDown(x:number, y:number) {
@@ -142,7 +154,10 @@ namespace Unblock {
             let hp = m.homingPiece(m.selected_piece);
             if(hp!=null) {
                 m.layout_run.pieces[hp.pindex] = hp.end;
-                g.useract.splice(0, 0, `H:${hp}`);
+                let ok = m.checkSuccess(hp.end);
+                let act = `H:${ok}`;
+                g.useract.splice(0, 0, act);
+                tge.log(tge.LogLevel.DEBUG, "HOME...", act, x, y);
             }
         }
 
@@ -163,6 +178,7 @@ namespace Unblock {
                 g.useract.splice(0, 0, `M:${mp}`);
                 this.touch_beganx = x;
                 this.touch_begany = y;
+                tge.log(tge.LogLevel.DEBUG, "MOVE UPDATE PIECE...", mp, x, y);
             }
             if (tge.pointInRect(this.region, point)) {
                 return true;
@@ -187,12 +203,14 @@ namespace Unblock {
                 'Game over,press {green-fg}r{/} restart...',
                 'Game over,press {green-fg}r{/} restart...'];
             let g = TermRender.game;
-            this.msgbox.setContent(msg[g.gamestate]);
+            let m = <Unblock.Model>g.model;
+            this.msgbox.setContent(`Stage ${m.map_index}`);
         }
 
         drawCell(b:any, kind:number) {
             let s = tge.AscIIManager.getArt(`cc${kind}`).blessed_lines;
             b.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}\n${s[4]}`);
+            b.hidden = false;
         }
 
         drawMsgInCell(b:any, lineno:number, start:number, msg:string, color:number = -1, adj:number = 0) {
@@ -218,6 +236,9 @@ namespace Unblock {
                 b.left = Math.floor((p.x+count*adj[p.kind-1][0]) * Unblock.CELLSIZEX) + 1;
                 b.top  = Math.floor((p.y+count*adj[p.kind-1][1]) * Unblock.CELLSIZEY) + 5;
                 this.drawCell(b, c.kind);
+                if(p.kind==1 && count==1) {
+                    this.drawMsgInCell(b, 2, 4, " 🚀 ", -1, -1);
+                }
                 count++;
             }
         }
@@ -230,10 +251,25 @@ namespace Unblock {
             }
         }
 
+        drawSuccessMovie() {
+            let g = TermRender.game;
+            let m = <Unblock.Model>g.model;
+            if(g.gamestate!=GameState.Win) return;
+            let b = this.gridboxes[m.main_piece.y][m.main_piece.x];
+            let mc = 18 + Math.floor((g.stage / 2)) % 212;
+            let sidx = Math.floor(g.stage / 6.0) % 3;
+            let strs = [
+                'esc>>  ',
+                ' esc>> ',
+                '  esc>>',
+            ]
+            this.drawMsgInCell(b, 2, 2, strs[sidx], mc);
+        }
+
         draw() {
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
-            this.redrawGrid();
+            this.drawSuccessMovie();
         }
     }
 }

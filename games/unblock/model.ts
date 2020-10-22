@@ -22,6 +22,7 @@ namespace Unblock {
         layout_origin: Layout = {moves:0, pieces:[]};
         layout_run: Layout = {moves:0, pieces:[]};
         layouts_undo: Layout[] = [];
+        main_piece: tge.Point = {x:0, y:0}; 
         selected_piece: number = -1;
 
         constructor() {
@@ -30,6 +31,7 @@ namespace Unblock {
         }
 
         reset() {
+            tge.srand(new Date().valueOf());
             this.map_index = tge.rand()%8880;
             this.layout_origin = this.getPuzzle(this.map_index);
             this.layout_run = tge.clone(this.layout_origin);
@@ -51,6 +53,7 @@ namespace Unblock {
                 let cs:Cell[] = [];
                 switch(k) {
                     case 1:
+                        this.main_piece = {x:x, y:y};
                     case 2:
                         cs.push({x:x, y:y, kind:14});
                         cs.push({x:x+1, y:y, kind:13});
@@ -100,7 +103,7 @@ namespace Unblock {
         }
 
         movePiece(pindex: number, bpt:tge.Point, ept:tge.Point) {
-            let p = this.layout_origin.pieces;
+            let p = this.layout_run.pieces;
             let mp:Piece = tge.clone(p[pindex]);
             let chkpoints:number[] = [];
             let adj = Unblock.PADJ[mp.kind - 1];
@@ -137,7 +140,7 @@ namespace Unblock {
         }
 
         homingPiece(pindex:number) {
-            let p = this.layout_origin.pieces;
+            let p = this.layout_run.pieces;
             let mp = tge.clone(p[pindex]);
             let adj = Unblock.PADJ[mp.kind - 1];
             if(adj[0]>adj[1]) {
@@ -146,6 +149,10 @@ namespace Unblock {
                 mp.y = Math.round(mp.y);
             }
             return {pindex:pindex, end:mp};
+        }
+
+        checkSuccess(p:Piece) {
+            return (p.kind==1 && p.x>=4);
         }
 
         isOverlap(p1:Piece, p2:Piece): boolean {

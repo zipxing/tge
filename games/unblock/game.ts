@@ -13,27 +13,13 @@ namespace Unblock {
             this.gamestate=GameState.Playing;
             this.useract=[];
 
-            tge.Emitter.fire("Unblock.REDRAW_GRID");
+            tge.Emitter.fire("Unblock.RESET_GRID");
 
-            /*tge.Timer.register("merge", 0.3, ()=>{
-                this.gamestate = GameState.LevelUpMovie;
-                let lc = m.postMerge();
-                tge.Emitter.fire("Unblock.REDRAW_GRID");
-                tge.Timer.setTime("levelup", lc*LEVELUP_STEP_TIME);
-                tge.Timer.fire("levelup");
+            tge.Timer.register("success", 3.0, ()=>{
+                m.reset();
+                tge.Emitter.fire("Unblock.RESET_GRID");
+                this.gamestate = GameState.Playing;
             });
-
-            tge.Timer.register("levelup", 0.2, ()=>{
-                this.gamestate = GameState.DropMovie;
-                m.drop();
-                tge.Timer.fire("drop");
-            });
-
-            tge.Timer.register("drop", 0.3, ()=>{
-                this.gamestate = GameState.Normal;
-                m.searchUnit();
-                tge.Emitter.fire("Unblock.REDRAW_GRID");
-            });*/
         }
 
         restartGame() {
@@ -61,10 +47,17 @@ namespace Unblock {
             let m = <Unblock.Model>this.model;
             switch(ag[0]) {
                 case "M":
+                    tge.Emitter.fire("Unblock.REDRAW_GRID");
                     break;
                 case "S":
+                    tge.Emitter.fire("Unblock.REDRAW_GRID");
                     break;
                 case "H":
+                    tge.Emitter.fire("Unblock.REDRAW_GRID");
+                    if(ag[1]=='true') {
+                        this.gamestate = GameState.Win;
+                        tge.Timer.fire('success', 0);
+                    }
                     break;
                 default:
                     break;
