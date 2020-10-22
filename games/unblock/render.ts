@@ -16,13 +16,13 @@ namespace Unblock {
         touch_beganx: number = 0;
         touch_begany: number = 0;
 
-        static colors: number[] = [30, 71, 22, 94, 241, 51, 141, 135, 129];
+        static colors: number[] = [50, 71, 9, 94, 241, 51, 141, 135, 129];
 
         constructor() {
             super();
 
             tge.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
-            tge.AscIIManager.loadArtFile("ascii_art/snake.txt", "unblock");
+            tge.AscIIManager.loadArtFile("ascii_art/unblock.txt", "unblock");
             tge.AscIIManager.loadArtFileSEQ("ascii_art/", "cc", 16);
 
             let nb = <tge.TermRun>tge.env;
@@ -82,14 +82,18 @@ namespace Unblock {
 
             tge.Emitter.register("Unblock.REDRAW_GRID", this.redrawGrid, this);
 
+            let adjx = 1, adjy = 5;
             nb.tscreen.on("mousedown", (data:any)=>{
-                this.mouseDown(data.x, data.y);
+                if(!this.touchbegin)
+                    this.mouseDown(data.x - adjx, data.y - adjy);
+                else
+                    this.mouseMove(data.x - adjx, data.y - adjy);
             });
             nb.tscreen.on("mousemove", (data:any)=>{
-                this.mouseMove(data.x, data.y);
+                this.mouseMove(data.x - adjx, data.y - adjy);
             });
             nb.tscreen.on("mouseup", (data:any)=>{
-                this.mouseUp(data.x, data.y);
+                this.mouseUp(data.x - adjx, data.y - adjy);
             });
 
             this.drawTitle();
@@ -103,12 +107,13 @@ namespace Unblock {
             let m = <Unblock.Model>g.model;
             if(g.gamestate!=GameState.Playing) return;
             let point = {x:x, y:y};
-            tge.log(tge.LogLevel.DEBUG, "zipxing , touch began : {x:"+x+", y:"+y+"}");
+            tge.log(tge.LogLevel.DEBUG, "DOWN, {x:"+x+", y:"+y+"}");
             if (tge.pointInRect(this.region, point)) {
                 this.touchbegin = true;
                 this.touch_beganx = x;
                 this.touch_begany = y;
                 let index = m.selectPiece(point);
+                tge.log(tge.LogLevel.DEBUG, "selectPiece", index);
                 m.selected_piece = index;
                 g.useract.splice(0, 0, `S:${index}`);
                 return true;
@@ -130,6 +135,7 @@ namespace Unblock {
             let g = TermRender.game;
             let m = <Unblock.Model>g.model;
             if(g.gamestate!=GameState.Playing) return;
+            tge.log(tge.LogLevel.DEBUG, "  UP, {x:"+x+", y:"+y+"}");
             this.touchbegin = false;
             let point = {x:x, y:y};
             if(m.selected_piece == -1) return;
@@ -147,6 +153,7 @@ namespace Unblock {
             let m = <Unblock.Model>g.model;
             if(g.gamestate!=GameState.Playing) return;
             if(!this.touchbegin) return;
+            tge.log(tge.LogLevel.DEBUG, "MOVE, {x:"+x+", y:"+y+"}");
             if(m.selected_piece == -1) return;
             let point = {x:x, y:y};
             let mp = m.movePiece(m.selected_piece,
@@ -201,28 +208,15 @@ namespace Unblock {
 
         drawPiece(p:Piece) {
             let color = 0;
-            let leftadj = 0;
-            let topadj = 0;
-            switch(p.kind) {
-                case 1:
-                case 2:
-                case 4:
-                    leftadj = 1;
-                    topadj = 0;
-                    break;
-                case 3:
-                case 5:
-                    leftadj = 0;
-                    topadj = 1;
-                    break;
-            }
+            let adj = [[1,0], [1,0], [0,1], [1,0], [0,1]];
+
             if(p.kind==1) color = 2;
             let count = 0;
             for(let c of p.cells) {
                 let b = this.gridboxes[c.y][c.x];
                 b.style.fg = TermRender.colors[color];
-                b.left = Math.floor((p.x+count*leftadj) * Unblock.CELLSIZEX) + 1;
-                b.top = Math.floor((p.y+count*topadj) * Unblock.CELLSIZEY) + 5;
+                b.left = Math.floor((p.x+count*adj[p.kind-1][0]) * Unblock.CELLSIZEX) + 1;
+                b.top  = Math.floor((p.y+count*adj[p.kind-1][1]) * Unblock.CELLSIZEY) + 5;
                 this.drawCell(b, c.kind);
                 count++;
             }
@@ -239,6 +233,7 @@ namespace Unblock {
         draw() {
             let nb = (<tge.TermRun>tge.env);
             nb.tscreen.render();
+            this.redrawGrid();
         }
     }
 }

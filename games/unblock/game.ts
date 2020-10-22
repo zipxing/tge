@@ -10,7 +10,7 @@ namespace Unblock {
     export class Game extends tge.Game {
         initGame() {
             let m = <Unblock.Model>this.model;
-            this.gamestate=GameState.Ready;
+            this.gamestate=GameState.Playing;
             this.useract=[];
 
             tge.Emitter.fire("Unblock.REDRAW_GRID");

@@ -93,7 +93,7 @@ namespace Unblock {
             let p = this.layout_run.pieces;
             for(let i=0; i<p.length; i++) {
                 let r = this.piece2Rect(p[i]);
-                if (pt.x<=r[2] && pt.x>r[0] && pt.y<=r[3] && pt.y>r[1])
+                if (pt.x<=r[2] && pt.x>=r[0] && pt.y<=r[3] && pt.y>=r[1])
                     sp = i;
             }
             return sp;
