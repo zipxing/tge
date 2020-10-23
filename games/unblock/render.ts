@@ -6,16 +6,6 @@ namespace Unblock {
         gridboxes: any[][];
         msgbox: any;
 
-        region: tge.Rect = {
-            x:0, y:0, 
-            width:Unblock.CELLSIZEX*Unblock.WIDTH,
-            height:Unblock.CELLSIZEY*Unblock.HEIGHT
-        };
-
-        touchbegin: boolean = false;
-        touch_beganx: number = 0;
-        touch_begany: number = 0;
-
         static colors: number[] = [50, 71, 9, 94, 241, 51, 141, 135, 129];
 
         constructor() {
@@ -26,6 +16,7 @@ namespace Unblock {
             tge.AscIIManager.loadArtFileSEQ("ascii_art/", "cc", 16);
 
             let nb = <tge.TermRun>tge.env;
+            let mh = new MouseHandler();
 
             this.titlebox = nb.blessed.box({
                 width:Unblock.WIDTH*10+10,
@@ -86,16 +77,16 @@ namespace Unblock {
 
             let adjx = 1, adjy = 5;
             nb.tscreen.on("mousedown", (data:any)=>{
-                if(!this.touchbegin)
-                    this.mouseDown(data.x - adjx, data.y - adjy);
+                if(!mh.touchbegin)
+                    mh.mouseDown(data.x - adjx, data.y - adjy);
                 else
-                    this.mouseMove(data.x - adjx, data.y - adjy);
+                    mh.mouseMove(data.x - adjx, data.y - adjy);
             });
             nb.tscreen.on("mousemove", (data:any)=>{
-                this.mouseMove(data.x - adjx, data.y - adjy);
+                mh.mouseMove(data.x - adjx, data.y - adjy);
             });
             nb.tscreen.on("mouseup", (data:any)=>{
-                this.mouseUp(data.x - adjx, data.y - adjy);
+                mh.mouseUp(data.x - adjx, data.y - adjy);
             });
 
             this.drawTitle();
@@ -110,82 +101,6 @@ namespace Unblock {
             }
             this.redrawGrid();
             this.redrawMsg();
-        }
-
-        mouseDown(x:number, y:number) {
-            let nb = (<tge.TermRun>tge.env);
-            if(!TermRender.game) return;
-            let g = TermRender.game;
-            let m = <Unblock.Model>g.model;
-            if(g.gamestate!=GameState.Playing) return;
-            let point = {x:x, y:y};
-            tge.log(tge.LogLevel.DEBUG, "DOWN, {x:"+x+", y:"+y+"}");
-            if (tge.pointInRect(this.region, point)) {
-                this.touchbegin = true;
-                this.touch_beganx = x;
-                this.touch_begany = y;
-                let index = m.selectPiece(point);
-                tge.log(tge.LogLevel.DEBUG, "selectPiece", index);
-                m.selected_piece = index;
-                g.useract.splice(0, 0, `S:${index}`);
-                return true;
-            }
-            /*if(x<=320 && x>40 && y<=740 && y>672) {
-                this.game.reset();
-                this.touchbegin = false;
-            }
-            if(x<=630 && x>342 && y<=740 && y>672) {
-                this.game.undo();
-                this.touchbegin = false;
-            }*/
-            return false;
-        }
-
-        mouseUp(x:number, y:number) {
-            let nb = (<tge.TermRun>tge.env);
-            if(!TermRender.game) return;
-            let g = TermRender.game;
-            let m = <Unblock.Model>g.model;
-            if(g.gamestate!=GameState.Playing) return;
-            tge.log(tge.LogLevel.DEBUG, "  UP, {x:"+x+", y:"+y+"}");
-            this.touchbegin = false;
-            let point = {x:x, y:y};
-            if(m.selected_piece == -1) return;
-            let hp = m.homingPiece(m.selected_piece);
-            if(hp!=null) {
-                m.layout_run.pieces[hp.pindex] = hp.end;
-                let ok = m.checkSuccess(hp.end);
-                let act = `H:${ok}`;
-                g.useract.splice(0, 0, act);
-                tge.log(tge.LogLevel.DEBUG, "HOME...", act, x, y);
-            }
-        }
-
-        mouseMove(x:number, y:number) {
-            let nb = (<tge.TermRun>tge.env);
-            if(!TermRender.game) return;
-            let g = TermRender.game;
-            let m = <Unblock.Model>g.model;
-            if(g.gamestate!=GameState.Playing) return;
-            if(!this.touchbegin) return;
-            tge.log(tge.LogLevel.DEBUG, "MOVE, {x:"+x+", y:"+y+"}");
-            if(m.selected_piece == -1) return;
-            let point = {x:x, y:y};
-            let mp = m.movePiece(m.selected_piece,
-                {x:this.touch_beganx, y:this.touch_begany}, point);
-            if(mp!=null) {
-                m.layout_run.pieces[mp.pindex] = mp.end;
-                g.useract.splice(0, 0, `M:${mp}`);
-                this.touch_beganx = x;
-                this.touch_begany = y;
-                tge.log(tge.LogLevel.DEBUG, "MOVE UPDATE PIECE...", mp, x, y);
-            }
-            if (tge.pointInRect(this.region, point)) {
-                return true;
-            } else {
-                this.mouseUp(0,0);
-                m.selected_piece = -1;
-            }
         }
 
         drawTitle() {

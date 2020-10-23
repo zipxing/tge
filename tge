@@ -77,6 +77,7 @@ games = {
         "src": [
             "constant.ts",
             "model.ts",
+            "mouse.ts",
             "render.ts",
             "game.ts",
             "main.ts"
