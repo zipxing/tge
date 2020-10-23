@@ -5,8 +5,6 @@ namespace Unblock {
         Ready = 2
     }
 
-    //export const LEVELUP_STEP_TIME = 0.05;
-
     export class Game extends tge.Game {
         initGame() {
             let m = <Unblock.Model>this.model;

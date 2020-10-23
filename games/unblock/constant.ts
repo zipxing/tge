@@ -6,12 +6,6 @@ namespace Unblock {
     export const PADJ:number[][] = [[2, 1], [2, 1], [1, 2], [3, 1], [1, 3]];
     export const MAX:number[] = [4, 4, 4, 3, 3];
 
-/*unblock.State = {
-    READY : 2,
-    PLAYING : 0,
-    WIN : 1
-};*/
-
     export const MAP:string[][] = [
         [ "121","002","202","132","432","244","052","013","033","315","403","503" ],
         [ "021","204","432","054","003","033","103","133","215","443","505" ],

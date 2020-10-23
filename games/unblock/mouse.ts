@@ -1,15 +1,14 @@
 namespace Unblock {
     export class MouseHandler {
-        region: tge.Rect = {
+        static region: tge.Rect = {
             x:0, y:0, 
             width:Unblock.CELLSIZEX*Unblock.WIDTH,
             height:Unblock.CELLSIZEY*Unblock.HEIGHT
         };
 
-        touchbegin: boolean = false;
-        touch_beganx: number = 0;
-        touch_begany: number = 0;
-
+        mouse_pressed: boolean = false;
+        lastx: number = 0;
+        lasty: number = 0;
 
         constructor() {
         }
@@ -21,10 +20,10 @@ namespace Unblock {
             let m = <Unblock.Model>g.model;
             if(g.gamestate!=GameState.Playing) return;
             let point = {x:x, y:y};
-            if (tge.pointInRect(this.region, point)) {
-                this.touchbegin = true;
-                this.touch_beganx = x;
-                this.touch_begany = y;
+            if (tge.pointInRect(MouseHandler.region, point)) {
+                this.mouse_pressed = true;
+                this.lastx = x;
+                this.lasty = y;
                 let index = m.selectPiece(point);
                 m.selected_piece = index;
                 g.useract.splice(0, 0, `S:${index}`);
@@ -39,7 +38,7 @@ namespace Unblock {
             let g = TermRender.game;
             let m = <Unblock.Model>g.model;
             if(g.gamestate!=GameState.Playing) return;
-            this.touchbegin = false;
+            this.mouse_pressed = false;
             let point = {x:x, y:y};
             if(m.selected_piece == -1) return;
             let hp = m.homingPiece(m.selected_piece);
@@ -57,18 +56,18 @@ namespace Unblock {
             let g = TermRender.game;
             let m = <Unblock.Model>g.model;
             if(g.gamestate!=GameState.Playing) return;
-            if(!this.touchbegin) return;
+            if(!this.mouse_pressed) return;
             if(m.selected_piece == -1) return;
             let point = {x:x, y:y};
             let mp = m.movePiece(m.selected_piece,
-                {x:this.touch_beganx, y:this.touch_begany}, point);
+                {x:this.lastx, y:this.lasty}, point);
             if(mp!=null) {
                 m.layout_run.pieces[mp.pindex] = mp.end;
                 g.useract.splice(0, 0, `M:${mp}`);
-                this.touch_beganx = x;
-                this.touch_begany = y;
+                this.lastx = x;
+                this.lasty = y;
             }
-            if (tge.pointInRect(this.region, point)) {
+            if (tge.pointInRect(MouseHandler.region, point)) {
                 return true;
             } else {
                 this.mouseUp(0,0);

@@ -77,7 +77,7 @@ namespace Unblock {
 
             let adjx = 1, adjy = 5;
             nb.tscreen.on("mousedown", (data:any)=>{
-                if(!mh.touchbegin)
+                if(!mh.mouse_pressed)
                     mh.mouseDown(data.x - adjx, data.y - adjy);
                 else
                     mh.mouseMove(data.x - adjx, data.y - adjy);
@@ -114,9 +114,6 @@ namespace Unblock {
         }
 
         redrawMsg() {
-            let msg:string[] =['Press {green-fg}q{/} quit...',
-                'Game over,press {green-fg}r{/} restart...',
-                'Game over,press {green-fg}r{/} restart...'];
             let g = TermRender.game;
             let m = <Unblock.Model>g.model;
             this.msgbox.setContent(`Stage ${m.map_index}`);
