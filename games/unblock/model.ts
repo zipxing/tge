@@ -37,7 +37,6 @@ namespace Unblock {
             this.layout_run = tge.clone(this.layout_origin);
             this.layouts_undo = [tge.clone(this.layout_origin)];
             this.selected_piece = -1;
-            //this.state = unblock.State.READY;//PLAYING...
         }
 
         getPuzzle(mapidx: number) {
