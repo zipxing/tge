@@ -73,7 +73,7 @@ games = {
     "unblock" : {
         "path": "games/unblock",
         "namespace": "Unblock",
-        "web": False,
+        "web": True,
         "src": [
             "constant.ts",
             "model.ts",

@@ -149,7 +149,10 @@ namespace Unblock {
                 b.top  = Math.floor((p.y+count*adj[p.kind-1][1]) * Unblock.CELLSIZEY) + 5;
                 this.drawCell(b, c.kind);
                 if(p.kind==1 && count==1) {
-                    this.drawMsgInCell(b, 2, 4, " 🚀 ", -1, -1);
+                    if(tge.env.kind == 'TERM')
+                        this.drawMsgInCell(b, 2, 4, " 🚀 ", -1, -1);
+                    else 
+                        this.drawMsgInCell(b, 2, 4, " >> ");
                 }
                 count++;
             }
