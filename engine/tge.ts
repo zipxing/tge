@@ -27,11 +27,27 @@ namespace tge {
     export function initEnvironment(runenv:string) {
         switch(runenv) {
             case "WEB":
-                env = <WebRun>{
-                    kind:runenv, 
-                    context:{}, 
-                    canvas:{}
-                };
+                let cv = document.createElement("canvas");
+                document.body.appendChild(cv);
+                cv.width = Math.floor(cv.clientWidth * window.devicePixelRatio);
+                cv.height = Math.floor(cv.clientHeight * window.devicePixelRatio);
+                let names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
+                let ct = null;
+                for(let i=0; i<names.length; i++){
+                    try{ ct = cv.getContext(names[i]); } catch(e) { }
+                    if(ct) break;
+                }
+                if(ct) {
+                    let wglct:WebGLRenderingContext = <WebGLRenderingContext> ct;
+                    wglct.viewport(0, 0, cv.width, cv.height);
+                    env = <WebRun>{
+                        kind:runenv, 
+                        context: wglct, 
+                        canvas: cv
+                    };
+                } else {
+                    tge.log(tge.LogLevel.ERROR, "WebGL init fail...");
+                }
                 break;
             case "WEBTERM":
                 let b = require('blessed');
