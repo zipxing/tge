@@ -18,6 +18,17 @@ games = {
             "ascii.ts"
         ]
     },
+    "engine3d" : {
+        "path": "engine/webgl",
+        "namespace": "tge3d",
+        "web": True,
+        "src" : [
+            "matrix.ts",
+            "vertex.ts",
+            "mesh.ts",
+            "shader.ts"
+        ]
+    },
     "tetris" : {
         "path": "games/tetris",
         "namespace": "Tetris",
@@ -83,6 +94,14 @@ games = {
             "main.ts"
         ]
     },
+    "simple3d" : {
+        "path": "games/simple3d",
+        "namespace": "Simple3d",
+        "webgl": True,
+        "src": [
+            "main.ts"
+        ]
+    },
     "ascii" : {
         "path": "tool/asc2editor",
         "namespace": "AscIIEditor",
@@ -130,21 +149,27 @@ def grepArt(path):
                 art_dict[p+n+str(i)+'.txt']=n+str(i)
     return art_dict
 
+
 def make_cmd_line(name, is_build, oa=[]):
     cmds = []
+
     if name not in games:
         printColor("red", "Game:"+name+" not in list...");
         return cmds;
+
     if name == "engine":
         printColor("red", "Engine can't build independent...")
         return cmds;
+
     if is_build:
         pe = ' '+games["engine"]["path"]+'/'
+        pe3d = ' '+games["engine3d"]["path"]+'/'
         pg = ' '+games[name]["path"]+'/'
         se = games["engine"]["src"]
+        se3d = games["engine3d"]["src"]
         sg = games[name]["src"]
         artjs = ''
-        if games[name]["web"]:
+        if "web" in games[name] and games[name]["web"]:
             arts = grepArt(pg)
             if len(arts)>0:
                 cmds.append("echo|green|🍀 Art2Js...")
@@ -154,9 +179,14 @@ def make_cmd_line(name, is_build, oa=[]):
                         ' '+arts[a]+' tmp/'+arts[a]+'.ts')
                 artjs+=' tmp/'+arts[a]+'.ts '
         cmds.append("echo|green|🍀 TSC...")
-        cmds.append("tsc -t es5 --outfile tmp/"+name+".js "+ \
-                pe+pe.join(se)+artjs+pg+pg.join(sg))
-        if games[name]["web"]:
+        if "webgl" in games[name] and games[name]["webgl"]:
+            cmds.append("tsc -t es5 --outfile tmp/"+name+".js "+ \
+                    pe+pe.join(se)+pe3d+pe3d.join(se3d)+pg+pg.join(sg))
+        else:
+            cmds.append("tsc -t es5 --outfile tmp/"+name+".js "+ \
+                    pe+pe.join(se)+artjs+pg+pg.join(sg))
+        if ("web" in games[name] and games[name]["web"]) or \
+                ("webgl" in games[name] and games[name]["webgl"]):
             cmds.append("echo|green|🍀 Browserify for web...")
             cmds.append("browserify tmp/"+name+ \
                     ".js --ignore-missing -o tmp/"+name+"_bundle.js")
@@ -164,7 +194,8 @@ def make_cmd_line(name, is_build, oa=[]):
         return cmds
     else:
         rcs = ["node tmp/"+name+".js "+' '.join(oa)]
-        if games[name]["web"]:
+        if ("web" in games[name] and games[name]["web"]) or \
+                ("webgl" in games[name] and games[name]["webgl"]):
             rcs.append("open tmp/"+name+".html")
         return rcs
 
