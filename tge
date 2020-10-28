@@ -154,7 +154,7 @@ def make_cmd_line(name, is_build, oa=[]):
                         ' '+arts[a]+' tmp/'+arts[a]+'.ts')
                 artjs+=' tmp/'+arts[a]+'.ts '
         cmds.append("echo|green|🍀 TSC...")
-        cmds.append("tsc --outfile tmp/"+name+".js "+ \
+        cmds.append("tsc -t es5 --outfile tmp/"+name+".js "+ \
                 pe+pe.join(se)+artjs+pg+pg.join(sg))
         if games[name]["web"]:
             cmds.append("echo|green|🍀 Browserify for web...")
