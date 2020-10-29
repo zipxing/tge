@@ -59,7 +59,6 @@ namespace Simple3d {
 
             let mh = new MouseHandler();
             canvas.onmousedown = (event: any) => {
-                console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDD");
                 mh.mouseDown(event);
             }
             canvas.onmousemove = (event: any) => {
