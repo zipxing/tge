@@ -99,6 +99,9 @@ games = {
         "namespace": "Simple3d",
         "webgl": True,
         "src": [
+            "model.ts",
+            "render.ts",
+            "game.ts",
             "main.ts"
         ]
     },
@@ -261,7 +264,9 @@ if __name__ == "__main__":
                 os.system(c);
         printColor('yellow', 'Build ok...🍺')
     if 'r' in sys.argv[1] and r:
-        if 'w' in sys.argv[1] and games[sys.argv[2]]["web"]:
+        if 'w' in sys.argv[1] and \
+                ("web" in games[sys.argv[2]] and games[sys.argv[2]]["web"]) \
+                or ("webgl" in games[sys.argv[2]] and games[sys.argv[2]]["webgl"]):
             printColor('green', r[1])
             os.system(r[1])
         else:

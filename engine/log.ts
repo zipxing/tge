@@ -7,7 +7,7 @@ namespace tge {
     }
 
     export function bindLogPath(fpath: string) {
-        if(tge.env.kind == "WEBTERM")
+        if(tge.env.kind == "WEBTERM" || tge.env.kind == "WEB")
             return;
         let fs=require('fs');
         let util = require('util');

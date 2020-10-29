@@ -15,7 +15,7 @@ namespace tge3d {
         }
     }
 
-    class Shader{
+    export class Shader{
         program: any;
         private _semanticToAttribName : {[key: string]: string};
         private _attributes : {[key: string] : number};
@@ -130,7 +130,7 @@ namespace tge3d {
             console.log('uniforms',this._uniforms);
         }
 
-        setUniform(name: string, value: number){
+        setUniform(name: string, value: any){
             let gl = (<tge.WebRun>tge.env).context;
             let info = this._uniforms[name];
             if(!info){
