@@ -25,9 +25,6 @@ namespace Simple3d {
         modelMatrix: tge3d.Matrix4; 
         viewProjMatrix: tge3d.Matrix4;
         mvpMatrix: tge3d.Matrix4;
-        rotX = 20.2;
-        rotY = 30.2;
-        rotZ = 40.2;
         mesh: tge3d.Mesh;
         shader: tge3d.Shader;
 
@@ -59,7 +56,20 @@ namespace Simple3d {
             gl.clearColor(0, 0, 0, 1);
             gl.clearDepth(1.0);
             gl.enable(gl.DEPTH_TEST);
-            this.redraw();
+
+            let mh = new MouseHandler();
+            canvas.onmousedown = (event: any) => {
+                console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDD");
+                mh.mouseDown(event);
+            }
+            canvas.onmousemove = (event: any) => {
+                mh.mouseMove(event);
+            }
+            canvas.onmouseup = (event: any) => {
+                mh.mouseUp(event);
+            }
+
+            tge.Emitter.register("Simple3d.REDRAW", this.redraw, this);
         }
 
         createMesh(){
@@ -135,24 +145,24 @@ namespace Simple3d {
         redraw() {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
+            let g = WebGlRender.game;
+            let m = <Simple3d.Model>g.model;
 
             //rotate order: x-y-z
-            this.modelMatrix.setRotate(this.rotZ, 0, 0, 1); //rot around z-axis
-            this.modelMatrix.rotate(this.rotY, 0.0, 1.0, 0.0); //rot around y-axis
-            this.modelMatrix.rotate(this.rotX, 1.0, 0.0, 0.0); //rot around x-axis
+            this.modelMatrix.setRotate(m.rot_z, 0, 0, 1); //rot around z-axis
+            this.modelMatrix.rotate(m.rot_y, 0.0, 1.0, 0.0); //rot around y-axis
+            this.modelMatrix.rotate(m.rot_x, 1.0, 0.0, 0.0); //rot around x-axis
 
             this.mvpMatrix.set(this.viewProjMatrix);
             this.mvpMatrix.multiply(this.modelMatrix);
 
             this.shader.setUniform('u_mvpMatrix', this.mvpMatrix.elements);
 
-            gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             this.mesh.render(this.shader);
         }
 
         draw() {
-            let nb = (<tge.TermRun>tge.env);
-            nb.tscreen.render();
         }
     }
 }

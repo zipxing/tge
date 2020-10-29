@@ -1,15 +1,9 @@
 namespace Simple3d {
-    export enum GameState {
-        Playing = 0,
-        Win = 1,
-        Ready = 2
-    }
-
     export class Game extends tge.Game {
         initGame() {
             let m = <Simple3d.Model>this.model;
-            this.gamestate=GameState.Playing;
             this.useract=[];
+            tge.Emitter.fire("Simple3d.REDRAW");
         }
 
         restartGame() {
@@ -28,6 +22,15 @@ namespace Simple3d {
         }
 
         doAction(act: any) {
+            let ag = act.split(":");
+            let m = <Simple3d.Model>this.model;
+            switch(ag[0]) {
+                case "M":
+                    tge.Emitter.fire("Simple3d.REDRAW");
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

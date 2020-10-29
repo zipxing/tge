@@ -163,6 +163,7 @@ namespace tge {
             switch(env.kind) {
                 case "TERM":
                 case "WEBTERM":
+                case "WEB":
                     let now = Date.now();
                     Game._actualTicks++;
                     if (Game._previousTick + Game._tickLengthMs <= now) {

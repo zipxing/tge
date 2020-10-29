@@ -102,6 +102,7 @@ games = {
             "model.ts",
             "render.ts",
             "game.ts",
+            "mouse.ts",
             "main.ts"
         ]
     },
