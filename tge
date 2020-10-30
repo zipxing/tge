@@ -7,7 +7,7 @@ import subprocess
 
 games = {
     "engine" : {
-        "path": "engine",
+        "path": "src/engine",
         "namespace": "tge",
         "web": False,
         "src" : [
@@ -19,7 +19,7 @@ games = {
         ]
     },
     "engine3d" : {
-        "path": "engine/webgl",
+        "path": "src/engine/webgl",
         "namespace": "tge3d",
         "web": True,
         "src" : [
@@ -30,7 +30,7 @@ games = {
         ]
     },
     "tetris" : {
-        "path": "games/tetris",
+        "path": "src/games/tetris",
         "namespace": "Tetris",
         "web": True,
         "src": [
@@ -49,7 +49,7 @@ games = {
         ]
     },
     "snake" : {
-        "path": "games/snake",
+        "path": "src/games/snake",
         "namespace": "Snake",
         "web": True,
         "src": [
@@ -60,18 +60,18 @@ games = {
         ]
     },
     "jump" : {
-        "path": "games/jump",
+        "path": "src/games/jump",
         "namespace": "Jump",
         "web": True,
         "src": [
             "model.ts",
-            "render.ts",
+            "render.src/ts",
             "game.ts",
             "main.ts"
         ]
     },
     "city" : {
-        "path": "games/city",
+        "path": "src/games/city",
         "namespace": "City",
         "web": True,
         "src": [
@@ -82,7 +82,7 @@ games = {
         ]
     },
     "unblock" : {
-        "path": "games/unblock",
+        "path": "src/games/unblock",
         "namespace": "Unblock",
         "web": True,
         "src": [
@@ -95,7 +95,7 @@ games = {
         ]
     },
     "simple3d" : {
-        "path": "games/simple3d",
+        "path": "src/games/simple3d",
         "namespace": "Simple3d",
         "webgl": True,
         "src": [
@@ -107,7 +107,7 @@ games = {
         ]
     },
     "ascii" : {
-        "path": "tool/asc2editor",
+        "path": "src/tool/asc2editor",
         "namespace": "AscIIEditor",
         "web": False,
         "src": [
@@ -118,7 +118,7 @@ games = {
         ]
     },
     "art2js" : {
-        "path": "tool/art2js",
+        "path": "src/tool/art2js",
         "namespace": "Art2Js",
         "web": False,
         "src": [

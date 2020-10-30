@@ -21,7 +21,7 @@ namespace tge {
         static loadArtFile(fpath: string, name: string) {
             try {
                 let fs = require("fs");
-                let lines = fs.readFileSync(fpath, "utf8").split('\n');
+                let lines = fs.readFileSync('assets/'+fpath, "utf8").split('\n');
                 let row = 0;
                 let grid: any[][] = [];
                 let blessed_lines: string[] = [];
