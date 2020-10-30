@@ -13,18 +13,11 @@ namespace tge3d {
         UV3 = 'uv3'
     }
 
-    export class VertexAttribInfo {
+    export interface VertexAttribInfo {
         semantic: VertexSemantic;
         size: number;
         offset: number;
         data: any;
-
-        constructor(attrsem: VertexSemantic, attrsize: number) {
-            this.semantic = attrsem;
-            this.size = attrsize;
-            this.offset = 0;
-            this.data = null;
-        }
     }
 
     export class VertexFormat {
@@ -77,9 +70,14 @@ namespace tge3d {
                 let semantic = this._vertex_format.attribs[i];
                 let size = this._vertex_format.attr_size[semantic];
                 if(size==null){
-                    console.error('VertexBuffer: bad semantic');
+                    tge.log(tge.LogLevel.ERROR, 'VertexBuffer: bad semantic');
                 } else {
-                    let info = new VertexAttribInfo(semantic, size);
+                    let info = <VertexAttribInfo> {
+                        semantic: semantic,
+                        size: size,
+                        offset: 0,
+                        data: null
+                    }
                     this._attribs_info[semantic] = info;
                 }
             }
@@ -114,11 +112,11 @@ namespace tge3d {
         _compile(){
             let positionInfo = this._attribs_info[VertexSemantic.POSITION];
             if(positionInfo == null){
-                console.error('VertexBuffer: no attrib position');
+                tge.log(tge.LogLevel.ERROR, 'VertexBuffer: no attrib position');
                 return;
             }
             if(positionInfo.data == null || positionInfo.data.length===0){
-                console.error('VertexBuffer: position data is empty');
+                tge.log(tge.LogLevel.ERROR, 'VertexBuffer: position data is empty');
                 return;
             }
 
@@ -130,13 +128,13 @@ namespace tge3d {
                 for(let semantic of this._vertex_format.attribs){
                     let info = this._attribs_info[semantic];
                     if(info==null || info.data==null){
-                        console.error('VertexBuffer: bad semantic '+semantic);
+                        tge.log(tge.LogLevel.ERROR, 'VertexBuffer: bad semantic '+semantic);
                         continue;
                     }
                     for(let k=0; k<info.size; ++k){
                         let value = info.data[ i * info.size + k ];
                         if(value===undefined){
-                            console.error('VertexBuffer: missing value for '+semantic);
+                            tge.log(tge.LogLevel.ERROR, 'VertexBuffer: missing value for '+semantic);
                         }
                         this._bufferData.push(value);
                     }
@@ -243,7 +241,7 @@ namespace tge3d {
         upload(){
             let gl = (<tge.WebRun>tge.env).context;
             if(this._bufferData==null){
-                console.error("buffer data is null.");
+                tge.log(tge.LogLevel.ERROR, "buffer data is null.");
                 return;
             }
             let useByte = this._bufferData.length<=256;
