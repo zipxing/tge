@@ -214,7 +214,7 @@ def prepareTool():
     pt = patched[1].split('\n')
     if len(pt[0])==0:
         printColor('green', '🍀 Patch blessed for emoji...')
-        c = 'cp -f vendor/unicode.js node_modules/blessed/lib/unicode.js'
+        c = 'cp -f etc/vendor/unicode.js node_modules/blessed/lib/unicode.js'
         print(c)
         os.system(c)
 

@@ -1,8 +1,8 @@
 # tge
 A typescript | tiny | terminal game engine and games...
 
-![tge](https://raw.githubusercontent.com/zipxing/tge/master/screenshot/tetris.gif)
-![tge](https://raw.githubusercontent.com/zipxing/tge/master/screenshot/city.gif)
+![tge](https://raw.githubusercontent.com/zipxing/tge/master/etc/screenshot/tetris.gif)
+![tge](https://raw.githubusercontent.com/zipxing/tge/master/etc/screenshot/city.gif)
 
 Build and run games:
 * #./tge br tetris
