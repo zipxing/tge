@@ -280,6 +280,7 @@ if __name__ == "__main__":
 
     if 'b' in cmd and b:
         execCmds(b)
+        printColor('yellow', 'Build ok...🍺')
 
     if 'r' in cmd and r:
         if 'w' in cmd and \
@@ -292,5 +293,4 @@ if __name__ == "__main__":
             os.system(r[0])
 
     prepareHttpServer()
-    printColor('yellow', 'Build ok...🍺')
 
