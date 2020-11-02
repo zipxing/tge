@@ -27,5 +27,6 @@
     "fs": "0.0.1-security",
     "http-server": "^0.12.3",
     "term.js": "0.0.7"
-  }
+  },
+  "dependencies": {}
 }

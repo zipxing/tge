@@ -271,7 +271,7 @@ namespace tge3d {
         setOrtho(left: number, right: number, bottom: number, 
             top: number, near: number, far: number) {
             if (left === right || bottom === top || near === far) {
-                console.error("wrong param");
+                tge.log(tge.LogLevel.ERROR, "wrong param");
                 return;
             }
 
@@ -307,15 +307,15 @@ namespace tge3d {
         setFrustum(left: number, right: number, bottom: number, 
             top: number, near: number, far: number) {
             if (left === right || bottom === top || near === far) {
-                console.error("wrong param");
+                tge.log(tge.LogLevel.ERROR, "wrong param");
                 return;
             }
             if(near <= 0){
-                console.error("wrong near");
+                tge.log(tge.LogLevel.ERROR, "wrong near");
                 return;
             }
             if(far <= 0){
-                console.error("wrong far");
+                tge.log(tge.LogLevel.ERROR, "wrong far");
                 return;
             }
 
@@ -350,14 +350,14 @@ namespace tge3d {
 
         setPerspective(fovy: number, aspect: number, near: number, far: number){
             if(near === far || aspect === 0 || near <= 0 || far <= 0){
-                console.error("wrong param");
+                tge.log(tge.LogLevel.ERROR, "wrong param");
                 return;
             }
 
             let radius = fovy * Math.PI / 180 / 2;
             let sin = Math.sin(radius);
             if(sin === 0){
-                console.error("wrong param");
+                tge.log(tge.LogLevel.ERROR, "wrong param");
                 return;
             }
             let cot = Math.cos(radius) / sin;
