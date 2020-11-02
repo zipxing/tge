@@ -262,7 +262,7 @@ def prepareHttpServer():
     if not hsok:
         printColor('green', 'not found!')
         printColor('green', '🍀 Load http-server...', False)
-        cmd = 'http-server ./ -a 127.0.0.1 -p8866 > /dev/null 2>/dev/null &'
+        cmd = 'node node_modules/http-server/bin/http-server ./ -p8866 > /dev/null 2>/dev/null &'
         shs = subprocess.getstatusoutput(cmd)
         if shs[0]==0:
             printColor('green', 'OK!')
