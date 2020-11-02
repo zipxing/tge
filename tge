@@ -23,6 +23,7 @@ games = {
         "namespace": "tge3d",
         "web": True,
         "src" : [
+            "asset.ts",
             "matrix.ts",
             "vertex.ts",
             "mesh.ts",
@@ -200,7 +201,8 @@ def make_cmd_line(name, is_build, oa=[]):
         rcs = ["node tmp/"+name+".js "+' '.join(oa)]
         if ("web" in games[name] and games[name]["web"]) or \
                 ("webgl" in games[name] and games[name]["webgl"]):
-            rcs.append("open tmp/"+name+".html")
+            hp = 'http://127.0.0.1:8866/'
+            rcs.append("open "+hp+"tmp/"+name+".html")
         return rcs
 
 def prepareTool():
@@ -273,7 +275,6 @@ if __name__ == "__main__":
     os.chdir(sys.path[0])
 
     prepareTool()
-    prepareHttpServer()
 
     cmd = sys.argv[1]
     game = sys.argv[2]
@@ -289,6 +290,7 @@ if __name__ == "__main__":
         if 'w' in cmd and \
                 ("web" in games[game] and games[game]["web"]) \
                 or ("webgl" in games[game] and games[game]["webgl"]):
+            prepareHttpServer()
             printColor('green', r[1])
             os.system(r[1])
         else:

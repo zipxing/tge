@@ -5,6 +5,10 @@ namespace Simple3d {
         let m = new Simple3d.Model();
         let r = new Simple3d.WebGlRender();
         let g = new Simple3d.Game(m, r);
+        let am = new tge3d.AssetManager();
+        tge3d.AssetManager.loadAsset("http://127.0.0.1:8866/readme.md", tge3d.AssetType.Text, (asset: any) => {
+            tge.log(tge.LogLevel.DEBUG, asset);
+        });
         g.initGame();
         g.regKeyAction({'r':'R'});
         g.loop();
