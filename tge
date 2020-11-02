@@ -220,20 +220,10 @@ def prepareTool():
 
     if not os.path.exists('tmp/art2js.js'):
         r = make_cmd_line('art2js', True)
-        for c in r:
-            if c.startswith('echo'):
-                printColor(*c.split('|')[1:])
-            else:
-                print(c)
-                os.system(c);
+        execCmds(r)
     if not os.path.exists('tmp/ascii.js'):
         r = make_cmd_line('ascii', True)
-        for c in r:
-            if c.startswith('echo'):
-                printColor(*c.split('|')[1:])
-            else:
-                print(c)
-                os.system(c);
+        execCmds(r)
 
 def printUsage():
     printColor('yellow', '🏖  TGE building script usage:')
@@ -248,29 +238,59 @@ def printUsage():
     printColor('green', '  ./tge brw <game-name> <...>')
     print('')
 
+def execCmds(cmds):
+    for c in cmds:
+        if c.startswith('echo'):
+            printColor(*c.split('|')[1:])
+        else:
+            print(c)
+            os.system(c);
+
+def prepareHttpServer():
+    #printColor('white', '\n🚀  Check http-server...', False)
+    hsok = False
+    findhs = subprocess.getstatusoutput("ps -ef | grep http-server | grep -v grep | awk '{print $2}'")
+    if findhs[0]==0:
+        hsinfo = subprocess.getstatusoutput("lsof -p "+findhs[1]+" | grep -E 'LISTEN|tge'")
+        if hsinfo[0]==0:
+            ret = hsinfo[1].split('\n')
+            if len(ret)==2:
+                hsok = True
+                #printColor('green', 'OK\n')
+    if not hsok:
+        printColor('green', '🍀 Load http-server...')
+        cmd = 'http-server ./ -a 127.0.0.1 -p8866 > /dev/null 2>/dev/null &'
+        subprocess.getstatusoutput(cmd)
+
+
 if __name__ == "__main__":
     if len(sys.argv)<3:
         printUsage()
         sys.exit(0)
+
     os.chdir(sys.path[0])
+
     prepareTool()
-    b = make_cmd_line(sys.argv[2], True)
-    r = make_cmd_line(sys.argv[2], False, sys.argv[3:])
-    if 'b' in sys.argv[1] and b:
-        for c in b:
-            if c.startswith('echo'):
-                printColor(*c.split('|')[1:])
-            else:
-                print(c)
-                os.system(c);
-        printColor('yellow', 'Build ok...🍺')
-    if 'r' in sys.argv[1] and r:
-        if 'w' in sys.argv[1] and \
-                ("web" in games[sys.argv[2]] and games[sys.argv[2]]["web"]) \
-                or ("webgl" in games[sys.argv[2]] and games[sys.argv[2]]["webgl"]):
+
+    cmd = sys.argv[1]
+    game = sys.argv[2]
+    oargs = sys.argv[3:]
+    b = make_cmd_line(game, True)
+    r = make_cmd_line(game, False, oargs)
+
+    if 'b' in cmd and b:
+        execCmds(b)
+
+    if 'r' in cmd and r:
+        if 'w' in cmd and \
+                ("web" in games[game] and games[game]["web"]) \
+                or ("webgl" in games[game] and games[game]["webgl"]):
             printColor('green', r[1])
             os.system(r[1])
         else:
             printColor('green', r[0])
             os.system(r[0])
+
+    prepareHttpServer()
+    printColor('yellow', 'Build ok...🍺')
 
