@@ -247,7 +247,7 @@ def execCmds(cmds):
             os.system(c);
 
 def prepareHttpServer():
-    #printColor('white', '\n🚀  Check http-server...', False)
+    printColor('green', '🍀 Check http-server...', False)
     hsok = False
     findhs = subprocess.getstatusoutput("ps -ef | grep http-server | grep -v grep | awk '{print $2}'")
     if findhs[0]==0:
@@ -256,12 +256,14 @@ def prepareHttpServer():
             ret = hsinfo[1].split('\n')
             if len(ret)==2:
                 hsok = True
-                #printColor('green', 'OK\n')
+                printColor('green', 'OK!')
     if not hsok:
-        printColor('green', '🍀 Load http-server...')
+        printColor('green', 'not found!')
+        printColor('green', '🍀 Load http-server...', False)
         cmd = 'http-server ./ -a 127.0.0.1 -p8866 > /dev/null 2>/dev/null &'
-        subprocess.getstatusoutput(cmd)
-
+        shs = subprocess.getstatusoutput(cmd)
+        if shs[0]==0:
+            printColor('green', 'OK!')
 
 if __name__ == "__main__":
     if len(sys.argv)<3:
@@ -271,6 +273,7 @@ if __name__ == "__main__":
     os.chdir(sys.path[0])
 
     prepareTool()
+    prepareHttpServer()
 
     cmd = sys.argv[1]
     game = sys.argv[2]
@@ -292,5 +295,4 @@ if __name__ == "__main__":
             printColor('green', r[0])
             os.system(r[0])
 
-    prepareHttpServer()
 
