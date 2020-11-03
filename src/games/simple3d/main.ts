@@ -7,7 +7,7 @@ namespace Simple3d {
         let g = new Simple3d.Game(m, r);
         let am = new tge3d.AssetManager();
         am.loadAsset(
-            "http://127.0.0.1:8866/readme.md", 
+            "../readme.md", 
             tge3d.AssetType.Text, 
             (asset: any) => {
                 tge.log(tge.LogLevel.DEBUG, asset);

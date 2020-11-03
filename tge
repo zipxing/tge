@@ -128,12 +128,18 @@ games = {
     }
 }
 
-Color={'black':30, 'red':31, 'green':32, 'yellow':33, 'blue':34, \
-       'mag':35, 'cyan':36, 'white':37}
+
+Color= {
+        'black':30,  'red':31,
+        'green':32,  'yellow':33,
+        'blue':34,   'mag':35,
+        'cyan':36,   'white':37
+}
 def printColor(color, msg, crlf=True):
     sys.stdout.write('\033[1;'+str(Color[color])+'m'+msg+'\033[0m')
     if crlf: sys.stdout.write('\n')
     sys.stdout.flush()
+
 
 def grepArt(path):
     art_dict = {}
@@ -174,6 +180,8 @@ def make_cmd_line(name, is_build, oa=[]):
         se3d = games["engine3d"]["src"]
         sg = games[name]["src"]
         artjs = ''
+
+        #convert ascii art to javascript for web...
         if "web" in games[name] and games[name]["web"]:
             arts = grepArt(pg)
             if len(arts)>0:
@@ -183,19 +191,23 @@ def make_cmd_line(name, is_build, oa=[]):
                         games[name]["namespace"]+ \
                         ' '+arts[a]+' tmp/'+arts[a]+'.ts')
                 artjs+=' tmp/'+arts[a]+'.ts '
+
         cmds.append("echo|green|🍀 TSC...")
         if "webgl" in games[name] and games[name]["webgl"]:
             cmds.append("tsc -t es5 --outfile tmp/"+name+".js "+ \
-                    pe+pe.join(se)+pe3d+pe3d.join(se3d)+pg+pg.join(sg))
+                    pe + pe.join(se) + pe3d + pe3d.join(se3d) + \
+                    pg + pg.join(sg))
         else:
             cmds.append("tsc -t es5 --outfile tmp/"+name+".js "+ \
-                    pe+pe.join(se)+artjs+pg+pg.join(sg))
+                    pe + pe.join(se) + artjs + pg + pg.join(sg))
+
         if ("web" in games[name] and games[name]["web"]) or \
                 ("webgl" in games[name] and games[name]["webgl"]):
             cmds.append("echo|green|🍀 Browserify for web...")
             cmds.append("browserify tmp/"+name+ \
                     ".js --ignore-missing -o tmp/"+name+"_bundle.js")
             cmds.append("cp src/games/"+name+"/"+name+".html tmp/")
+
         return cmds
     else:
         rcs = ["node tmp/"+name+".js "+' '.join(oa)]
@@ -203,7 +215,9 @@ def make_cmd_line(name, is_build, oa=[]):
                 ("webgl" in games[name] and games[name]["webgl"]):
             hp = 'http://127.0.0.1:8866/'
             rcs.append("open "+hp+"tmp/"+name+".html")
+
         return rcs
+
 
 def prepareTool():
     if not os.path.exists('node_modules/blessed/lib/unicode.js'):
@@ -227,6 +241,7 @@ def prepareTool():
         r = make_cmd_line('ascii', True)
         execCmds(r)
 
+
 def printUsage():
     printColor('yellow', '🏖  TGE building script usage:')
     printColor('white', '\nBuild game:')
@@ -240,6 +255,7 @@ def printUsage():
     printColor('green', '  ./tge brw <game-name> <...>')
     print('')
 
+
 def execCmds(cmds):
     for c in cmds:
         if c.startswith('echo'):
@@ -247,6 +263,7 @@ def execCmds(cmds):
         else:
             print(c)
             os.system(c);
+
 
 def prepareHttpServer():
     printColor('green', '🍀 Check http-server...', False)
@@ -266,6 +283,7 @@ def prepareHttpServer():
         shs = subprocess.getstatusoutput(cmd)
         if shs[0]==0:
             printColor('green', 'OK!')
+
 
 if __name__ == "__main__":
     if len(sys.argv)<3:
@@ -291,10 +309,10 @@ if __name__ == "__main__":
                 ("web" in games[game] and games[game]["web"]) \
                 or ("webgl" in games[game] and games[game]["webgl"]):
             prepareHttpServer()
-            printColor('green', r[1])
+            printColor('mag', '🚀 '+r[1])
             os.system(r[1])
         else:
-            printColor('green', r[0])
+            printColor('mag', '🚀 '+r[0])
             os.system(r[0])
 
 
