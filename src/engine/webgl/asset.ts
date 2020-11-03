@@ -45,32 +45,36 @@ namespace tge3d {
         Image =  'image'
     }
     export class AssetManager {
-        static _loaders: {[name: string] : any} = {};
-        static _assets: {[name: string] : any} = {};
+        _loaders: {[name: string] : any} = {};
+        _assets: {[name: string] : any} = {};
+
         constructor(){
-            AssetManager._loaders = {};
-            AssetManager._assets = {};
-
-            AssetManager.addLoader(AssetType.Image, new ImageLoader());
-            AssetManager.addLoader(AssetType.Text, new TextLoader());
+            this._loaders = {};
+            this._assets = {};
+            this.addLoader(AssetType.Image, new ImageLoader());
+            this.addLoader(AssetType.Text, new TextLoader());
         }
 
-        static addLoader(asset_type: string, loader: any){
-            AssetManager._loaders[asset_type] = loader;
+        addLoader(asset_type: string, loader: any){
+            this._loaders[asset_type] = loader;
         }
 
-        static loadAsset(name: string, type: AssetType, oncomp: Function){
-            if(AssetManager._assets[name]){
+        loadAsset(name: string, type: AssetType, oncomp: Function){
+            if((Object.keys(this._loaders)).length == 0) {
+                this.addLoader(AssetType.Image, new ImageLoader());
+                this.addLoader(AssetType.Text, new TextLoader());
+            }
+            if(this._assets[name]){
                 if(oncomp){
-                    oncomp(AssetManager._assets[name]);
+                    oncomp(this._assets[name]);
                 }
                 return;
             }
 
-            let loader = AssetManager._loaders[type];
+            let loader = this._loaders[type];
             if(loader){
                 loader.loadAsset(name, (asset: any) => {
-                    AssetManager._assets[name] = asset;
+                    this._assets[name] = asset;
                     if(oncomp){
                         oncomp(asset);
                     }
@@ -80,17 +84,17 @@ namespace tge3d {
             }
         }
 
-        static getAsset(name: string){
-            return AssetManager._assets[name];
+        getAsset(name: string){
+            return this._assets[name];
         }
 
         //assetList: [[name,type]]
-        static loadAssetList(asset_list: any, onAllComplete: Function){
+        loadAssetList(asset_list: any, onAllComplete: Function){
             let remainCount = asset_list.length;
             for(let listItem of asset_list){
                 let name = listItem[0];
                 let type = listItem[1];
-                AssetManager.loadAsset(name, type, (asset: any) => {
+                this.loadAsset(name, type, (asset: any) => {
                     if(asset){
                         remainCount--;
                         if(remainCount===0 && onAllComplete){
