@@ -80,7 +80,7 @@ namespace tge3d {
                     }
                 });
             } else {
-                console.error("missing loader for asset type "+type);
+                tge.log(tge.LogLevel.ERROR, "missing loader for asset type "+type);
             }
         }
 
@@ -101,10 +101,12 @@ namespace tge3d {
                             onAllComplete();
                         }
                     } else {
-                        console.error('fail to load asset '+name);
+                        tge.log(tge.LogLevel.ERROR, 'fail to load asset '+name);
                     }
                 })
             }
         }
     }
+
+    export let assetManager = new AssetManager();
 }

@@ -27,7 +27,8 @@ games = {
             "matrix.ts",
             "vertex.ts",
             "mesh.ts",
-            "shader.ts"
+            "shader.ts",
+            "texture.ts"
         ]
     },
     "tetris" : {

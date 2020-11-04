@@ -57,7 +57,7 @@ namespace AscIIEditor {
             let ots = [];
             for(let i=0; i<Model.asciih; i++) {
                 ots[ots.length]=tge.AscIIManager.processGridLine(this.grid[i]);
-                console.log(ots[i].length);
+                //console.log(ots[i].length);
             }
             let blank_count = 0;
             for(let i=ots.length-1; i>=0; i--) {

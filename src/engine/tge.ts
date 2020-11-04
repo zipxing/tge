@@ -29,8 +29,10 @@ namespace tge {
             case "WEB":
                 let cv = document.createElement("canvas");
                 document.body.appendChild(cv);
-                cv.width = Math.floor(cv.clientWidth * window.devicePixelRatio);
-                cv.height = Math.floor(cv.clientHeight * window.devicePixelRatio);
+                //cv.width = Math.floor(cv.clientWidth * window.devicePixelRatio);
+                //cv.height = Math.floor(cv.clientHeight * window.devicePixelRatio);
+                cv.width = 640;
+                cv.height = 640;
                 let names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
                 let ct = null;
                 for(let i=0; i<names.length; i++){
@@ -39,6 +41,7 @@ namespace tge {
                 }
                 if(ct) {
                     let wglct:WebGLRenderingContext = <WebGLRenderingContext> ct;
+                    wglct.pixelStorei(wglct.UNPACK_FLIP_Y_WEBGL, 1); //Flip the image's y axis
                     wglct.viewport(0, 0, cv.width, cv.height);
                     env = <WebRun>{
                         kind:runenv, 
@@ -88,7 +91,7 @@ namespace tge {
                 };
                 break;
             default:
-                console.log("ERROR:error runenv string...");
+                tge.log(tge.LogLevel.ERROR, "ERROR:error runenv string...");
         }
     }
 
@@ -179,7 +182,7 @@ namespace tge {
                     }
                     break;
                 default:
-                    console.log("RunEnv must be TERM | COCOS | WEB...");
+                    tge.log(tge.LogLevel.ERROR, "RunEnv must be TERM | COCOS | WEB...");
             }
         }
     }

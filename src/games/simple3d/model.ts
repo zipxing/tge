@@ -1,8 +1,8 @@
 namespace Simple3d {
     export class Model extends tge.Model {
-        rot_x: number = 20;
+        rot_x: number = 30;
         rot_y: number = 30;
-        rot_z: number = 40;
+        rot_z: number = 0;
 
         constructor() {
             super();

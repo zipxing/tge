@@ -136,6 +136,14 @@ namespace tge3d {
                 return;
             }
             switch(info.type){
+                case gl.INT:{
+                    if(info.isArray){
+                        gl.uniform1iv(info.location, value);
+                    } else {
+                        gl.uniform1i(info.location, value);
+                    }
+                    break;
+                }
                 case gl.FLOAT:{
                     if(info.isArray){
                         gl.uniform1fv(info.location, value);
@@ -156,8 +164,16 @@ namespace tge3d {
                     gl.uniform4fv(info.location, value);
                     break;
                 }
+                case gl.FLOAT_MAT3:{
+                    gl.uniformMatrix3fv(info.location, false, value);
+                    break;
+                }
                 case gl.FLOAT_MAT4:{
                     gl.uniformMatrix4fv(info.location, false, value);
+                    break;
+                }
+                case gl.SAMPLER_2D:{
+                    gl.uniform1i(info.location, value);
                     break;
                 }
                 default:{
