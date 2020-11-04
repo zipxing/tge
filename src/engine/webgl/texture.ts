@@ -91,5 +91,5 @@ namespace tge3d {
             }
         }
     }
-    export let texture_manager = new TextureManager();
+    export const texture_manager = new TextureManager();
 }

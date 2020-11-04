@@ -1,31 +1,14 @@
 namespace Simple3d {
     export class WebGlRender extends tge.Render {
-        static VSHADER_SOURCE=`
-            attribute vec4 a_Position;
-            attribute vec4 a_Color;
-            attribute vec2 a_TexCoord;
-            uniform mat4 u_mvpMatrix;
-            varying vec4 v_Color;
-            varying vec2 v_TexCoord;
-            void main(){
-                gl_Position = u_mvpMatrix * a_Position;
-                v_Color = a_Color;
-                v_TexCoord = a_TexCoord;
-            }
-        `;
+        static shader_vs = 'shader/tex.vs';
+        static shader_fs = 'shader/tex.fs';
+        static image_box = 'image/box.jpg';
 
-        static FSHADER_SOURCE=`
-            #ifdef GL_ES
-            precision mediump float;
-            #endif
-            uniform sampler2D u_sampler;
-            varying vec4 v_Color;
-            varying vec2 v_TexCoord;
-            void main() {
-                vec4 tex = texture2D(u_sampler, v_TexCoord);
-                gl_FragColor = tex * v_Color;
-            }
-        `;
+        static assets = [
+            [WebGlRender.shader_vs, tge3d.AssetType.Text],
+            [WebGlRender.shader_fs, tge3d.AssetType.Text],
+            [WebGlRender.image_box, tge3d.AssetType.Image]
+        ];
 
         modelMatrix: tge3d.Matrix4;
         viewMatrix: tge3d.Matrix4;
@@ -46,7 +29,7 @@ namespace Simple3d {
             this.shader = null;
             this.texture = null;
 
-            tge3d.asset_manager.loadAsset('../assets/image/box.jpg', tge3d.AssetType.Image, ()=>{
+            tge3d.asset_manager.loadAssetList(WebGlRender.assets, ()=>{
                 this.isInit = true;
                 this.start();
             });
@@ -58,8 +41,10 @@ namespace Simple3d {
             let canvas = (<tge.WebRun>tge.env).canvas;
 
             this.shader = new tge3d.Shader();
+            let vs = tge3d.asset_manager.getAsset(WebGlRender.shader_vs).data;
+            let fs = tge3d.asset_manager.getAsset(WebGlRender.shader_fs).data;
 
-            if(!this.shader.create(WebGlRender.VSHADER_SOURCE, WebGlRender.FSHADER_SOURCE)){
+            if(!this.shader.create(vs, fs)){
                 tge.log(tge.LogLevel.ERROR, "Failed to initialize shaders");
                 return;
             }
@@ -69,7 +54,7 @@ namespace Simple3d {
             this.shader.mapAttributeSemantic(tge3d.VertexSemantic.UV0, 'a_TexCoord');
             this.shader.use();
 
-            this.texture = tge3d.texture_manager.getTexture('../assets/image/box.jpg');
+            this.texture = tge3d.texture_manager.getTexture(WebGlRender.image_box);
             this.mesh = this.createMesh();
 
             this.viewProjMatrix.setPerspective(60.0, canvas.width/canvas.height, 1.0, 100.0);

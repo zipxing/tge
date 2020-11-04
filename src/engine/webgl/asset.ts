@@ -4,6 +4,8 @@ namespace tge3d {
         data: string;
     }
 
+    let _asset_path = "../assets/";
+
     export class TextLoader {
         loadAsset(name: string, oncomplete: Function) {
             let req= new XMLHttpRequest();
@@ -18,7 +20,7 @@ namespace tge3d {
                     }
                 }
             };
-            req.open('GET', name, true);
+            req.open('GET', _asset_path + name, true);
             req.send();
         }
     }
@@ -40,7 +42,7 @@ namespace tge3d {
                     oncomplete(a);
                 }
             };
-            img.src = name;
+            img.src = _asset_path + name;
         }
     }
 
@@ -58,6 +60,11 @@ namespace tge3d {
             this._assets = {};
             this.addLoader(AssetType.Image, new ImageLoader());
             this.addLoader(AssetType.Text, new TextLoader());
+        }
+
+        //default _asset_path : "../assets/"
+        setAssetsPath(ap: string) {
+            _asset_path = ap;
         }
 
         addLoader(asset_type: string, loader: any){
@@ -113,5 +120,5 @@ namespace tge3d {
         }
     }
 
-    export let asset_manager = new AssetManager();
+    export const asset_manager = new AssetManager();
 }
