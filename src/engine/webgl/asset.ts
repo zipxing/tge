@@ -3,6 +3,7 @@ namespace tge3d {
         name: string;
         data: string;
     }
+
     export class TextLoader {
         loadAsset(name: string, oncomplete: Function) {
             let req= new XMLHttpRequest();
@@ -21,10 +22,12 @@ namespace tge3d {
             req.send();
         }
     }
+
     export interface ImageAsset {
         name: string;
         data: any;
     }
+
     export class ImageLoader {
         loadAsset(name: string, oncomplete: Function) {
             let img = new Image();
@@ -40,13 +43,15 @@ namespace tge3d {
             img.src = name;
         }
     }
+
     export enum AssetType {
         Text = 'text',
         Image =  'image'
     }
+
     export class AssetManager {
-        _loaders: {[name: string] : any} = {};
-        _assets: {[name: string] : any} = {};
+        private _loaders: {[name: string] : any};
+        private _assets: {[name: string] : any};
 
         constructor(){
             this._loaders = {};
@@ -89,7 +94,7 @@ namespace tge3d {
         }
 
         //assetList: [[name,type]]
-        loadAssetList(asset_list: any, onAllComplete: Function){
+        loadAssetList(asset_list: any, on_all_comp: Function){
             let remainCount = asset_list.length;
             for(let listItem of asset_list){
                 let name = listItem[0];
@@ -97,8 +102,8 @@ namespace tge3d {
                 this.loadAsset(name, type, (asset: any) => {
                     if(asset){
                         remainCount--;
-                        if(remainCount===0 && onAllComplete){
-                            onAllComplete();
+                        if(remainCount===0 && on_all_comp){
+                            on_all_comp();
                         }
                     } else {
                         tge.log(tge.LogLevel.ERROR, 'fail to load asset '+name);
@@ -108,5 +113,5 @@ namespace tge3d {
         }
     }
 
-    export let assetManager = new AssetManager();
+    export let asset_manager = new AssetManager();
 }

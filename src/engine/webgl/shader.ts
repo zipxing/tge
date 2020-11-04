@@ -7,24 +7,24 @@ namespace tge3d {
         isArray: boolean;
     }
 
-    export class Shader{
+    export class Shader {
         program: any;
-        private _semanticToAttribName : {[key: string]: string};
+        private _semantic2attr : {[key: string]: string};
         private _attributes : {[key: string] : number};
         private _uniforms : {[key: string] : any};
 
-        constructor(){
+        constructor() {
             this.program = null;
-            this._semanticToAttribName = {}; // {[semantic:string]:string}
+            this._semantic2attr = {}; // {[semantic:string]:string}
             this._attributes = {}; // {[name:string]:number}
             this._uniforms = {};  // {[name:string]:WebGLUniformLocation}
         }
 
-        mapAttributeSemantic(semantic: string, attribName: string){
-            this._semanticToAttribName[semantic] = attribName;
+        mapAttributeSemantic(semantic: string, attr_name: string) {
+            this._semantic2attr[semantic] = attr_name;
         }
 
-        create(vshader: string, fshader: string){
+        create(vshader: string, fshader: string) {
             let gl = (<tge.WebRun>tge.env).context;
             let vertexShader = this.loadShader(gl.VERTEX_SHADER, vshader);
             let fragmentShader = this.loadShader(gl.FRAGMENT_SHADER, fshader);
@@ -63,7 +63,7 @@ namespace tge3d {
             return true;
         }
 
-        loadShader(type: any, source: string){
+        loadShader(type: any, source: string) {
             let gl = (<tge.WebRun>tge.env).context;
             let shader = gl.createShader(type);
             if (shader == null) {
@@ -89,12 +89,12 @@ namespace tge3d {
             return shader;
         }
 
-        findoutAttributes(){
+        findoutAttributes() {
             let gl = (<tge.WebRun>tge.env).context;
             let attributeCount = gl.getProgramParameter(this.program, gl.ACTIVE_ATTRIBUTES);
-            for(let i=0; i<attributeCount; ++i){
+            for(let i=0; i<attributeCount; ++i) {
                 let info = gl.getActiveAttrib(this.program, i);
-                if(!info){
+                if(!info) {
                     break;
                 }
 
@@ -104,12 +104,12 @@ namespace tge3d {
             tge.log(tge.LogLevel.INFO, 'attributes',this._attributes);
         }
 
-        findoutUniforms(){
+        findoutUniforms() {
             let gl = (<tge.WebRun>tge.env).context;
             let uniformCount = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
-            for(let i=0; i<uniformCount; ++i){
+            for(let i=0; i<uniformCount; ++i) {
                 let info = gl.getActiveUniform(this.program, i);
-                if(!info){
+                if(!info) {
                     break;
                 }
 
@@ -128,14 +128,14 @@ namespace tge3d {
             tge.log(tge.LogLevel.INFO, 'uniforms',this._uniforms);
         }
 
-        setUniform(name: string, value: any){
+        setUniform(name: string, value: any) {
             let gl = (<tge.WebRun>tge.env).context;
             let info = this._uniforms[name];
-            if(!info){
+            if(!info) {
                 tge.log(tge.LogLevel.ERROR, 'can not find uniform named '+name);
                 return;
             }
-            switch(info.type){
+            switch(info.type) {
                 case gl.INT:{
                     if(info.isArray){
                         gl.uniform1iv(info.location, value);
@@ -183,9 +183,9 @@ namespace tge3d {
             }
         }
 
-        getAttributeLocation(semantic: string){
-            let name = this._semanticToAttribName[semantic];
-            if(name){
+        getAttributeLocation(semantic: string) {
+            let name = this._semantic2attr[semantic];
+            if(name) {
                 let location = this._attributes[name];
                 return location;
             } else {
@@ -194,8 +194,8 @@ namespace tge3d {
             }
         }
 
-        use(){
-            if(this.program){
+        use() {
+            if(this.program) {
                 let gl = (<tge.WebRun>tge.env).context;
                 gl.useProgram(this.program);
             }

@@ -46,7 +46,7 @@ namespace Simple3d {
             this.shader = null;
             this.texture = null;
 
-            tge3d.assetManager.loadAsset('../assets/image/box.jpg', tge3d.AssetType.Image, ()=>{
+            tge3d.asset_manager.loadAsset('../assets/image/box.jpg', tge3d.AssetType.Image, ()=>{
                 this.isInit = true;
                 this.start();
             });
@@ -69,13 +69,13 @@ namespace Simple3d {
             this.shader.mapAttributeSemantic(tge3d.VertexSemantic.UV0, 'a_TexCoord');
             this.shader.use();
 
-            this.texture = tge3d.textureManager.getTexture('../assets/image/box.jpg');
+            this.texture = tge3d.texture_manager.getTexture('../assets/image/box.jpg');
             this.mesh = this.createMesh();
 
             this.viewProjMatrix.setPerspective(60.0, canvas.width/canvas.height, 1.0, 100.0);
             this.viewProjMatrix.multiply(this.viewMatrix);
 
-            gl.clearColor(0, 0, 0, 1);
+            gl.clearColor(0, 0, 0.1, 1);
             gl.clearDepth(1.0);
             gl.enable(gl.DEPTH_TEST);
 

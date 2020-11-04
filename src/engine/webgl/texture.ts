@@ -7,7 +7,7 @@ namespace tge3d {
     export class Texture2D {
         _id: number;
 
-        constructor(){
+        constructor() {
             let gl = (<tge.WebRun>tge.env).context;
             this._id = gl.createTexture();
             if (!this._id) {
@@ -15,13 +15,13 @@ namespace tge3d {
             }
         }
 
-        destroy(){
+        destroy() {
             let gl = (<tge.WebRun>tge.env).context;
             gl.deleteTexture(this._id);
             this._id = 0;
         }
 
-        create(image: any){
+        create(image: any) {
             let gl = (<tge.WebRun>tge.env).context;
             // Bind the texture object to the target
             gl.bindTexture(gl.TEXTURE_2D, this._id);
@@ -37,17 +37,17 @@ namespace tge3d {
             gl.bindTexture(gl.TEXTURE_2D, null);
         }
 
-        get id(){
+        get id() {
             return this._id;
         }
 
-        bind(unit=0){
+        bind(unit=0) {
             let gl = (<tge.WebRun>tge.env).context;
             gl.activeTexture(gl.TEXTURE0 + unit);
             gl.bindTexture(gl.TEXTURE_2D, this._id);
         }
 
-        unbind(){
+        unbind() {
             let gl = (<tge.WebRun>tge.env).context;
             gl.bindTexture(gl.TEXTURE_2D, null);
         }
@@ -56,16 +56,16 @@ namespace tge3d {
     export class TextureManager {
         private _textures: {[path:string] : SharedTexture | null};
 
-        constructor(){
+        constructor() {
             this._textures = {};
         }
 
-        getTexture(texturePath: string){
+        getTexture(texturePath: string) {
             let t = this._textures[texturePath];
-            if(t == null){
+            if(t == null) {
                 let texture = new Texture2D();
-                texture.create(assetManager.getAsset(texturePath).data);
-                t = <SharedTexture>{
+                texture.create(asset_manager.getAsset(texturePath).data);
+                t = <SharedTexture> {
                     texture: texture,
                     ref: 1
                 };
@@ -77,7 +77,7 @@ namespace tge3d {
             return t.texture;
         }
 
-        releaseTexture(texturePath: string){
+        releaseTexture(texturePath: string) {
             let t = this._textures[texturePath];
             if(t == null){
                 tge.log(tge.LogLevel.ERROR, "releaseTexture: texture not found: "+texturePath);
@@ -91,5 +91,5 @@ namespace tge3d {
             }
         }
     }
-    export let textureManager = new TextureManager();
+    export let texture_manager = new TextureManager();
 }

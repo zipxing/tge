@@ -109,7 +109,7 @@ namespace tge3d {
         }
 
         //combine vertex attribute datas to a data array
-        _compile(){
+        private _compile(){
             let positionInfo = this._attribs_info[VertexSemantic.POSITION];
             if(positionInfo == null){
                 tge.log(tge.LogLevel.ERROR, 'VertexBuffer: no attrib position');
