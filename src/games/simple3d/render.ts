@@ -31,12 +31,12 @@ namespace Simple3d {
 
             tge3d.asset_manager.loadAssetList(WebGlRender.assets, ()=>{
                 this.isInit = true;
-                this.start();
+                this.init();
             });
-            this.viewMatrix.setLookAt(.0, .0, 8.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+            this.viewMatrix.setLookAt(.0, .0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
         }
 
-        start() {
+        init() {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
 
@@ -60,7 +60,7 @@ namespace Simple3d {
             this.viewProjMatrix.setPerspective(60.0, canvas.width/canvas.height, 1.0, 100.0);
             this.viewProjMatrix.multiply(this.viewMatrix);
 
-            gl.clearColor(0, 0, 0.1, 1);
+            gl.clearColor(0, 0, 0, 1);
             gl.clearDepth(1.0);
             gl.enable(gl.DEPTH_TEST);
 
