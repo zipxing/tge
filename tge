@@ -24,7 +24,7 @@ games = {
         "web": True,
         "src" : [
             "asset.ts",
-            "matrix.ts",
+            "math.ts",
             "vertex.ts",
             "mesh.ts",
             "shader.ts",
