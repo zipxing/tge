@@ -28,7 +28,9 @@ games = {
             "vertex.ts",
             "mesh.ts",
             "shader.ts",
-            "texture.ts"
+            "texture.ts",
+            "geomerty.ts",
+            "obj.ts"
         ]
     },
     "tetris" : {
@@ -93,6 +95,18 @@ games = {
             "mouse.ts",
             "render.ts",
             "game.ts",
+            "main.ts"
+        ]
+    },
+    "obj3d" : {
+        "path": "src/games/obj3d",
+        "namespace": "Obj3d",
+        "webgl": True,
+        "src": [
+            "model.ts",
+            "render.ts",
+            "game.ts",
+            "mouse.ts",
             "main.ts"
         ]
     },

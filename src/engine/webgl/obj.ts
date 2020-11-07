@@ -84,7 +84,7 @@ namespace tge3d {
         }
     }
 
-    class ObjFileLoader{
+    export class ObjFileLoader {
         private _vertices: any[] = [];
         private _normals: any[] = [];
         private _texcoords: any[] = [];
@@ -102,7 +102,7 @@ namespace tge3d {
             this._faces = [];
         }
 
-        load(fileString: string, scale: number, calcTangent=false){
+        load(fileString: string, scale: number, calcTangent=false) {
             this.calcTangent = calcTangent;
             let lines: (string | null)[] = fileString.split('\n');
             lines.push(null);
