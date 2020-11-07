@@ -399,6 +399,7 @@ namespace tge3d {
         x: number;
         y: number;
         z: number;
+        w: number = 0;
 
         constructor(x=0,y=0,z=0){
             this.x = x;

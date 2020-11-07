@@ -27,45 +27,45 @@ namespace tge3d {
                 let p1 = new Vector3(p1x, p1y, p1z);
                 let p2 = new Vector3(p2x, p2y, p2z);
 
-                let faceN = GeomertyHelper._calcFaceNormal(p0, p1, p2);          
-                let faceArea = GeomertyHelper._calcFaceArea(p0, p1, p2);      
+                let faceN = GeomertyHelper._calcFaceNormal(p0, p1, p2);
+                let faceArea = GeomertyHelper._calcFaceArea(p0, p1, p2);
 
                 if(vertexNormals[idx0]==null){
                     vertexNormals[idx0] = new Vector3();
                 }
-                let angle = GeomertyHelper._calcAngle(new Vector3(p1x-p0x, p1y-p0y, p1z-p0z), new Vector3(p2x-p0x, p2y-p0y, p2z-p0z));                
+                let angle = GeomertyHelper._calcAngle(new Vector3(p1x-p0x, p1y-p0y, p1z-p0z), new Vector3(p2x-p0x, p2y-p0y, p2z-p0z));
                 vertexNormals[idx0].add(Vector3.scaleTo(faceN, angle, new Vector3().scale(faceArea)));
 
                 if(vertexNormals[idx1]==null){
                     vertexNormals[idx1] = new Vector3();
                 }
-                angle = GeomertyHelper._calcAngle(new Vector3(p2x-p1x, p2y-p1y, p2z-p1z), new Vector3(p0x-p1x, p0y-p1y, p0z-p1z));                
+                angle = GeomertyHelper._calcAngle(new Vector3(p2x-p1x, p2y-p1y, p2z-p1z), new Vector3(p0x-p1x, p0y-p1y, p0z-p1z));
                 vertexNormals[idx1].add(Vector3.scaleTo(faceN, angle, new Vector3().scale(faceArea)));
 
                 if(vertexNormals[idx2]==null){
                     vertexNormals[idx2] = new Vector3();
                 }
-                angle = GeomertyHelper._calcAngle(new Vector3(p0x-p2x, p0y-p2y, p0z-p2z), new Vector3(p1x-p2x, p1y-p2y, p1z-p2z));                
+                angle = GeomertyHelper._calcAngle(new Vector3(p0x-p2x, p0y-p2y, p0z-p2z), new Vector3(p1x-p2x, p1y-p2y, p1z-p2z));
                 vertexNormals[idx2].add(Vector3.scaleTo(faceN, angle, new Vector3().scale(faceArea)));
             }
 
             for(let i=0; i<vertexNormals.length; ++i){
-                let n = vertexNormals[i];                                
+                let n = vertexNormals[i];
                 n.normalize();
-                normals.push(n.x, n.y, n.z);
+                normal.push(n.x, n.y, n.z);
             }
         }
 
-        static _calcFaceNormal(p0, p1, p2){
+        static _calcFaceNormal(p0:Vector3, p1:Vector3, p2:Vector3){
             let v_10 = new Vector3(p0.x-p1.x, p0.y-p1.y, p0.z-p1.z);
             let v_12 = new Vector3(p2.x-p1.x, p2.y-p1.y, p2.z-p1.z);
             let normal = new Vector3();
-            Vector3.cross(v_12, v_10, normal);        
+            Vector3.cross(v_12, v_10, normal);
             normal.normalize();
             return normal;
         }
 
-        static _calcFaceArea(p0, p1, p2){
+        static _calcFaceArea(p0:Vector3, p1:Vector3, p2:Vector3){
             let a = Vector3.distance(p0, p1);
             let b = Vector3.distance(p1, p2);
             let c = Vector3.distance(p0, p2);
@@ -73,18 +73,18 @@ namespace tge3d {
             return Math.sqrt(p*(p-a)*(p-b)*(p-c));
         }
 
-        static _calcAngle(v0, v1){
+        static _calcAngle(v0:Vector3, v1:Vector3){
             v0.normalize();
             v1.normalize();
             return Math.acos(Vector3.dot(v0, v1));
         }
 
         // tangents ////////////
-        static calcMeshTangents(triangels, positions, uvs, tangents){
+        static calcMeshTangents(triangels: any[], positions: any[], uvs: any[], tangents: any[]){
             let triangleCount = triangels.length/3;
             let vertexTangents = [];
             let t = 0;
-            for(let i=0; i<triangleCount; ++i){                
+            for(let i=0; i<triangleCount; ++i){
                 let idx0 = triangels[t];
                 let idx1 = triangels[t+1];
                 let idx2 = triangels[t+2];
@@ -122,13 +122,13 @@ namespace tge3d {
 
                 if(vertexTangents[idx0]==null){
                     vertexTangents[idx0] = new Vector3();
-                }              
+                }
                 vertexTangents[idx0].add(faceT);
                 vertexTangents[idx0].w = faceT.w; //hack w给顶点切线
 
                 if(vertexTangents[idx1]==null){
                     vertexTangents[idx1] = new Vector3();
-                }            
+                }
                 vertexTangents[idx1].add(faceT);
                 vertexTangents[idx1].w = faceT.w;
 
@@ -140,13 +140,13 @@ namespace tge3d {
             }
 
             for(let i=0; i<vertexTangents.length; ++i){
-                let t = vertexTangents[i];                                
-                t.normalize();            
+                let t = vertexTangents[i];
+                t.normalize();
                 tangents.push(t.x, t.y, t.z, t.w);
             }
         }
 
-        static _calcFaceTangent(p0, p1, p2, uv0, uv1, uv2){
+        static _calcFaceTangent(p0:Vector3, p1:Vector3, p2:Vector3, uv0:Vector3, uv1:Vector3, uv2:Vector3){
             let edge1 = Vector3.sub(p1, p0, new Vector3());
             let edge2 = Vector3.sub(p2, p0, new Vector3());
             let deltaUV1 = Vector3.sub(uv1, uv0, new Vector3());

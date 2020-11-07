@@ -246,6 +246,7 @@ namespace tge3d {
             let positions = [];
             let normals = [];
             let uvs = [];
+            let tangents: any[] = [];
 
             for(let i=0; i<this._vertices.length; i++){
                 let v = this._vertices[i];
@@ -306,6 +307,10 @@ namespace tge3d {
 
             if(uvs.length>0){
                 mesh.setVertexData(VertexSemantic.UV0, uvs);
+            }
+
+            if(tangents.length>0){
+                mesh.setVertexData(VertexSemantic.TANGENT, tangents);
             }
 
             mesh.setTriangles(triangels);
