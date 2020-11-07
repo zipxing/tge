@@ -940,6 +940,9 @@ namespace tge3d {
         }
     }
 
+    export const Vec3Right = new Vector3(1, 0, 0);
+    export const Vec3Up = new Vector3(0, 1, 0);
+
     export class Quaternion {
         x: number;
         y: number;
@@ -1404,8 +1407,5 @@ namespace tge3d {
                 qa.w * scale0 + result.w * scale1);
             return result;
         }
-
     }
-    export let Vec3Right = new Vector3(1, 0, 0);
-    export let Vec3Up = new Vector3(0, 1, 0);
 }
