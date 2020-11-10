@@ -70,7 +70,7 @@ namespace tge3d {
                 let semantic = this._vertex_format.attribs[i];
                 let size = this._vertex_format.attr_size[semantic];
                 if(size==null){
-                    tge.log(tge.LogLevel.ERROR, 'VertexBuffer: bad semantic');
+                    tge.error('VertexBuffer: bad semantic');
                 } else {
                     let info = <VertexAttribInfo> {
                         semantic: semantic,
@@ -112,11 +112,11 @@ namespace tge3d {
         private _compile(){
             let positionInfo = this._attribs_info[VertexSemantic.POSITION];
             if(positionInfo == null){
-                tge.log(tge.LogLevel.ERROR, 'VertexBuffer: no attrib position');
+                tge.error('VertexBuffer: no attrib position');
                 return;
             }
             if(positionInfo.data == null || positionInfo.data.length===0){
-                tge.log(tge.LogLevel.ERROR, 'VertexBuffer: position data is empty');
+                tge.error('VertexBuffer: position data is empty');
                 return;
             }
 
@@ -128,13 +128,13 @@ namespace tge3d {
                 for(let semantic of this._vertex_format.attribs){
                     let info = this._attribs_info[semantic];
                     if(info==null || info.data==null){
-                        tge.log(tge.LogLevel.ERROR, 'VertexBuffer: bad semantic '+semantic);
+                        tge.error('VertexBuffer: bad semantic '+semantic);
                         continue;
                     }
                     for(let k=0; k<info.size; ++k){
                         let value = info.data[ i * info.size + k ];
                         if(value===undefined){
-                            tge.log(tge.LogLevel.ERROR, 'VertexBuffer: missing value for '+semantic);
+                            tge.error('VertexBuffer: missing value for '+semantic);
                         }
                         this._bufferData.push(value);
                     }
@@ -241,7 +241,7 @@ namespace tge3d {
         upload(){
             let gl = (<tge.WebRun>tge.env).context;
             if(this._bufferData==null){
-                tge.log(tge.LogLevel.ERROR, "buffer data is null.");
+                tge.error("buffer data is null.");
                 return;
             }
             let useByte = this._bufferData.length<=256;

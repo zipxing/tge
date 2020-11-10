@@ -54,7 +54,7 @@ namespace Tetris {
         //设置方块序列
         setQueue(queue: number[]) { 
             this.block_queue=queue; 
-            tge.log(tge.LogLevel.INFO, "mq in setqueue:\n", queue);
+            tge.info("mq in setqueue:\n", queue);
         }
 
         //重置数据，每局开始调用
@@ -73,7 +73,7 @@ namespace Tetris {
             });
 
             tge.Timer.register(this.index+"game-over", 0.12, ()=>{
-                tge.log(tge.LogLevel.INFO, "OVER"+this.index);
+                tge.info("OVER"+this.index);
                 //这里写mc.game_over会导致bug，因为实际玩的时候
                 //this.core已经不是mc了...
                 //mc.game_over=true;

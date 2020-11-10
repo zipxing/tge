@@ -49,7 +49,7 @@ namespace AscIIEditor {
             let g = tge.AscIIManager.getArt("MainGrid");
             if(g) {
                 this.grid = g.grid;
-                tge.log(tge.LogLevel.DEBUG, g.blessed_lines);
+                tge.error(g.blessed_lines);
             }
         }
 

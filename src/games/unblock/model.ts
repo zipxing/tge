@@ -124,7 +124,7 @@ namespace Unblock {
                 chkpoints[chkpoints.length] = i;
             }
             chkpoints[chkpoints.length] = nv;
-            tge.log(tge.LogLevel.DEBUG, "dirIsX=", dr, "old=", ov, "dv=", dv, "chk=", chkpoints);
+            tge.debug("dirIsX=", dr, "old=", ov, "dv=", dv, "chk=", chkpoints);
             let ret = null;
             for(let i=0; i<chkpoints.length; i++) {
                 dr? mp.x=chkpoints[i] : mp.y=chkpoints[i];

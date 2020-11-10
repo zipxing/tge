@@ -24,4 +24,20 @@ namespace tge {
         let d = new Date()
         console.log(LogLevel[level], d, ...arg);
     }
+
+    export function debug(...arg: any[]) {
+        tge.log(tge.LogLevel.DEBUG, ...arg);
+    }
+
+    export function error(...arg: any[]) {
+        tge.log(tge.LogLevel.ERROR, ...arg);
+    }
+
+    export function info(...arg: any[]) {
+        tge.log(tge.LogLevel.INFO, ...arg);
+    }
+
+    export function warning(...arg: any[]) {
+        tge.log(tge.LogLevel.WARNING, ...arg);
+    }
 }

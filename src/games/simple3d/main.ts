@@ -10,7 +10,7 @@ namespace Simple3d {
             "../readme.md", 
             tge3d.AssetType.Text, 
             (asset: any) => {
-                tge.log(tge.LogLevel.DEBUG, asset);
+                tge.debug(asset);
             }
         );
         g.initGame();
@@ -21,7 +21,7 @@ namespace Simple3d {
         //browser term...
         window.onload = () => { main("WEB"); }
     } else {
-        tge.log(tge.LogLevel.INFO, "Must in web...");
+        tge.info("Must in web...");
     }
 }
 

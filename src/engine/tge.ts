@@ -49,7 +49,7 @@ namespace tge {
                         canvas: cv
                     };
                 } else {
-                    tge.log(tge.LogLevel.ERROR, "WebGL init fail...");
+                    tge.error("WebGL init fail...");
                 }
                 break;
             case "WEBTERM":
@@ -91,7 +91,7 @@ namespace tge {
                 };
                 break;
             default:
-                tge.log(tge.LogLevel.ERROR, "ERROR:error runenv string...");
+                tge.error("ERROR:error runenv string...");
         }
     }
 
@@ -182,7 +182,7 @@ namespace tge {
                     }
                     break;
                 default:
-                    tge.log(tge.LogLevel.ERROR, "RunEnv must be TERM | COCOS | WEB...");
+                    tge.error("RunEnv must be TERM | COCOS | WEB...");
             }
         }
     }

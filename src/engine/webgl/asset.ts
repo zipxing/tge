@@ -92,7 +92,7 @@ namespace tge3d {
                     }
                 });
             } else {
-                tge.log(tge.LogLevel.ERROR, "missing loader for asset type "+type);
+                tge.error("missing loader for asset type "+type);
             }
         }
 
@@ -113,7 +113,7 @@ namespace tge3d {
                             on_all_comp();
                         }
                     } else {
-                        tge.log(tge.LogLevel.ERROR, 'fail to load asset '+name);
+                        tge.error('fail to load asset '+name);
                     }
                 })
             }

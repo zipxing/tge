@@ -29,11 +29,13 @@ namespace Simple3d {
             this.shader = null;
             this.texture = null;
 
+            this.viewMatrix.setLookAt(.0, .0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+            tge.debug("-=GLFLOW=-", "viewMatrix.setLookAt in render constructor");
+
             tge3d.asset_manager.loadAssetList(WebGlRender.assets, ()=>{
                 this.isInit = true;
                 this.init();
             });
-            this.viewMatrix.setLookAt(.0, .0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
         }
 
         init() {
@@ -44,10 +46,11 @@ namespace Simple3d {
             let vs = tge3d.asset_manager.getAsset(WebGlRender.shader_vs).data;
             let fs = tge3d.asset_manager.getAsset(WebGlRender.shader_fs).data;
 
-            if(!this.shader.create(vs, fs)){
-                tge.log(tge.LogLevel.ERROR, "Failed to initialize shaders");
+            if(!this.shader.create(vs, fs)) {
+                tge.error("Failed to initialize shaders");
                 return;
             }
+            tge.debug("-=GLFLOW=-", "create shader", vs, fs);
 
             this.shader.mapAttributeSemantic(tge3d.VertexSemantic.POSITION, 'a_Position');
             this.shader.mapAttributeSemantic(tge3d.VertexSemantic.COLOR, 'a_Color');

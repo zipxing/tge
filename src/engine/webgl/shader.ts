@@ -49,7 +49,7 @@ namespace tge3d {
             let linked = gl.getProgramParameter(this.program, gl.LINK_STATUS);
             if (!linked) {
                 let error = gl.getProgramInfoLog(this.program);
-                tge.log(tge.LogLevel.ERROR, 'Failed to link program: ' + error);
+                tge.error('Failed to link program: ' + error);
                 gl.deleteProgram(this.program);
                 gl.deleteShader(fragmentShader);
                 gl.deleteShader(vertexShader);
@@ -67,7 +67,7 @@ namespace tge3d {
             let gl = (<tge.WebRun>tge.env).context;
             let shader = gl.createShader(type);
             if (shader == null) {
-                tge.log(tge.LogLevel.ERROR, 'unable to create shader');
+                tge.error('unable to create shader');
                 return null;
             }
 
@@ -81,7 +81,7 @@ namespace tge3d {
             let compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
             if (!compiled) {
                 let error = gl.getShaderInfoLog(shader);
-                tge.log(tge.LogLevel.ERROR, 'Failed to compile shader: ' + error);
+                tge.error('Failed to compile shader: ' + error);
                 gl.deleteShader(shader);
                 return null;
             }
@@ -97,11 +97,10 @@ namespace tge3d {
                 if(!info) {
                     break;
                 }
-
                 this._attributes[info.name] = gl.getAttribLocation(this.program, info.name);
             }
 
-            tge.log(tge.LogLevel.INFO, 'attributes',this._attributes);
+            tge.info('attributes',this._attributes);
         }
 
         findoutUniforms() {
@@ -125,14 +124,14 @@ namespace tge3d {
                 this._uniforms[info.name] = uniformInfo;
             }
 
-            tge.log(tge.LogLevel.INFO, 'uniforms',this._uniforms);
+            tge.info('uniforms',this._uniforms);
         }
 
         setUniform(name: string, value: any) {
             let gl = (<tge.WebRun>tge.env).context;
             let info = this._uniforms[name];
             if(!info) {
-                tge.log(tge.LogLevel.ERROR, 'can not find uniform named '+name);
+                tge.error('can not find uniform named '+name);
                 return;
             }
             switch(info.type) {
@@ -177,7 +176,7 @@ namespace tge3d {
                     break;
                 }
                 default:{
-                    tge.log(tge.LogLevel.ERROR, 'uniform type not support', info.type)
+                    tge.error('uniform type not support', info.type)
                     break;
                 }
             }
@@ -189,7 +188,7 @@ namespace tge3d {
                 let location = this._attributes[name];
                 return location;
             } else {
-                tge.log(tge.LogLevel.ERROR, 'Shader: can not find attribute for semantic '+semantic);
+                tge.error('Shader: can not find attribute for semantic '+semantic);
                 return -1;
             }
         }

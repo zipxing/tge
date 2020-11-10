@@ -46,7 +46,7 @@ namespace Obj3d {
             let fs = tge3d.asset_manager.getAsset(WebGlRender.shader_fs).data;
 
             if(!this.shader.create(vs, fs)){
-                tge.log(tge.LogLevel.ERROR, "Failed to initialize shaders");
+                tge.error("Failed to initialize shaders");
                 return;
             }
 

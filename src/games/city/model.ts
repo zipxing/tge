@@ -82,7 +82,7 @@ namespace City {
                 dgs+='\n';
             }
             dgs+='-----------------------------------------';
-            tge.log(tge.LogLevel.DEBUG, dgs);
+            tge.debug(dgs);
         }
 
         checkLianTong(x:number, y:number, ic:Cell, u:Unit, sx:number, ex:number) {
@@ -296,7 +296,7 @@ namespace City {
         }
 
         postMerge() {
-            tge.log(tge.LogLevel.DEBUG, 'POSTMERGE..........');
+            tge.debug('POSTMERGE..........');
             this.dumpGrid('bpostm');
             let c = this.merges.objCell;
             let ms = this.merges.mergeCells;
@@ -330,7 +330,7 @@ namespace City {
         }
 
         delCell(id:number) {
-            tge.log(tge.LogLevel.DEBUG, "DELCELL!!!!!");
+            tge.debug("DELCELL!!!!!");
             let [x, y] = this.getxyById(id);
             let c = this.grid[y][x];
             if(c.color<100) {

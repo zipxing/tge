@@ -11,7 +11,7 @@ namespace tge3d {
             let gl = (<tge.WebRun>tge.env).context;
             this._id = gl.createTexture();
             if (!this._id) {
-                tge.log(tge.LogLevel.ERROR, 'Failed to create the texture object');
+                tge.error('Failed to create the texture object');
             }
         }
 
@@ -80,7 +80,7 @@ namespace tge3d {
         releaseTexture(texturePath: string) {
             let t = this._textures[texturePath];
             if(t == null){
-                tge.log(tge.LogLevel.ERROR, "releaseTexture: texture not found: "+texturePath);
+                tge.error("releaseTexture: texture not found: "+texturePath);
             } else {
                 t.ref--;
                 if(t.ref < 1){

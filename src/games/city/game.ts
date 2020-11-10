@@ -15,7 +15,7 @@ namespace City {
             this.gamestate=GameState.Normal;
             this.useract=[];
             m.searchUnit();
-            tge.log(tge.LogLevel.DEBUG, m.unit_map, m.units);
+            tge.debug(m.unit_map, m.units);
             tge.Emitter.fire("City.REDRAW_GRID");
 
             tge.Timer.register("merge", 0.3, ()=>{
