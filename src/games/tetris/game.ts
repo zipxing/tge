@@ -88,7 +88,7 @@ namespace Tetris {
                 let aiact = m.mai.getAIAct(m.grids[1]);
                 this.doAction(aiact, 1);
                 if(aiact=='W')
-                    tge.log(tge.LogLevel.DEBUG, "play ai action.....");
+                    tge.debug("play ai action.....");
                 this.timeout_ai=0;
             } else {
                 this.timeout_ai+=dt;
@@ -98,7 +98,6 @@ namespace Tetris {
         //用户键盘输入
         playUserAction(dt: number) {
             for(let i=0;i<this.useract.length;i++) {
-                //tge.log(tge.LogLevel.INFO, "PLAYUSERACT:", this.useract[i]);
                 this.doAction(this.useract[i], 0);
             }
             this.useract=[];
@@ -169,7 +168,7 @@ namespace Tetris {
                     break;
                 case 'D':
                     //this.mrep.recordAction(index, act);
-                    //tge.log(tge.LogLevel.DEBUG, "DOWN...");
+                    //tge.debug("DOWN...");
                     if(pg.moveBlk(ElsMove.DOWN, false)==ElsMoveRet.REACH_BOTTOM)
                         pg.nextBlk(false, false);
                     //pg.testDDown();

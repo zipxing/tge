@@ -329,12 +329,12 @@ namespace Tetris {
                     if(gr.need_draw)
                         gr.need_draw = false;
                     else {
-                        //tge.log(tge.LogLevel.DEBUG, "skip not need draw...");
+                        //tge.debug("skip not need draw...");
                         continue;
                     }
                 } else {
-                    //tge.log(tge.LogLevel.DEBUG, "FFFF", frs);
-                    //tge.log(tge.LogLevel.DEBUG, "FFFF", fr);
+                    //tge.debug("FFFF", frs);
+                    //tge.debug("FFFF", fr);
                 }
                 for(let i=0;i<ZONG;i++) {
                     for(let j=0;j<HENG;j++) {
