@@ -24,20 +24,25 @@ namespace tge3d {
         }
 
         upload(){
+            tge.debug("-=GLFLOW=-", "glBindBuffer(ARRAY_BUFFER)&glBufferData upload vertex data...");
             this._vertex_buffer.upload();
             if(this._index_buffer){
+                tge.debug("-=GLFLOW=-", "glBindBuffer(ELEMENT_ARRAY_BUFFER)&glBufferData upload index data...");
                 this._index_buffer.upload();
             }
         }
 
         render(shader: any){
             let gl = (<tge.WebRun>tge.env).context;
+            tge.debug("-=GLFLOW=-", "mesh render glBindBuffer(ARRAY_BUFFER)vertex data...");
             gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer.vbo);
 
             this._vertex_buffer.bindAttrib(shader);
 
             if(this._index_buffer){
+                tge.debug("-=GLFLOW=-", "mesh render glBindBuffer(ELEMENT_ARRAY_BUFFER)index data...");
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._index_buffer.vbo);
+                tge.debug("-=GLFLOW=-", "mesh render glDrawElements index data...");
                 gl.drawElements(this._index_buffer.mode, this._index_buffer.indexCount, this._index_buffer.type, 0);
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
             } else {

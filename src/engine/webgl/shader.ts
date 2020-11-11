@@ -33,6 +33,7 @@ namespace tge3d {
             }
 
             // Create a program object
+            tge.debug("-=GLFLOW=-", "glCreateProgram");
             this.program = gl.createProgram();
             if (!this.program) {
                 return false;
@@ -41,12 +42,15 @@ namespace tge3d {
             // Attach the shader objects
             gl.attachShader(this.program, vertexShader);
             gl.attachShader(this.program, fragmentShader);
+            tge.debug("-=GLFLOW=-", "glAttachShader attach program and shader...");
 
             // Link the program object
             gl.linkProgram(this.program);
+            tge.debug("-=GLFLOW=-", "glLinkProgram...");
 
             // Check the result of linking
             let linked = gl.getProgramParameter(this.program, gl.LINK_STATUS);
+            tge.debug("-=GLFLOW=-", "glGetProgramParameter...check linking result");
             if (!linked) {
                 let error = gl.getProgramInfoLog(this.program);
                 tge.error('Failed to link program: ' + error);
@@ -66,6 +70,7 @@ namespace tge3d {
         loadShader(type: any, source: string) {
             let gl = (<tge.WebRun>tge.env).context;
             let shader = gl.createShader(type);
+            tge.debug("-=GLFLOW=-", "glCreateShader&glShaderSource&glCompileShader&getShaderParameter...", source);
             if (shader == null) {
                 tge.error('unable to create shader');
                 return null;
@@ -92,6 +97,7 @@ namespace tge3d {
         findoutAttributes() {
             let gl = (<tge.WebRun>tge.env).context;
             let attributeCount = gl.getProgramParameter(this.program, gl.ACTIVE_ATTRIBUTES);
+            tge.debug("-=GLFLOW=-", "glGetProgramParameter&getActiveAttrib&getAttribLocation...", "findoutAttributes");
             for(let i=0; i<attributeCount; ++i) {
                 let info = gl.getActiveAttrib(this.program, i);
                 if(!info) {
@@ -106,6 +112,7 @@ namespace tge3d {
         findoutUniforms() {
             let gl = (<tge.WebRun>tge.env).context;
             let uniformCount = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
+            tge.debug("-=GLFLOW=-", "glGetProgramParameter&getActiveUniform&getAttribUniform...", "findoutUniform");
             for(let i=0; i<uniformCount; ++i) {
                 let info = gl.getActiveUniform(this.program, i);
                 if(!info) {
@@ -196,6 +203,7 @@ namespace tge3d {
         use() {
             if(this.program) {
                 let gl = (<tge.WebRun>tge.env).context;
+                tge.debug("-=GLFLOW=-", "glUseProgram shader");
                 gl.useProgram(this.program);
             }
         }
