@@ -30,9 +30,6 @@ namespace Simple3d {
             this.shader = null;
             this.texture = null;
 
-            this.viewMatrix.setLookAt(.0, .0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-            tge.debug("-=GLFLOW=-", "viewMatrix.setLookAt in render constructor");
-
             tge3d.asset_manager.loadAssetList(WebGlRender.assets, ()=>{
                 this.isInit = true;
                 this.init();
@@ -43,25 +40,31 @@ namespace Simple3d {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
 
+            //init shader...
             this.shader = new tge3d.Shader();
             let vs = tge3d.asset_manager.getAsset(WebGlRender.shader_vs).data;
             let fs = tge3d.asset_manager.getAsset(WebGlRender.shader_fs).data;
-
             if(!this.shader.create(vs, fs)) {
                 tge.error("Failed to initialize shaders");
                 return;
             }
-
             this.shader.mapAttributeSemantic(tge3d.VertexSemantic.POSITION, 'a_Position');
             this.shader.mapAttributeSemantic(tge3d.VertexSemantic.COLOR, 'a_Color');
             this.shader.mapAttributeSemantic(tge3d.VertexSemantic.UV0, 'a_TexCoord');
             this.shader.use();
 
+            //init texture...
             this.texture = tge3d.texture_manager.getTexture(WebGlRender.image_box);
+
+            //create cube mesh...
             this.mesh = this.createMesh();
 
+            //init matrix...
+            this.viewMatrix.setLookAt(.0, .0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+            tge.debug("-=GLFLOW=-", "viewMatrix.setLookAt in render constructor");
             this.viewProjMatrix.setPerspective(60.0, canvas.width/canvas.height, 1.0, 100.0);
             this.viewProjMatrix.multiply(this.viewMatrix);
+
 
             gl.clearColor(0, 0, 0, 1);
             gl.clearDepth(1.0);
@@ -174,11 +177,12 @@ namespace Simple3d {
             return mesh;
         }
 
-        drawCube(mx: number, z: number) {
+        drawCube(mx: number, z: number = 0) {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
             let g = WebGlRender.game;
             let m = <Simple3d.Model>g.model;
+
             //rotate order: x-y-z
             this.modelMatrix.setRotate(m.rot_z, 0, 0, 1); //rot around z-axis
             this.modelMatrix.rotate(m.rot_y, 0.0, 1.0, 0.0); //rot around y-axis
@@ -190,7 +194,6 @@ namespace Simple3d {
             this.mvpMatrix.multiply(this.modelMatrix);
             tge.debug("-=GLFLOW=-", "shader setUniform mvpMatrix");
             this.shader!.setUniform('u_mvpMatrix', this.mvpMatrix.elements);
-
 
             this.mesh!.render(this.shader);
         }
@@ -207,7 +210,6 @@ namespace Simple3d {
             this.drawCube(mx, 0);
             this.drawCube(mx*2, adj);
             //this.texture!.unbind();
-
         }
 
         draw() {

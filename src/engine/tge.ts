@@ -24,15 +24,28 @@ namespace tge {
     export var env:RunEnv;
 
     //Init environment...
-    export function initEnvironment(runenv:string) {
+    export function initEnvironment(runenv: string, canvasid: string = '') {
         switch(runenv) {
             case "WEB":
-                let cv = document.createElement("canvas");
+                let cv:any;
+                if(canvasid!='') {
+                    cv = document.getElementById(canvasid);
+                    if(cv === undefined) {
+                        tge.error("Can't find a canvas named:"+canvasid);
+                        return;
+                    }
+                } else {
+                    cv = document.createElement("canvas");
+                }
                 document.body.appendChild(cv);
-                //cv.width = Math.floor(cv.clientWidth * window.devicePixelRatio);
-                //cv.height = Math.floor(cv.clientHeight * window.devicePixelRatio);
-                cv.width = 640;
-                cv.height = 640;
+
+                tge.info("clientWidth:", cv.clientWidth, "clientHeight:", 
+                    cv.clientHeight, "devicePixelRatio:", window.devicePixelRatio);
+                let cw = Math.floor(cv.clientWidth * window.devicePixelRatio);
+                let ch = Math.floor(cv.clientHeight * window.devicePixelRatio);
+                cv.width = Math.max(640, cw);
+                cv.height = Math.max(480, ch);
+
                 let names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
                 let ct = null;
                 for(let i=0; i<names.length; i++){
