@@ -5,14 +5,6 @@ namespace Obj3d {
         let m = new Obj3d.Model();
         let r = new Obj3d.WebGlRender();
         let g = new Obj3d.Game(m, r);
-        let am = new tge3d.AssetManager();
-        am.loadAsset(
-            "../readme.md", 
-            tge3d.AssetType.Text, 
-            (asset: any) => {
-                tge.debug(asset);
-            }
-        );
         g.initGame();
         g.regKeyAction({'r':'R'});
         g.loop();

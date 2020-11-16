@@ -20,7 +20,7 @@ namespace tge3d {
                     }
                 }
             };
-            req.open('GET', _asset_path + name, true);
+            req.open('GET', _asset_path + name + "?"+Math.random()+'', true);
             req.send();
         }
     }
@@ -42,7 +42,7 @@ namespace tge3d {
                     oncomplete(a);
                 }
             };
-            img.src = _asset_path + name;
+            img.src = _asset_path + name + "?"+Math.random()+'';
         }
     }
 
