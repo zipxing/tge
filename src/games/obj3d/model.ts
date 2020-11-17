@@ -18,6 +18,7 @@ namespace Obj3d {
             } else {
                 this.rot_x = Math.max(Math.min(this.rot_x + dy, 90.0), -90.0);
                 this.rot_y += dx;
+                tge.info("ONDRAG...", this.rot_x, this.rot_y, this.rot_z);
                 let qx = tge3d.Quaternion.axisAngle(tge3d.Vec3Right, this.rot_x);
                 let qy = tge3d.Quaternion.axisAngle(tge3d.Vec3Up, this.rot_y);
                 tge3d.Quaternion.multiply(qx, qy, this.rotQuat);

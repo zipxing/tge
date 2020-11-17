@@ -255,7 +255,7 @@ namespace tge3d {
 
             if(this._normals.length > 0){
                 if(this._normals.length !== this._vertices.length){
-                    console.warn("obj file normals count not match vertices count");
+                    tge.warning("obj file normals count not match vertices count");
                 }
                 for(let i=0; i<this._normals.length; i++){
                     let n = this._normals[i];
@@ -265,7 +265,7 @@ namespace tge3d {
 
             if(this._texcoords.length > 0){
                 if(this._texcoords.length !== this._vertices.length){
-                    console.warn("obj file texcoords count not match vertices count");
+                    tge.warning("obj file texcoords count not match vertices count");
                 }
                 for(let i=0; i<this._texcoords.length; i++){
                     let texcoord = this._texcoords[i];
@@ -277,14 +277,14 @@ namespace tge3d {
 
             for(let i=0; i<this._faces.length; i++){
                 let face = this._faces[i];
-                for(let j=0; j<face.vIndices.length; j++){    
+                for(let j=0; j<face.vIndices.length; j++){
                     let vIdx = face.vIndices[j];
                     triangels.push(vIdx);
 
                     if(face.nIndices.length > 0){
                         let nIdx = face.nIndices[j];
                         if(nIdx !== vIdx){
-                            console.warn('obj file nIdx not match vIdx');
+                            //tge.warning('obj file nIdx not match vIdx');
                         }
                     }
                 }
@@ -296,7 +296,7 @@ namespace tge3d {
 
             if(tangents.length===0 && this.calcTangent){
                 if(uvs.length==0){
-                    console.error("Need uv coordinates to compute mesh tangents");
+                    tge.error("Need uv coordinates to compute mesh tangents");
                 } else {
                     GeomertyHelper.calcMeshTangents(triangels, positions, uvs, tangents);
                 }
@@ -316,8 +316,8 @@ namespace tge3d {
             mesh.setTriangles(triangels);
             mesh.upload();
 
-            console.log('vertex count '+this._vertices.length);
-            console.log('triangle count '+triangels.length/3);
+            tge.info('vertex count '+this._vertices.length);
+            tge.info('triangle count '+triangels.length/3);
 
             return mesh;
         }

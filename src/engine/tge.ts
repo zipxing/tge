@@ -24,32 +24,43 @@ namespace tge {
     export var env:RunEnv;
 
     //Init environment...
-    export function initEnvironment(runenv: string, canvasid: string = '') {
+    export function initEnvironment(runenv: string,
+        canvasid: string = '',
+        canvas_w: number = 1024.0,
+        canvas_h: number = 768.0) {
+
         switch(runenv) {
             case "WEB":
-                let cv:any;
+                let cv: any;
+                let w: number = canvas_w;
+                let h: number = canvas_h;
                 if(canvasid!='') {
                     cv = document.getElementById(canvasid);
                     if(cv === undefined) {
                         tge.error("Can't find a canvas named:"+canvasid);
                         return;
                     }
+                    w = Math.floor(cv.clientWidth * window.devicePixelRatio);
+                    h = Math.floor(cv.clientHeight * window.devicePixelRatio);
                 } else {
                     cv = document.createElement("canvas");
+                    document.body.appendChild(cv);
                 }
-                document.body.appendChild(cv);
+                cv.width  = w;
+                cv.height = h;
 
-                tge.info("clientWidth:", cv.clientWidth, "clientHeight:", 
-                    cv.clientHeight, "devicePixelRatio:", window.devicePixelRatio);
-                let cw = Math.floor(cv.clientWidth * window.devicePixelRatio);
-                let ch = Math.floor(cv.clientHeight * window.devicePixelRatio);
-                cv.width = Math.max(640, cw);
-                cv.height = Math.max(480, ch);
-
-                let names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
+                let names = [
+                    "webgl",
+                    "experimental-webgl",
+                    "webkit-3d",
+                    "moz-webgl"
+                ];
                 let ct = null;
                 for(let i=0; i<names.length; i++){
-                    try{ ct = cv.getContext(names[i]); } catch(e) { }
+                    try {
+                        ct = cv.getContext(names[i]);
+                    } catch(e) {
+                    }
                     if(ct) break;
                 }
                 if(ct) {
@@ -57,14 +68,15 @@ namespace tge {
                     wglct.pixelStorei(wglct.UNPACK_FLIP_Y_WEBGL, 1); //Flip the image's y axis
                     wglct.viewport(0, 0, cv.width, cv.height);
                     env = <WebRun>{
-                        kind:runenv, 
-                        context: wglct, 
+                        kind:runenv,
+                        context: wglct,
                         canvas: cv
                     };
                 } else {
                     tge.error("WebGL init fail...");
                 }
                 break;
+
             case "WEBTERM":
                 let b = require('blessed');
                 let tjs = require('term.js');
@@ -92,6 +104,7 @@ namespace tge {
                         tscreen:s
                 };
                 break;
+
             case "TERM":
                 let bt = require('blessed');
                 let pt = bt.program();
@@ -103,6 +116,7 @@ namespace tge {
                     tscreen:st
                 };
                 break;
+
             default:
                 tge.error("ERROR:error runenv string...");
         }
@@ -173,26 +187,44 @@ namespace tge {
                     });
                 }
             }
+            if(env.kind == "WEB") {
+                window.onkeypress = (event: any) => {
+                    let key = event.key;
+                    if(key in keyDefine) {
+                        tge.debug(keyDefine[key]);
+                        this.useract.splice(0,0,keyDefine[key]);
+                    }
+                }
+            }
         }
 
+        //@see: https://github.com/timetocode/node-game-loop
         loop() {
+            let now = Date.now();
+            Game._actualTicks++;
+            if (Game._previousTick + Game._tickLengthMs <= now) {
+                let delta = now - Game._previousTick;
+                Game._previousTick = now;
+                this.scheduleUpdate(delta);
+                Game._actualTicks = 0;
+            }
             switch(env.kind) {
                 case "TERM":
                 case "WEBTERM":
-                case "WEB":
-                    let now = Date.now();
-                    Game._actualTicks++;
-                    if (Game._previousTick + Game._tickLengthMs <= now) {
-                        let delta = now - Game._previousTick;
-                        Game._previousTick = now;
-                        this.scheduleUpdate(delta);
-                        Game._actualTicks = 0;
-                    }
                     if (Date.now() - Game._previousTick < Game._tickLengthMs - 16) {
-                        setTimeout(()=>{ this.loop(); });
+                        setTimeout(() => {
+                            this.loop();
+                        });
                     } else {
-                        setImmediate(()=>{ this.loop(); });
+                        setImmediate(() => {
+                            this.loop();
+                        });
                     }
+                    break;
+                case "WEB":
+                    window.requestAnimationFrame(()=>{
+                        this.loop();
+                    });
                     break;
                 default:
                     tge.error("RunEnv must be TERM | COCOS | WEB...");

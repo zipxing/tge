@@ -2,14 +2,30 @@ namespace Obj3d {
     export class WebGlRender extends tge.Render {
         static shader_vs = 'shader/light.vs';
         static shader_fs = 'shader/light.fs';
-        static image_box = 'image/box.jpg';
+        static image_boxs = [
+            'image/box1.jpg',
+            'image/box2.jpg',
+            'image/box3.jpg',
+            'image/box4.jpg',
+            'image/box5.jpg',
+            'image/box6.jpg',
+            'image/box7.jpg',
+            'image/box8.jpg'
+        ];
         static obj_file  = 'model3d/cube.obj';
 
         static assets = [
             [WebGlRender.shader_vs, tge3d.AssetType.Text],
             [WebGlRender.shader_fs, tge3d.AssetType.Text],
             [WebGlRender.obj_file, tge3d.AssetType.Text],
-            [WebGlRender.image_box, tge3d.AssetType.Image]
+            [WebGlRender.image_boxs[0], tge3d.AssetType.Image],
+            [WebGlRender.image_boxs[1], tge3d.AssetType.Image],
+            [WebGlRender.image_boxs[2], tge3d.AssetType.Image],
+            [WebGlRender.image_boxs[3], tge3d.AssetType.Image],
+            [WebGlRender.image_boxs[4], tge3d.AssetType.Image],
+            [WebGlRender.image_boxs[5], tge3d.AssetType.Image],
+            [WebGlRender.image_boxs[6], tge3d.AssetType.Image],
+            [WebGlRender.image_boxs[7], tge3d.AssetType.Image]
         ];
 
         modelMatrix: tge3d.Matrix4;
@@ -43,50 +59,31 @@ namespace Obj3d {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
 
-
+            //init shader...
             this.shader = new tge3d.Shader();
             let vs = tge3d.asset_manager.getAsset(WebGlRender.shader_vs).data;
             let fs = tge3d.asset_manager.getAsset(WebGlRender.shader_fs).data;
-
             if(!this.shader.create(vs, fs)){
                 tge.error("Failed to initialize shaders");
                 return;
             }
-
             this.shader.mapAttributeSemantic(tge3d.VertexSemantic.POSITION, 'a_Position');
             this.shader.mapAttributeSemantic(tge3d.VertexSemantic.NORMAL, 'a_Normal');
             this.shader.mapAttributeSemantic(tge3d.VertexSemantic.UV0, 'a_TexCoord');
             this.shader.use();
 
-            this.texture = tge3d.texture_manager.getTexture(WebGlRender.image_box);
+            //init mesh from obj file...
             let obj = tge3d.asset_manager.getAsset(WebGlRender.obj_file).data;
-            //this.mesh = this.createMesh();
-            this.texture!.bind();
-            this.shader!.setUniform('u_sampler', 0);
             let ofl = new tge3d.ObjFileLoader();
-            this.mesh = ofl.load(obj, 0.3, false);
-            /*let uv_data = [
-                //v0-v1-v2-v3 front
-                1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
-                //v0-v3-v4-v5 right
-                0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0,
-                //v0-v5-v6-v1 top
-                1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0,
-                //v1-v6-v7-v2 left
-                1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
-                //v7-v4-v3-v2 bottom
-                0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
-                //v4-v7-v6-v5 back
-                0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0
-            ];
-            this.mesh.setVertexData(tge3d.VertexSemantic.UV0, uv_data);*/
+            this.mesh = ofl.load(obj, 1.0, false);
 
+            this.shader!.setUniform('u_sampler', 0);
 
-            this.viewMatrix.setLookAt(.0, .0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+            this.viewMatrix.setLookAt(.0, .0, 42.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
             this.viewProjMatrix.setPerspective(60.0, canvas.width/canvas.height, 1.0, 100.0);
             this.viewProjMatrix.multiply(this.viewMatrix);
 
-            gl.clearColor(0, 0, 0, 1);
+            gl.clearColor(0.1, 0, 0, 1);
             gl.clearDepth(1.0);
             gl.enable(gl.DEPTH_TEST);
 
@@ -105,16 +102,24 @@ namespace Obj3d {
             this.redraw();
         }
 
-        redraw() {
-            if(!this.isInit) return;
+        drawObj(color:number, tx=0.0, ty=-1.0, tz=0.0, rx=0, ry=0, rz=0,
+                sx=1.0, sy=1.0, sz=1.0) {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
             let g = WebGlRender.game;
             let m = <Obj3d.Model>g.model;
 
-            this.modelMatrix.setTranslate(0, -1.0, 0);
-            this.modelMatrix.multiply(m.matRot);
-            this.modelMatrix.scale(1.0, 1.0, 1.0);
+
+            //init texture...
+            this.texture = tge3d.texture_manager.getTexture(WebGlRender.image_boxs[color]);
+            this.texture!.bind();
+
+            this.modelMatrix.setTranslate(tx, ty, tz);
+            this.modelMatrix.rotate(rz, 0.0, 0.0, 1.0); //rot around z-axis
+            this.modelMatrix.rotate(ry, 0.0, 1.0, 0.0); //rot around y-axis
+            this.modelMatrix.rotate(rx, 1.0, 0.0, 0.0); //rot around x-axis
+            //this.modelMatrix.multiply(m.matRot);
+            this.modelMatrix.scale(sx, sy, sz);
 
             this.normalMatrix.setInverseOf(this.modelMatrix);
             this.normalMatrix.transpose();
@@ -129,8 +134,29 @@ namespace Obj3d {
             let lightDir = [5.0, 3.0, 4.0];
             this.shader!.setUniform('u_LightDir', lightDir);
 
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             this.mesh!.render(this.shader);
+            this.texture!.unbind();
+        }
+
+        redraw() {
+            if(!this.isInit) return;
+            let gl = (<tge.WebRun>tge.env).context;
+            let canvas = (<tge.WebRun>tge.env).canvas;
+            let g = WebGlRender.game;
+            let m = <Obj3d.Model>g.model;
+
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            for(let i=0; i<20; i++)
+                for(let j=0; j<10; j++) {
+                    let c = j>7?7:j;
+                    let x = j*2.0 - 15.0;
+                    let y = i*2.0 - 16;
+                    let rx = m.rot_x;
+                    let ry = m.rot_y;
+                    let rz = m.rot_z;
+                    //this.drawObj(i>7?7:i, i*2.0-12.0, -1, 0, m.rot_x, m.rot_y, m.rot_z, 1, 1, 1);
+                    this.drawObj(c, x, y, 0, rx, ry, rz, 1, 1, 1);
+                }
         }
 
         draw() {
