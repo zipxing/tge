@@ -190,8 +190,9 @@ namespace tge {
             if(env.kind == "WEB") {
                 window.onkeypress = (event: any) => {
                     let key = event.key;
+                    if(key==' ') key='space';
                     if(key in keyDefine) {
-                        tge.debug(keyDefine[key]);
+                        tge.info(keyDefine[key]);
                         this.useract.splice(0,0,keyDefine[key]);
                     }
                 }
@@ -211,6 +212,7 @@ namespace tge {
             switch(env.kind) {
                 case "TERM":
                 case "WEBTERM":
+                case "WEB":
                     if (Date.now() - Game._previousTick < Game._tickLengthMs - 16) {
                         setTimeout(() => {
                             this.loop();
@@ -221,11 +223,11 @@ namespace tge {
                         });
                     }
                     break;
-                case "WEB":
+                /*case "WEB":
                     window.requestAnimationFrame(()=>{
                         this.loop();
                     });
-                    break;
+                    break;*/
                 default:
                     tge.error("RunEnv must be TERM | COCOS | WEB...");
             }

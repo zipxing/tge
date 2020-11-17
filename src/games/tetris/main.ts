@@ -2,10 +2,14 @@
 namespace Tetris {
     export function main(runtype: string) {
         tge.initEnvironment(runtype);
-        tge.bindLogPath('tmp/tetris.log');
+        tge.bindLogPath('tmp/tetris.log', tge.LogLevel.INFO);
 
         let m1 = new Tetris.Model();
-        let r1 = new Tetris.TermRender();
+        let r1: tge.Render;
+        if(runtype == "TERM")
+            r1 = new Tetris.TermRender();
+        else
+            r1 = new Tetris.WebGlRender();
         let g1 = new Tetris.Game(m1, r1);
 
         g1.initGame();
@@ -23,7 +27,7 @@ namespace Tetris {
 
     if((typeof window) !== 'undefined') {
         //browser term...
-        window.onload = () => { main("WEBTERM"); }
+        window.onload = () => { main("WEB"); }
     } else {
         main("TERM");
     }

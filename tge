@@ -36,7 +36,8 @@ games = {
     "tetris" : {
         "path": "src/games/tetris",
         "namespace": "Tetris",
-        "web": True,
+        #"web": True,
+        "webgl": True,
         "src": [
             "constant.ts",
             "block.ts",
@@ -48,6 +49,7 @@ games = {
             "ai.ts",
             "model.ts",
             "render.ts",
+            "render_webgl.ts",
             "game.ts",
             "main.ts"
         ]

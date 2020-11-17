@@ -1,7 +1,8 @@
-namespace Obj3d {
+namespace Tetris {
     export class WebGlRender extends tge.Render {
         static shader_vs = 'shader/light.vs';
         static shader_fs = 'shader/light.fs';
+        static obj_file  = 'model3d/cube.obj';
         static image_boxs = [
             'image/box1.jpg',
             'image/box2.jpg',
@@ -12,7 +13,6 @@ namespace Obj3d {
             'image/box7.jpg',
             'image/box8.jpg'
         ];
-        static obj_file  = 'model3d/cube.obj';
 
         static assets = [
             [WebGlRender.shader_vs, tge3d.AssetType.Text],
@@ -83,32 +83,124 @@ namespace Obj3d {
             this.viewProjMatrix.setPerspective(60.0, canvas.width/canvas.height, 1.0, 100.0);
             this.viewProjMatrix.multiply(this.viewMatrix);
 
-            //gl.clearColor(0.1, 0, 0, 1);
+            gl.clearColor(0, 0, 0, 1);
             gl.clearDepth(1.0);
             gl.enable(gl.DEPTH_TEST);
 
-            let mh = new MouseHandler();
-            canvas.onmousedown = (event: any) => {
-                mh.mouseDown(event);
-            }
-            canvas.onmousemove = (event: any) => {
-                mh.mouseMove(event);
-            }
-            canvas.onmouseup = (event: any) => {
-                mh.mouseUp(event);
-            }
+            tge.Emitter.register("Tetris.REDRAW_MSG", this.redrawMsg, this);
+            tge.Emitter.register("Tetris.REDRAW_NEXT", this.redrawNext, this);
+            tge.Emitter.register("Tetris.REDRAW_HOLD", this.redrawHold, this);
 
-            tge.Emitter.register("Obj3d.REDRAW", this.redraw, this);
-            this.redraw();
+            this.drawTitle();
+            this.drawLogo();
+            this.drawBack();
         }
 
+        drawTitle() {
+        }
+
+        drawLogo() {
+        }
+
+        drawBack() {
+        }
+
+        redrawMsg() {
+        }
+
+        redrawNext() {
+        }
+
+        redrawHold() {
+        }
+
+        drawCell(idx:number, col:number, row:number, color:number) {
+            this.drawObj(color, row*2.0 - 20 + idx*20, (21-col)*2.0 - 16, 0, 3, 13, 0, 1, 1, 1);
+        }
+
+        setCellBasic(idx:number, col:number, row:number, color: number) {
+            switch(color) {
+                case 0: //空白
+                    break;
+                case 11: //被攻击出来的
+                    this.drawCell(idx, col, row, 0);
+                    break;
+                case 20: //投影
+                    break;
+                case 30: //满行闪烁
+                    break;
+                default: //正常方块
+                    this.drawCell(idx, col, row, color%7);
+            }
+        }
+
+        setCell(idx:number, i:number, j:number, c:number) {
+            this.setCellBasic(idx, i, j, c);
+        }
+
+        redrawGrid() {
+            let g = TermRender.game;
+            let m = <Tetris.Model>g.model;
+            if(!this.isInit) return;
+            let gl = (<tge.WebRun>tge.env).context;
+            let canvas = (<tge.WebRun>tge.env).canvas;
+
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+            for(let idx=0; idx<=1; idx++) {
+                let gr = m.grids[idx];
+                let frs = tge.Timer.getStage(idx+"clear-row");
+                let fr = tge.Timer.getExData(idx+"clear-row");
+                if(frs==0) {
+                    if(gr.need_draw) {
+                        // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                        gr.need_draw = false;
+                    } else {
+                        //tge.debug("skip not need draw...");
+                        //continue;
+                    }
+                } else {
+                    //tge.debug("FFFF", frs);
+                    //tge.debug("FFFF", fr);
+                }
+                for(let i=0;i<ZONG;i++) {
+                    for(let j=0;j<HENG;j++) {
+                        let gv = gr.core.grid[i*GRIDW + j+2];
+                        let hidden_fullrow = false;
+                        if(frs!=undefined && frs!=0) {
+                            if(fr.indexOf(i)!=-1 && (Math.floor(frs/3)%2==0))
+                                hidden_fullrow = true;
+                        }
+                        if(gv==0) {
+                            this.setCell(idx, i, j, 0);
+                        } else {
+                            if(hidden_fullrow) 
+                                this.setCell(idx, i, j, 30);
+                            else
+                                this.setCell(idx, i, j, gv%100);
+                        }
+                    }
+                }
+            }
+        }
+
+        drawCombo() {
+            let g = TermRender.game;
+            let m = <Tetris.Model>g.model;
+        }
+
+        drawAttack() {
+            let g = TermRender.game;
+            let m = <Tetris.Model>g.model;
+        }
+
+
         drawObj(color:number, tx=0.0, ty=-1.0, tz=0.0, rx=0, ry=0, rz=0,
-                sx=1.0, sy=1.0, sz=1.0) {
+            sx=1.0, sy=1.0, sz=1.0) {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
             let g = WebGlRender.game;
-            let m = <Obj3d.Model>g.model;
-
+            let m = <Tetris.Model>g.model;
 
             //init texture...
             this.texture = tge3d.texture_manager.getTexture(WebGlRender.image_boxs[color]);
@@ -138,28 +230,10 @@ namespace Obj3d {
             this.texture!.unbind();
         }
 
-        redraw() {
-            if(!this.isInit) return;
-            let gl = (<tge.WebRun>tge.env).context;
-            let canvas = (<tge.WebRun>tge.env).canvas;
-            let g = WebGlRender.game;
-            let m = <Obj3d.Model>g.model;
-
-            //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            for(let i=0; i<20; i++)
-                for(let j=0; j<10; j++) {
-                    let c = j>7?7:j;
-                    let x = j*2.0 - 15.0;
-                    let y = i*2.0 - 16;
-                    let rx = m.rot_x;
-                    let ry = m.rot_y;
-                    let rz = m.rot_z;
-                    //this.drawObj(i>7?7:i, i*2.0-12.0, -1, 0, m.rot_x, m.rot_y, m.rot_z, 1, 1, 1);
-                    this.drawObj(c, x, y, 0, rx, ry, rz, 1, 1, 1);
-                }
-        }
-
         draw() {
+            this.redrawGrid();
+            this.drawCombo();
+            this.drawAttack();
         }
     }
 }

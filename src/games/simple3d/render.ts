@@ -205,7 +205,7 @@ namespace Simple3d {
             let g = WebGlRender.game;
             let m = <Simple3d.Model>g.model;
 
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             let adj = 0.2;
             this.drawCube(mx, 0);
             this.drawCube(mx*2, adj);
