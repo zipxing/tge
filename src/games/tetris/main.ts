@@ -6,7 +6,7 @@ namespace Tetris {
 
         let m1 = new Tetris.Model();
         let r1: tge.Render;
-        if(runtype == "TERM")
+        if(runtype == "TERM" || runtype == "WEBTERM")
             r1 = new Tetris.TermRender();
         else
             r1 = new Tetris.WebGlRender();
@@ -26,8 +26,13 @@ namespace Tetris {
     }
 
     if((typeof window) !== 'undefined') {
-        //browser term...
-        window.onload = () => { main("WEB"); }
+        //browser...
+        window.onload = () => { 
+            let rm = (<any>window).run_mode;
+            if(rm !== undefined) {
+                main(rm); 
+            }
+        }
     } else {
         main("TERM");
     }

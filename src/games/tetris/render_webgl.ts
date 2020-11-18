@@ -1,4 +1,9 @@
 namespace Tetris {
+    enum BlockType {
+        BLANK = 0,
+        FULLROW,
+        NORMAL
+    }
     export class WebGlRender extends tge.Render {
         static shader_vs = 'shader/light.vs';
         static shader_fs = 'shader/light.fs';
@@ -79,8 +84,8 @@ namespace Tetris {
 
             this.shader!.setUniform('u_sampler', 0);
 
-            this.viewMatrix.setLookAt(.0, .0, 42.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-            this.viewProjMatrix.setPerspective(60.0, canvas.width/canvas.height, 1.0, 100.0);
+            this.viewMatrix.setLookAt(.0, .0, 60.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+            this.viewProjMatrix.setPerspective(40.0, canvas.width/canvas.height, 1.0, 100.0);
             this.viewProjMatrix.multiply(this.viewMatrix);
 
             gl.clearColor(0, 0, 0, 1);
@@ -120,24 +125,24 @@ namespace Tetris {
         redrawHold() {
         }
 
-        drawBlk(idx:number, type:number, col:number, row:number, color: number, fullrow_stage: number = 0) {
+        drawBlk(idx:number, type:BlockType, col:number, row:number, color: number, fullrow_stage: number = 0) {
             let x = row*2.0 - 20 + idx*22;
             let y = (Tetris.ZONG - col)*2.0 - 16;
 
             switch(type) {
-                case 0: //空白
+                case BlockType.BLANK: //空白
                     break;
-                case 11: //被攻击出来的
-                    this.drawObj(0, x, y, 0, 3, 13, 0, 1, 1, 1);
-                    break;
-                case 20: //投影
-                    break;
-                case 30: //满行闪烁
+                case BlockType.FULLROW: //满行闪烁
                     this.drawObj(color%7, x, y, 0, 
                         3-fullrow_stage*5, 13-fullrow_stage*5, 0, 1, 1, 1);
                     break;
-                default: //正常方块
+                case BlockType.NORMAL://正常方块
+                    //被攻击出来的是11
+                    if(color==11) 
+                        color=0;
                     this.drawObj(color%7, x, y, 0, 3, 13, 0, 1, 1, 1);
+                default: 
+                    ;
             }
         }
 
@@ -148,6 +153,7 @@ namespace Tetris {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
 
+            //webgl中，浏览器会在页面合成时，自动执行清除操作
             //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
             let nd = [
@@ -183,12 +189,12 @@ namespace Tetris {
                                 hidden_fullrow = true;
                         }
                         if(gv==0) {
-                            this.drawBlk(idx, 0, i, j, 0);
+                            this.drawBlk(idx, BlockType.BLANK, i, j, 0);
                         } else {
                             if(hidden_fullrow) 
-                                this.drawBlk(idx, 30, i, j, gv%100, frs[idx]);
+                                this.drawBlk(idx, BlockType.FULLROW, i, j, gv%100, frs[idx]);
                             else
-                                this.drawBlk(idx, gv%100, i, j, gv%100, frs[idx]);
+                                this.drawBlk(idx, BlockType.NORMAL, i, j, gv%100, frs[idx]);
                         }
                     }
                 }

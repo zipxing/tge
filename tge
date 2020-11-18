@@ -9,7 +9,7 @@ games = {
     "engine" : {
         "path": "src/engine",
         "namespace": "tge",
-        "web": False,
+        "run": [],
         "src" : [
             "tge.ts",
             "log.ts",
@@ -21,7 +21,7 @@ games = {
     "engine3d" : {
         "path": "src/engine/webgl",
         "namespace": "tge3d",
-        "web": True,
+        "run": [],
         "src" : [
             "asset.ts",
             "math.ts",
@@ -36,8 +36,7 @@ games = {
     "tetris" : {
         "path": "src/games/tetris",
         "namespace": "Tetris",
-        #"web": True,
-        "webgl": True,
+        "run": ["terminal", "webterm", "webgl"],
         "src": [
             "constant.ts",
             "block.ts",
@@ -57,6 +56,8 @@ games = {
     "snake" : {
         "path": "src/games/snake",
         "namespace": "Snake",
+        "run": ["terminal", "webterm"],
+        "terminal": True,
         "web": True,
         "src": [
             "model.ts",
@@ -68,10 +69,12 @@ games = {
     "jump" : {
         "path": "src/games/jump",
         "namespace": "Jump",
+        "run": ["terminal", "webterm"],
+        "terminal": True,
         "web": True,
         "src": [
             "model.ts",
-            "render.src/ts",
+            "render.ts",
             "game.ts",
             "main.ts"
         ]
@@ -79,6 +82,8 @@ games = {
     "city" : {
         "path": "src/games/city",
         "namespace": "City",
+        "run": ["terminal", "webterm"],
+        "terminal": True,
         "web": True,
         "src": [
             "model.ts",
@@ -90,6 +95,8 @@ games = {
     "unblock" : {
         "path": "src/games/unblock",
         "namespace": "Unblock",
+        "run": ["terminal", "webterm"],
+        "terminal": True,
         "web": True,
         "src": [
             "constant.ts",
@@ -103,7 +110,7 @@ games = {
     "obj3d" : {
         "path": "src/games/obj3d",
         "namespace": "Obj3d",
-        "webgl": True,
+        "run": ["webgl"],
         "src": [
             "model.ts",
             "render.ts",
@@ -115,7 +122,7 @@ games = {
     "simple3d" : {
         "path": "src/games/simple3d",
         "namespace": "Simple3d",
-        "webgl": True,
+        "run": ["webgl"],
         "src": [
             "model.ts",
             "render.ts",
@@ -127,7 +134,7 @@ games = {
     "ascii" : {
         "path": "src/tool/asc2editor",
         "namespace": "AscIIEditor",
-        "web": False,
+        "run": ["terminal"],
         "src": [
             "model.ts",
             "render.ts",
@@ -138,7 +145,7 @@ games = {
     "art2js" : {
         "path": "src/tool/art2js",
         "namespace": "Art2Js",
-        "web": False,
+        "run": ["terminal"],
         "src": [
             "main.ts"
         ]
@@ -178,62 +185,75 @@ def grepArt(path):
     return art_dict
 
 
-def make_cmd_line(name, is_build, oa=[]):
+def make_build_cmd_line(name):
     cmds = []
 
     if name not in games:
-        printColor("red", "Game:"+name+" not in list...");
-        return cmds;
+        printColor("red", "Game:"+name+" not in list...")
+        sys.exit(0)
 
-    if name == "engine":
+    g = games[name]
+    runenv = g['run']
+
+    if len(runenv) == 0:
         printColor("red", "Engine can't build independent...")
-        return cmds;
+        sys.exit(0)
 
-    if is_build:
-        pe = ' '+games["engine"]["path"]+'/'
-        pe3d = ' '+games["engine3d"]["path"]+'/'
-        pg = ' '+games[name]["path"]+'/'
-        se = games["engine"]["src"]
-        se3d = games["engine3d"]["src"]
-        sg = games[name]["src"]
-        artjs = ''
+    pe = ' '+games["engine"]["path"]+'/'
+    pe3d = ' '+games["engine3d"]["path"]+'/'
+    pg = ' '+g["path"]+'/'
+    se = games["engine"]["src"]
+    se3d = games["engine3d"]["src"]
+    sg = g["src"]
+    artjs = ''
 
-        #convert ascii art to javascript for web...
-        if "web" in games[name] and games[name]["web"]:
-            arts = grepArt(pg)
-            if len(arts)>0:
-                cmds.append("echo|green|🍀 Art2Js...")
-            for a in arts:
-                cmds.append("node tmp/art2js.js "+a+' '+ \
-                        games[name]["namespace"]+ \
-                        ' '+arts[a]+' tmp/'+arts[a]+'.ts')
-                artjs+=' tmp/'+arts[a]+'.ts '
+    #convert ascii art to javascript for web-terminal...
+    if "webterm" in runenv:
+        arts = grepArt(pg)
+        if len(arts)>0:
+            cmds.append("echo|green|🍀 Art2Js...")
+        for a in arts:
+            cmds.append("node tmp/art2js.js "+a+' '+ \
+                    g["namespace"]+ \
+                    ' '+arts[a]+' tmp/'+arts[a]+'.ts')
+            artjs+=' tmp/'+arts[a]+'.ts '
 
-        cmds.append("echo|green|🍀 TSC...")
-        if "webgl" in games[name] and games[name]["webgl"]:
-            cmds.append("tsc -t es5 --outfile tmp/"+name+".js "+ \
-                    pe + pe.join(se) + pe3d + pe3d.join(se3d) + \
-                    pg + pg.join(sg))
-        else:
-            cmds.append("tsc -t es5 --outfile tmp/"+name+".js "+ \
-                    pe + pe.join(se) + artjs + pg + pg.join(sg))
+    cmds.append("echo|green|🍀 TSC...")
+    tsccmd = "tsc -t es5 --outfile tmp/"+name+".js "+pe+pe.join(se)
+    if "webgl" in runenv:
+        tsccmd += (pe3d+pe3d.join(se3d))
+    if "webterm" in runenv:
+        tsccmd += artjs
+    tsccmd+=(pg+pg.join(sg))
+    cmds.append(tsccmd)
 
-        if ("web" in games[name] and games[name]["web"]) or \
-                ("webgl" in games[name] and games[name]["webgl"]):
-            cmds.append("echo|green|🍀 Browserify for web...")
-            cmds.append("browserify tmp/"+name+ \
-                    ".js --ignore-missing -o tmp/"+name+"_bundle.js")
-            cmds.append("cp src/games/"+name+"/"+name+".html tmp/")
+    if "webterm" in runenv or "webgl" in runenv:
+        cmds.append("echo|green|🍀 Browserify for web...")
+        cmds.append("browserify tmp/"+name+ \
+                ".js --ignore-missing -o tmp/"+name+"_bundle.js")
+    if "webterm" in runenv:
+        cmds.append("cp src/games/"+name+"/"+name+".html tmp/")
+    if "webgl" in runenv:
+        cmds.append("cp src/games/"+name+"/"+name+"_gl.html tmp/")
 
-        return cmds
-    else:
-        rcs = ["node tmp/"+name+".js "+' '.join(oa)]
-        if ("web" in games[name] and games[name]["web"]) or \
-                ("webgl" in games[name] and games[name]["webgl"]):
-            hp = 'http://127.0.0.1:8866/'
-            rcs.append("open "+hp+"tmp/"+name+".html")
+    return cmds
 
-        return rcs
+
+def make_run_cmd_line(name, exargs=[]):
+    g = games[name]
+    runenv = g['run']
+    rcs = {}
+    if "terminal" in runenv:
+        rcs["terminal"] = "node tmp/"+name+".js "+' '.join(exargs)
+
+    if "webterm" in runenv:
+        rcs["webterm"] = "open tmp/"+name+".html"
+
+    if "webgl" in runenv:
+        hp = 'http://127.0.0.1:8866/'
+        rcs["webgl"] = "open "+hp+"tmp/"+name+"_gl.html"
+
+    return rcs
 
 
 def prepareTool():
@@ -252,10 +272,10 @@ def prepareTool():
         os.system(c)
 
     if not os.path.exists('tmp/art2js.js'):
-        r = make_cmd_line('art2js', True)
+        r = make_build_cmd_line('art2js')
         execCmds(r)
     if not os.path.exists('tmp/ascii.js'):
-        r = make_cmd_line('ascii', True)
+        r = make_build_cmd_line('ascii')
         execCmds(r)
 
 
@@ -314,22 +334,31 @@ if __name__ == "__main__":
     cmd = sys.argv[1]
     game = sys.argv[2]
     oargs = sys.argv[3:]
-    b = make_cmd_line(game, True)
-    r = make_cmd_line(game, False, oargs)
+
+    b = make_build_cmd_line(game)
+    r = make_run_cmd_line(game, oargs)
 
     if 'b' in cmd and b:
         execCmds(b)
         printColor('yellow', 'Build ok...🍺')
 
     if 'r' in cmd and r:
-        if 'w' in cmd and \
-                ("web" in games[game] and games[game]["web"]) \
-                or ("webgl" in games[game] and games[game]["webgl"]):
-            prepareHttpServer()
-            printColor('mag', '🚀 '+r[1])
-            os.system(r[1])
+        runenv = games[game]['run']
+        if 'w' in cmd:
+            if "webgl" in runenv:
+                prepareHttpServer()
+                printColor('mag', '🚀 '+r['webgl'])
+                os.system(r['webgl'])
+            else:
+                printColor('red', "No webgl mode!")
+        elif 't' in cmd:
+            if "webterm" in runenv:
+                printColor('mag', '🚀 '+r['webterm'])
+                os.system(r['webterm'])
+            else:
+                printColor('red', "No webterm mode!")
         else:
-            printColor('mag', '🚀 '+r[0])
-            os.system(r[0])
+            printColor('mag', '🚀 '+r['terminal'])
+            os.system(r['terminal'])
 
 

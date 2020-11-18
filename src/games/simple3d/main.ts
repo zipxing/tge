@@ -10,8 +10,13 @@ namespace Simple3d {
         g.loop();
     }
     if((typeof window) !== 'undefined') {
-        //browser term...
-        window.onload = () => { main("WEB"); }
+        //browser...
+        window.onload = () => { 
+            let rm = (<any>window).run_mode;
+            if(rm !== undefined) {
+                main(rm); 
+            }
+        }
     } else {
         tge.info("Must in web...");
     }
