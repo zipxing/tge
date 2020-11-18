@@ -96,6 +96,12 @@ namespace Tetris {
             this.drawBack();
         }
 
+        draw() {
+            this.redrawGrid();
+            this.drawCombo();
+            this.drawAttack();
+        }
+
         drawTitle() {
         }
 
@@ -114,28 +120,25 @@ namespace Tetris {
         redrawHold() {
         }
 
-        drawCell(idx:number, col:number, row:number, color:number) {
-            this.drawObj(color, row*2.0 - 20 + idx*20, (21-col)*2.0 - 16, 0, 3, 13, 0, 1, 1, 1);
-        }
+        drawBlk(idx:number, type:number, col:number, row:number, color: number, fullrow_stage: number = 0) {
+            let x = row*2.0 - 20 + idx*22;
+            let y = (Tetris.ZONG - col)*2.0 - 16;
 
-        setCellBasic(idx:number, col:number, row:number, color: number) {
-            switch(color) {
+            switch(type) {
                 case 0: //空白
                     break;
                 case 11: //被攻击出来的
-                    this.drawCell(idx, col, row, 0);
+                    this.drawObj(0, x, y, 0, 3, 13, 0, 1, 1, 1);
                     break;
                 case 20: //投影
                     break;
                 case 30: //满行闪烁
+                    this.drawObj(color%7, x, y, 0, 
+                        3-fullrow_stage*5, 13-fullrow_stage*5, 0, 1, 1, 1);
                     break;
                 default: //正常方块
-                    this.drawCell(idx, col, row, color%7);
+                    this.drawObj(color%7, x, y, 0, 3, 13, 0, 1, 1, 1);
             }
-        }
-
-        setCell(idx:number, i:number, j:number, c:number) {
-            this.setCellBasic(idx, i, j, c);
         }
 
         redrawGrid() {
@@ -145,39 +148,47 @@ namespace Tetris {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
 
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+            let nd = [
+                m.grids[0].need_draw,
+                m.grids[1].need_draw
+            ];
+            let frs = [
+                tge.Timer.getStage("0clear-row"),
+                tge.Timer.getStage("1clear-row")
+            ]
+            let fr = [
+                tge.Timer.getExData("0clear-row"),
+                tge.Timer.getExData("1clear-row")
+            ];
+            if(!nd[0] && !nd[1] && frs[0]==0 && frs[1]==0) {
+                //tge.info("NEED_DRAW skip...");
+                return;
+            }
 
             for(let idx=0; idx<=1; idx++) {
                 let gr = m.grids[idx];
-                let frs = tge.Timer.getStage(idx+"clear-row");
-                let fr = tge.Timer.getExData(idx+"clear-row");
-                if(frs==0) {
+                if(frs[idx]==0) {
                     if(gr.need_draw) {
-                        // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                         gr.need_draw = false;
-                    } else {
-                        //tge.debug("skip not need draw...");
-                        //continue;
                     }
-                } else {
-                    //tge.debug("FFFF", frs);
-                    //tge.debug("FFFF", fr);
                 }
                 for(let i=0;i<ZONG;i++) {
                     for(let j=0;j<HENG;j++) {
                         let gv = gr.core.grid[i*GRIDW + j+2];
                         let hidden_fullrow = false;
-                        if(frs!=undefined && frs!=0) {
-                            if(fr.indexOf(i)!=-1 && (Math.floor(frs/3)%2==0))
+                        if(frs[idx]!=undefined && frs[idx]!=0) {
+                            if(fr[idx].indexOf(i)!=-1 && (Math.floor(frs[idx]/3)%1==0))
                                 hidden_fullrow = true;
                         }
                         if(gv==0) {
-                            this.setCell(idx, i, j, 0);
+                            this.drawBlk(idx, 0, i, j, 0);
                         } else {
                             if(hidden_fullrow) 
-                                this.setCell(idx, i, j, 30);
+                                this.drawBlk(idx, 30, i, j, gv%100, frs[idx]);
                             else
-                                this.setCell(idx, i, j, gv%100);
+                                this.drawBlk(idx, gv%100, i, j, gv%100, frs[idx]);
                         }
                     }
                 }
@@ -194,7 +205,6 @@ namespace Tetris {
             let m = <Tetris.Model>g.model;
         }
 
-
         drawObj(color:number, tx=0.0, ty=-1.0, tz=0.0, rx=0, ry=0, rz=0,
             sx=1.0, sy=1.0, sz=1.0) {
             let gl = (<tge.WebRun>tge.env).context;
@@ -210,7 +220,6 @@ namespace Tetris {
             this.modelMatrix.rotate(rz, 0.0, 0.0, 1.0); //rot around z-axis
             this.modelMatrix.rotate(ry, 0.0, 1.0, 0.0); //rot around y-axis
             this.modelMatrix.rotate(rx, 1.0, 0.0, 0.0); //rot around x-axis
-            //this.modelMatrix.multiply(m.matRot);
             this.modelMatrix.scale(sx, sy, sz);
 
             this.normalMatrix.setInverseOf(this.modelMatrix);
@@ -223,17 +232,11 @@ namespace Tetris {
             this.shader!.setUniform('u_NormalMatrix', this.normalMatrix.elements);
             this.shader!.setUniform('u_LightColor', [1.0,1.0,1.0]);
 
-            let lightDir = [5.0, 3.0, 4.0];
+            let lightDir = [1.0, 3.0, 4.0];
             this.shader!.setUniform('u_LightDir', lightDir);
 
             this.mesh!.render(this.shader);
             this.texture!.unbind();
-        }
-
-        draw() {
-            this.redrawGrid();
-            this.drawCombo();
-            this.drawAttack();
         }
     }
 }

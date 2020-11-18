@@ -206,15 +206,17 @@ namespace Simple3d {
             let m = <Simple3d.Model>g.model;
 
             //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            tge.info("begin...", g.stage);
             let adj = 0.2;
             this.drawCube(mx, 0);
             this.drawCube(mx*2, adj);
+            tge.info("end...", g.stage);
             //this.texture!.unbind();
         }
 
         draw() {
             let g = WebGlRender.game;
-            this.movex = 3.0 - 6.0*((g.stage/8 % 100) / 100.0);
+            this.movex = 3.0 - 6.0*((g.stage / 20 % 100) / 100.0);
             this.redraw(this.movex);
         }
     }
