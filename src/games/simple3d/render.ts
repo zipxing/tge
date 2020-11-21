@@ -110,6 +110,11 @@ namespace Simple3d {
             //  v2------v3
 
             let mesh = new tge3d.Mesh(format);
+            let position_data = [1.0, 1.0, 1.0,  -1.0, 1.0, 1.0,  -1.0, -1.0, 1.0,  1.0, -1.0, 1.0];
+            let color_data = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
+            let uv_data = [1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0];
+            let triangels = [ 0,1,2, 0,2,3 ];
+            /*
             //6个面（12个三角形），24个顶点
             let position_data = [
                 //v0-v1-v2-v3 front (0,1,2,3)
@@ -161,7 +166,7 @@ namespace Simple3d {
                 12,13,14, 12,14,15, //left
                 16,17,18, 16,18,19, //bottom
                 20,21,22, 20,22,23  //back
-            ]
+            ];*/
 
             mesh.setVertexData(tge3d.VertexSemantic.POSITION, position_data);
             mesh.setVertexData(tge3d.VertexSemantic.COLOR, color_data);

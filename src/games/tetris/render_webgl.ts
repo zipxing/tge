@@ -8,29 +8,14 @@ namespace Tetris {
         static shader_vs = 'shader/light.vs';
         static shader_fs = 'shader/light.fs';
         static obj_file  = 'model3d/cube.obj';
-        static image_boxs = [
-            'image/box1.jpg',
-            'image/box2.jpg',
-            'image/box3.jpg',
-            'image/box4.jpg',
-            'image/box5.jpg',
-            'image/box6.jpg',
-            'image/box7.jpg',
-            'image/box8.jpg'
-        ];
+        static title_img = 'image/tetris.jpg';
+        static image_boxs: string[] = [];
 
         static assets = [
             [WebGlRender.shader_vs, tge3d.AssetType.Text],
             [WebGlRender.shader_fs, tge3d.AssetType.Text],
             [WebGlRender.obj_file, tge3d.AssetType.Text],
-            [WebGlRender.image_boxs[0], tge3d.AssetType.Image],
-            [WebGlRender.image_boxs[1], tge3d.AssetType.Image],
-            [WebGlRender.image_boxs[2], tge3d.AssetType.Image],
-            [WebGlRender.image_boxs[3], tge3d.AssetType.Image],
-            [WebGlRender.image_boxs[4], tge3d.AssetType.Image],
-            [WebGlRender.image_boxs[5], tge3d.AssetType.Image],
-            [WebGlRender.image_boxs[6], tge3d.AssetType.Image],
-            [WebGlRender.image_boxs[7], tge3d.AssetType.Image]
+            [WebGlRender.title_img, tge3d.AssetType.Image]
         ];
 
         modelMatrix: tge3d.Matrix4;
@@ -39,6 +24,7 @@ namespace Tetris {
         mvpMatrix: tge3d.Matrix4;
         normalMatrix: tge3d.Matrix4;
         mesh: tge3d.Mesh | null;
+        mesh2d_0: tge3d.Mesh | null;
         shader: tge3d.Shader | null;
         texture: tge3d.Texture2D | null;
         isInit: boolean = false;
@@ -51,8 +37,14 @@ namespace Tetris {
             this.mvpMatrix= new tge3d.Matrix4();
             this.normalMatrix= new tge3d.Matrix4();
             this.mesh = null;
+            this.mesh2d_0 = null;
             this.shader = null;
             this.texture = null;
+
+            for(let i=0; i<8; i++) {
+                WebGlRender.image_boxs.push(`image/box${i+1}.jpg`);
+                WebGlRender.assets.push([WebGlRender.image_boxs[i], tge3d.AssetType.Image]);
+            }
 
             tge3d.asset_manager.loadAssetList(WebGlRender.assets, ()=>{
                 this.isInit = true;
@@ -82,6 +74,21 @@ namespace Tetris {
             let ofl = new tge3d.ObjFileLoader();
             this.mesh = ofl.load(obj, 1.0, false);
 
+            let format = new tge3d.VertexFormat();
+            format.addAttrib(tge3d.VertexSemantic.POSITION, 3);
+            format.addAttrib(tge3d.VertexSemantic.COLOR, 3);
+            format.addAttrib(tge3d.VertexSemantic.UV0, 2);
+            this.mesh2d_0 = new tge3d.Mesh(format);
+            let position_data = [1.0, 1.0, 1.0,  -1.0, 1.0, 1.0,  -1.0, -1.0, 1.0,  1.0, -1.0, 1.0];
+            let color_data = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
+            let uv_data = [1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0];
+            let triangels = [ 0,1,2, 0,2,3 ];
+            this.mesh2d_0.setVertexData(tge3d.VertexSemantic.POSITION, position_data);
+            this.mesh2d_0.setVertexData(tge3d.VertexSemantic.COLOR, color_data);
+            this.mesh2d_0.setVertexData(tge3d.VertexSemantic.UV0, uv_data);
+            this.mesh2d_0.setTriangles(triangels);
+            this.mesh2d_0.upload();
+
             this.shader!.setUniform('u_sampler', 0);
 
             this.viewMatrix.setLookAt(.0, .0, 60.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
@@ -96,18 +103,24 @@ namespace Tetris {
             tge.Emitter.register("Tetris.REDRAW_NEXT", this.redrawNext, this);
             tge.Emitter.register("Tetris.REDRAW_HOLD", this.redrawHold, this);
 
-            this.drawTitle();
             this.drawLogo();
             this.drawBack();
         }
 
         draw() {
-            this.redrawGrid();
+            if(this.testNeedDrawGrid()) {
+                this.drawTitle();
+                this.redrawGrid();
+            }
             this.drawCombo();
             this.drawAttack();
         }
 
         drawTitle() {
+            let g = TermRender.game;
+            let m = <Tetris.Model>g.model;
+            if(!this.isInit) return;
+            this.drawObj(2, 10, 10, 0, 3, 13, 0, 10.0, 10.0, 1.0, 1);
         }
 
         drawLogo() {
@@ -146,6 +159,28 @@ namespace Tetris {
             }
         }
 
+        testNeedDrawGrid() {
+            let g = TermRender.game;
+            let m = <Tetris.Model>g.model;
+            if(!this.isInit) return;
+            let gl = (<tge.WebRun>tge.env).context;
+            let canvas = (<tge.WebRun>tge.env).canvas;
+
+            let nd = [
+                m.grids[0].need_draw,
+                m.grids[1].need_draw
+            ];
+            let frs = [
+                tge.Timer.getStage("0clear-row"),
+                tge.Timer.getStage("1clear-row")
+            ]
+            if(!nd[0] && !nd[1] && frs[0]==0 && frs[1]==0) {
+                //tge.info("NEED_DRAW skip...");
+                return false;
+            }
+            return true;
+        }
+
         redrawGrid() {
             let g = TermRender.game;
             let m = <Tetris.Model>g.model;
@@ -156,10 +191,6 @@ namespace Tetris {
             //webgl中，浏览器会在页面合成时，自动执行清除操作
             //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-            let nd = [
-                m.grids[0].need_draw,
-                m.grids[1].need_draw
-            ];
             let frs = [
                 tge.Timer.getStage("0clear-row"),
                 tge.Timer.getStage("1clear-row")
@@ -168,10 +199,6 @@ namespace Tetris {
                 tge.Timer.getExData("0clear-row"),
                 tge.Timer.getExData("1clear-row")
             ];
-            if(!nd[0] && !nd[1] && frs[0]==0 && frs[1]==0) {
-                //tge.info("NEED_DRAW skip...");
-                return;
-            }
 
             for(let idx=0; idx<=1; idx++) {
                 let gr = m.grids[idx];
@@ -199,6 +226,7 @@ namespace Tetris {
                     }
                 }
             }
+            return true;
         }
 
         drawCombo() {
@@ -212,14 +240,17 @@ namespace Tetris {
         }
 
         drawObj(color:number, tx=0.0, ty=-1.0, tz=0.0, rx=0, ry=0, rz=0,
-            sx=1.0, sy=1.0, sz=1.0) {
+            sx=1.0, sy=1.0, sz=1.0, obj:number = 0) {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
             let g = WebGlRender.game;
             let m = <Tetris.Model>g.model;
 
             //init texture...
-            this.texture = tge3d.texture_manager.getTexture(WebGlRender.image_boxs[color]);
+            if(obj==0) 
+                this.texture = tge3d.texture_manager.getTexture(WebGlRender.image_boxs[color]);
+            else
+                this.texture = tge3d.texture_manager.getTexture(WebGlRender.title_img);
             this.texture!.bind();
 
             this.modelMatrix.setTranslate(tx, ty, tz);
@@ -241,8 +272,15 @@ namespace Tetris {
             let lightDir = [1.0, 3.0, 4.0];
             this.shader!.setUniform('u_LightDir', lightDir);
 
-            this.mesh!.render(this.shader);
+            if(obj==0)
+                this.mesh!.render(this.shader);
+            else
+                this.mesh2d_0!.render(this.shader);
+
             this.texture!.unbind();
+        }
+
+        draw2DRect() {
         }
     }
 }
