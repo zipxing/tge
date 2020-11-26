@@ -1,6 +1,6 @@
 namespace tge3d {
     export class GeomertyHelper{
-        // normals ////////////
+
         static calcMeshNormals(triangels: any[], positions: any[], normal: any[]){
             let triangleCount = triangels.length/3;
             let vertexNormals = [];
@@ -56,7 +56,7 @@ namespace tge3d {
             }
         }
 
-        static _calcFaceNormal(p0:Vector3, p1:Vector3, p2:Vector3){
+        private static _calcFaceNormal(p0:Vector3, p1:Vector3, p2:Vector3){
             let v_10 = new Vector3(p0.x-p1.x, p0.y-p1.y, p0.z-p1.z);
             let v_12 = new Vector3(p2.x-p1.x, p2.y-p1.y, p2.z-p1.z);
             let normal = new Vector3();
@@ -65,7 +65,7 @@ namespace tge3d {
             return normal;
         }
 
-        static _calcFaceArea(p0:Vector3, p1:Vector3, p2:Vector3){
+        private static _calcFaceArea(p0:Vector3, p1:Vector3, p2:Vector3){
             let a = Vector3.distance(p0, p1);
             let b = Vector3.distance(p1, p2);
             let c = Vector3.distance(p0, p2);
@@ -73,13 +73,12 @@ namespace tge3d {
             return Math.sqrt(p*(p-a)*(p-b)*(p-c));
         }
 
-        static _calcAngle(v0:Vector3, v1:Vector3){
+        private static _calcAngle(v0:Vector3, v1:Vector3){
             v0.normalize();
             v1.normalize();
             return Math.acos(Vector3.dot(v0, v1));
         }
 
-        // tangents ////////////
         static calcMeshTangents(triangels: any[], positions: any[], uvs: any[], tangents: any[]){
             let triangleCount = triangels.length/3;
             let vertexTangents = [];
@@ -146,7 +145,7 @@ namespace tge3d {
             }
         }
 
-        static _calcFaceTangent(p0:Vector3, p1:Vector3, p2:Vector3, uv0:Vector3, uv1:Vector3, uv2:Vector3){
+        private static _calcFaceTangent(p0:Vector3, p1:Vector3, p2:Vector3, uv0:Vector3, uv1:Vector3, uv2:Vector3){
             let edge1 = Vector3.sub(p1, p0, new Vector3());
             let edge2 = Vector3.sub(p2, p0, new Vector3());
             let deltaUV1 = Vector3.sub(uv1, uv0, new Vector3());

@@ -414,10 +414,10 @@ namespace tge3d {
         }
 
         /**
-     * Calculate the inverse matrix of source matrix, and set to this.
-     * @param {Matrix4} source The source matrix.
-     * @returns this
-     */
+         * Calculate the inverse matrix of source matrix, and set to this.
+         * @param {Matrix4} source The source matrix.
+         * @returns this
+         */
         setInverseOf(source:Matrix4){
             let s = source.elements;
             let d = this.elements;
@@ -482,6 +482,14 @@ namespace tge3d {
         }
 
         /**
+         * Invert this matrix
+         * @returns this
+         */
+        invert(){
+            return this.setInverseOf(this);
+        }
+
+        /**
          * Transpose this matrix.
          * @returns this
          */
@@ -499,6 +507,67 @@ namespace tge3d {
 
             return this;
         }
+
+        static multiply(m1: Matrix4, m2: Matrix4, dst:Matrix4){
+            let i, e, a, b, ai0, ai1, ai2, ai3;
+
+            // Calculate e = a * b
+            e = dst.elements;
+            a = m1.elements;
+            b = m2.elements;
+
+            // If e equals b, copy b to temporary matrix.
+            if (e === b) {
+                b = new Float32Array(16);
+                for (i = 0; i < 16; ++i) {
+                    b[i] = e[i];
+                }
+            }
+
+            for (i = 0; i < 4; i++) {
+                ai0=a[i];  ai1=a[i+4];  ai2=a[i+8];  ai3=a[i+12];
+                e[i]    = ai0 * b[0]  + ai1 * b[1]  + ai2 * b[2]  + ai3 * b[3];
+                e[i+4]  = ai0 * b[4]  + ai1 * b[5]  + ai2 * b[6]  + ai3 * b[7];
+                e[i+8]  = ai0 * b[8]  + ai1 * b[9]  + ai2 * b[10] + ai3 * b[11];
+                e[i+12] = ai0 * b[12] + ai1 * b[13] + ai2 * b[14] + ai3 * b[15];
+            }
+
+            return dst;
+        }
+
+        static transformVec4(mat4: Matrix4, vec4: number[]){
+            let i, ai0, ai1, ai2, ai3;
+            let a = mat4.elements;
+            let dst = [];
+
+            for(i=0; i<4; ++i){
+                ai0=a[i];  ai1=a[i+4];  ai2=a[i+8];  ai3=a[i+12];
+                dst[i] = ai0 * vec4[0] + ai1 * vec4[1] + ai2 * vec4[2] + ai3 * vec4[3];
+            }
+
+            return dst;
+        }
+
+        static transformPoint(mat4: Matrix4, vec3: Vector3, dstVec3: Vector3){
+            let vec4 = [vec3.x, vec3.y, vec3.z, 1];
+            let dst = Matrix4.transformVec4(mat4, vec4);
+            if(dstVec3==null){
+                dstVec3 = new Vector3();
+            }
+            dstVec3.set(dst[0], dst[1], dst[2]);
+            return dstVec3;
+        }
+
+        static transformDirection(mat4: Matrix4, vec3: Vector3, dstVec3: Vector3){
+            let vec4 = [vec3.x, vec3.y, vec3.z, 0];
+            let dst = Matrix4.transformVec4(mat4, vec4);
+            if(dstVec3==null){
+                dstVec3 = new Vector3();
+            }
+            dstVec3.set(dst[0], dst[1], dst[2]);
+            return dstVec3;
+        }
+
     }
 
     export class Matrix3 {
@@ -779,7 +848,7 @@ namespace tge3d {
         z: number;
         w: number = 0;
 
-        constructor(x=0,y=0,z=0){
+        constructor(x=0,y=0,z=0) {
             this.x = x;
             this.y = y;
             this.z = z;

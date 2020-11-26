@@ -67,6 +67,16 @@ namespace tge3d {
             return true;
         }
 
+        hasUniform(name: string){
+            return this._uniforms[name]!=null;
+        }
+
+        destroy(){
+            let gl = (<tge.WebRun>tge.env).context;
+            gl.deleteProgram(this.program);
+            this.program = null;
+        }
+
         loadShader(type: any, source: string) {
             let gl = (<tge.WebRun>tge.env).context;
             let shader = gl.createShader(type);
@@ -134,6 +144,20 @@ namespace tge3d {
             tge.info('uniforms',this._uniforms);
         }
 
+        setAttributesMap(attributesMap: any){
+            for(let attr of attributesMap){
+                let semantic = attr['semantic'];
+                let name = attr['name'];
+                this.mapAttributeSemantic(semantic, name);
+            }
+        }
+
+        setUniformSafe(name: string, value: any){
+            if(this.hasUniform(name)){
+                this.setUniform(name, value);
+            }
+        }
+
         setUniform(name: string, value: any) {
             let gl = (<tge.WebRun>tge.env).context;
             let info = this._uniforms[name];
@@ -195,7 +219,7 @@ namespace tge3d {
                 let location = this._attributes[name];
                 return location;
             } else {
-                tge.error('Shader: can not find attribute for semantic '+semantic);
+                //tge.error('Shader: can not find attribute for semantic '+semantic);
                 return -1;
             }
         }

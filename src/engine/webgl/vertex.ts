@@ -202,18 +202,31 @@ namespace tge3d {
         private _type: number;
         private _vbo: any;
         private _bufferData: any;
+        private _wireframe: boolean;
 
-        constructor(){
+        constructor(wireframe:boolean = false){
             let gl = (<tge.WebRun>tge.env).context;
+            this._wireframe = wireframe;
             this._indexCount = 0;
-            this._mode = gl.TRIANGLES;
+            this._mode = wireframe? gl.LINES: gl.TRIANGLES;
             this._type = gl.UNSIGNED_SHORT;
             this._vbo = gl.createBuffer();
             this._bufferData = null;
         }
 
         setData(data: any){
-            this._bufferData = data;
+            if(this._wireframe){
+                this._bufferData = [];
+                let vcnt = data.length/3;
+                for(let i=0; i<vcnt; i++){
+                    let a = data[i*3];
+                    let b = data[i*3+1];
+                    let c = data[i*3+2];
+                    this._bufferData.push(a,b,b,c,c,a);
+                }
+            } else {
+                this._bufferData = data;
+            }
         }
 
         get vbo(){
