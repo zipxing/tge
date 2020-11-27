@@ -56,10 +56,21 @@ namespace tge3d {
         }
     }
 
+    export class PostEffectLayer {
+        private _material: Material;
+        constructor(material: Material){
+            this._material = material;
+        }
+
+        //override
+        render(chain: any, srcRT: any, dstRT: any){
+        }
+    }
+
     export class PostProcessingChain {
         private _quardMesh: Mesh | null;
         private _matPPBase: MatPP_Base;
-        private _postEffectLayers: any[];
+        private _postEffectLayers: PostEffectLayer[];
         private _tempRTPools: {[key:string]: any};
 
         constructor(){
@@ -78,7 +89,7 @@ namespace tge3d {
             this._matPPBase.destroy();
         }
 
-        add(layer: any){
+        add(layer: PostEffectLayer){
             this._postEffectLayers.push(layer);
         }
 

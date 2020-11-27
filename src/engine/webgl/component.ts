@@ -135,7 +135,7 @@ namespace tge3d {
             gl.clearDepth(1.0);
             gl.enable(gl.DEPTH_TEST);
 
-            gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);                
+            gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
         }
 
         afterRender(){
@@ -149,10 +149,11 @@ namespace tge3d {
         }
 
         enablePostProcessing(enabled: boolean){
+            let canvas = (<tge.WebRun>tge.env).canvas;
             if(enabled){
                 this._tempRenderTexture = new RenderTexture(canvas.width, canvas.height, true);
                 this.target = new RenderTexture(canvas.width, canvas.height, true);
-                this._postProcessingChain = new PostProcessingChain(this);
+                this._postProcessingChain = new PostProcessingChain();
             } else {
                 if(this._tempRenderTexture){
                     this._tempRenderTexture.destroy();
@@ -169,14 +170,12 @@ namespace tge3d {
             }
         }
 
-        addPostProcessing(postEffectLayer){
+        addPostProcessing(postEffectLayer: PostEffectLayer){
             if(this._postProcessingChain==null){
                 this.enablePostProcessing(true);
             }
-
-            this._postProcessingChain.add(postEffectLayer);
+            this._postProcessingChain!.add(postEffectLayer);
         }
-
     }
 
     export class Projector extends Component{
@@ -420,13 +419,15 @@ namespace tge3d {
         private _worldPosition: Vector3;
         private _worldRotation: Quaternion;
         private _worldDirty: boolean;
-        private _scene: Scene | null;
+        _scene: Scene | null;
         localMatrix: Matrix4;
         worldMatrix: Matrix4;
         parent: Node | null;
         children: Node[];
         components: {[key : string] : Component};
         light : Light | null = null;
+        camera: Camera | null = null;
+        projector: Projector | null = null;
 
         constructor(){
             this._isStatic = false;
@@ -447,7 +448,7 @@ namespace tge3d {
             this._scene = null;
         }
 
-        isStatic(){
+        isStatic(){ 
             return this._isStatic;
         }
 
@@ -615,6 +616,7 @@ namespace tge3d {
 
             let node = new Node();
             node.addComponent(SystemComponents.Projector, projector);
+
             node.setParent(this);
             node.projector = projector;
             return node;
@@ -631,7 +633,7 @@ namespace tge3d {
             return node;
         }
 
-        addPointLight(color, range){
+        addPointLight(color: number[], range: any){
             let light = new Light(LightType.Point);
             light.color = color;
             light.range = range;
@@ -644,11 +646,11 @@ namespace tge3d {
         }
 
         lookAt(target, up, smoothFactor){
-            up = up || Vector3.Up;
+            up = up || tge3d.Vec3Up;
             let worldPos = this.worldPosition;
-            if(Math.abs(worldPos.x-target.x)<math.ZeroEpsilon
-                && Math.abs(worldPos.y-target.y)<math.ZeroEpsilon
-                && Math.abs(worldPos.z-target.z)<math.ZeroEpsilon){
+            if(Math.abs(worldPos.x-target.x)<tge3d.ZeroEpsilon
+                && Math.abs(worldPos.y-target.y)<tge3d.ZeroEpsilon
+                && Math.abs(worldPos.z-target.z)<tge3d.ZeroEpsilon){
                 return;
             }
 
@@ -727,6 +729,12 @@ namespace tge3d {
     }
     class Scene{
         private _root: Node;
+        private _ambientColor: number[];
+        cameras: Camera[];
+        lights: Light[];
+        projectors: Projector[];
+        renderNodes: Node[];
+
         constructor(){
             this._root = new Node();
             this._root._scene = this;
@@ -809,7 +817,7 @@ namespace tge3d {
             }
         }
 
-        onScreenResize(width, height){
+        onScreenResize(width: number, height: number){
             for(let camera of this.cameras){
                 camera.onScreenResize(width, height);
             }
