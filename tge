@@ -23,14 +23,8 @@ games = {
         "namespace": "tge3d",
         "run": [],
         "src" : [
-            "asset.ts",
-            "math.ts",
-            "vertex.ts",
-            "mesh.ts",
-            "shader.ts",
-            "texture.ts",
-            "geomerty.ts",
-            "obj.ts"
+            "core/*.ts",
+            "math/*.ts"
         ]
     },
     "tetris" : {
