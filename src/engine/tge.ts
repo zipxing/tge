@@ -5,6 +5,7 @@ namespace tge {
         context: any;
         canvas: any;
         ability: any;
+        config: any;
     }
 
     export interface TermRun {
@@ -28,7 +29,8 @@ namespace tge {
     export function initEnvironment(runenv: string,
         canvasid: string = '',
         canvas_w: number = 1024.0,
-        canvas_h: number = 768.0) {
+        canvas_h: number = 768.0,
+        webgl_config: any = null) {
 
         switch(runenv) {
             case "WEB":
@@ -69,11 +71,17 @@ namespace tge {
                     wglct.pixelStorei(wglct.UNPACK_FLIP_Y_WEBGL, 1); //Flip the image's y axis
                     wglct.viewport(0, 0, cv.width, cv.height);
                     let ab = glCheck(ct);
+                    let conf:any = {};
+                    if(webgl_config == null)
+                        conf.gammaCorrection = true;
+                    else
+                        conf = webgl_config;
                     env = <WebRun>{
                         kind:runenv,
                         context: wglct,
                         canvas: cv,
-                        ability: ab
+                        ability: ab,
+                        config: conf
                     };
                 } else {
                     tge.error("WebGL init fail...");
