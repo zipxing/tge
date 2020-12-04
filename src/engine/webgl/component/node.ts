@@ -239,7 +239,8 @@ namespace tge3d {
             return node;
         }
 
-        lookAt(target:Vector3, up:Vector3, smoothFactor:number){
+        lookAt(target:Vector3, up:Vector3 | null = null, 
+            smoothFactor:number | null = null){
             up = up || tge3d.Vec3Up;
             let worldPos = this.worldPosition;
             if(Math.abs(worldPos.x-target.x)<tge3d.ZeroEpsilon

@@ -29,7 +29,7 @@ namespace tge3d {
 
     export class Material {
         renderPasses: RenderPass[];
-        _mainTexture: Texture2D;
+        _mainTexture: Texture2D | null;
         texelSize: any;
 
         constructor() {
@@ -53,7 +53,7 @@ namespace tge3d {
         }
 
         get mainTexture() {
-            return this._mainTexture;
+            return this._mainTexture!;
         }
 
         set mainTexture(m: Texture2D) {
