@@ -1,9 +1,5 @@
 namespace Scene3d {
     export class WebGlRender extends tge.Render {
-        static shader_vs = 'shader/tex.vs';
-        static shader_fs = 'shader/tex.fs';
-        static image_box = 'image/box.jpg';
-
         static obj_file_capsule = 'models/capsule.obj';
         static obj_file_sphere = 'models/sphere.obj';
         static obj_main_texture = 'imgs/wall01_diffuse.jpg';
@@ -17,9 +13,6 @@ namespace Scene3d {
         static proj_texture = 'imgs/t1.png';
 
         static assets = [
-            [WebGlRender.shader_vs, tge3d.AssetType.Text],
-            [WebGlRender.shader_fs, tge3d.AssetType.Text],
-            [WebGlRender.image_box, tge3d.AssetType.Image],
             [WebGlRender.obj_file_capsule, tge3d.AssetType.Text],
             [WebGlRender.obj_file_sphere, tge3d.AssetType.Text],
             [WebGlRender.obj_main_texture, tge3d.AssetType.Image],
@@ -45,7 +38,6 @@ namespace Scene3d {
         _pointLight2: tge3d.Node | null = null;
         _cameraNode: tge3d.Node | null = null;
 
-
         isInit: boolean = false;
 
         constructor() {
@@ -66,6 +58,7 @@ namespace Scene3d {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
 
+            //refer to mouse.ts...
             let mh = new MouseHandler();
             canvas.onmousedown = (event: any) => {
                 mh.mouseDown(event);
@@ -119,7 +112,6 @@ namespace Scene3d {
             let sphereData = tge3d.asset_manager.getAsset(WebGlRender.obj_file_sphere).data;
             let sphereMesh = ofl.load(sphereData, 1.0, true);
 
-
             // Create scene
             this._scene = new tge3d.Scene();
 
@@ -130,7 +122,6 @@ namespace Scene3d {
             let wall1 = this.createWall();
             wall1.localPosition.set(0, 5, -5);
             wall1.localRotation.setFromEulerAngles(new tge3d.Vector3(90,0,0));
-
 
             // Create an empty mesh root node
             let meshRoot = this._scene.root.addEmptyNode();
