@@ -1,16 +1,16 @@
 namespace Scene3d {
     export class WebGlRender extends tge.Render {
-        static obj_file_capsule = 'models/capsule.obj';
-        static obj_file_sphere = 'models/sphere.obj';
-        static obj_main_texture = 'imgs/wall01_diffuse.jpg';
-        static obj_normal_map = 'imgs/wall01_normal.jpg';
-        static box_main_texture = 'imgs/box_diffuse.jpg';
-        static box_normal_map = 'imgs/box_normal.jpg';
-        static plane_main_texture = 'imgs/wall02_diffuse.png';
-        static plane_normal_map = 'imgs/wall02_normal.png';
-        static brick_main_texture = 'imgs/brickwall_diffuse.jpg';
-        static brick_normal_map = 'imgs/brickwall_normal.jpg';
-        static proj_texture = 'imgs/t1.png';
+        static obj_file_capsule = 'model3d/capsule.obj';
+        static obj_file_sphere = 'model3d/sphere.obj';
+        static obj_main_texture = 'image/wall01_diffuse.jpg';
+        static obj_normal_map = 'image/wall01_normal.jpg';
+        static box_main_texture = 'image/box_diffuse.jpg';
+        static box_normal_map = 'image/box_normal.jpg';
+        static plane_main_texture = 'image/wall02_diffuse.png';
+        static plane_normal_map = 'image/wall02_normal.png';
+        static brick_main_texture = 'image/brickwall_diffuse.jpg';
+        static brick_normal_map = 'image/brickwall_normal.jpg';
+        static proj_texture = 'image/t1.png';
 
         static assets = [
             [WebGlRender.obj_file_capsule, tge3d.AssetType.Text],
@@ -57,6 +57,8 @@ namespace Scene3d {
         init() {
             let gl = (<tge.WebRun>tge.env).context;
             let canvas = (<tge.WebRun>tge.env).canvas;
+
+            this.createWorld();
 
             //refer to mouse.ts...
             let mh = new MouseHandler();
@@ -191,8 +193,32 @@ namespace Scene3d {
 
         draw() {
             let g = WebGlRender.game;
-            //this.movex = 3.0 - 6.0*((g.stage / 20 % 100) / 100.0);
-            //this.redraw(this.movex);
+            if(!this._scene) return;
+            this._time += 5.1;
+            this._scene.update();
+
+            //灯光做圆周运动
+            let cosv = Math.cos(this._time/1500);
+            let sinv = Math.sin(this._time/1500);
+            let radius = 5;
+
+            this._pointLight1!.localPosition.x = radius*cosv*cosv;
+            this._pointLight1!.localPosition.z = radius*sinv*cosv;
+            this._pointLight1!.localPosition.y = 0.5 + radius*(0.5+0.5*sinv)*0.5;
+            this._pointLight1!.setTransformDirty();
+
+            this._pointLight2!.localPosition.x = -radius*cosv*cosv;
+            this._pointLight2!.localPosition.z = -radius*sinv*cosv;
+            this._pointLight2!.localPosition.y = 0.5 + radius*(0.5+0.5*sinv)*0.5;
+            this._pointLight2!.setTransformDirty();
+
+            //move projector
+            //this._projector.localPosition.x = radius*cosv;
+            ////this._projector.localPosition.z = radius*sinv;
+            ////this._projector.localRotation.setFromEulerAngles(new mini3d.Vector3(60*sinv,0,0));
+            //this._projector.setTransformDirty();
+
+            this._scene.render();
         }
     }
 }

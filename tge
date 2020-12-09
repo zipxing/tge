@@ -24,7 +24,11 @@ games = {
         "run": [],
         "src" : [
             "core/*.ts",
-            "math/*.ts"
+            "math/*.ts",
+            "component/component.ts",
+            "component/*.ts",
+            "material/*.ts",
+            "postprocessing/*.ts"
         ]
     },
     "tetris" : {
@@ -104,6 +108,18 @@ games = {
     "obj3d" : {
         "path": "src/games/obj3d",
         "namespace": "Obj3d",
+        "run": ["webgl"],
+        "src": [
+            "model.ts",
+            "render.ts",
+            "game.ts",
+            "mouse.ts",
+            "main.ts"
+        ]
+    },
+    "scene3d" : {
+        "path": "src/games/scene3d",
+        "namespace": "Scene3d",
         "run": ["webgl"],
         "src": [
             "model.ts",
