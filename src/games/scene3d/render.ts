@@ -10,7 +10,7 @@ namespace Scene3d {
         static plane_normal_map = 'image/wall02_normal.png';
         static brick_main_texture = 'image/brickwall_diffuse.jpg';
         static brick_normal_map = 'image/brickwall_normal.jpg';
-        static proj_texture = 'image/t1.png';
+        static proj_texture = 'image/t2.png';
 
         static assets = [
             [WebGlRender.obj_file_capsule, tge3d.AssetType.Text],
@@ -37,6 +37,7 @@ namespace Scene3d {
         _pointLight1: tge3d.Node | null = null;
         _pointLight2: tge3d.Node | null = null;
         _cameraNode: tge3d.Node | null = null;
+        _projector: tge3d.Node | null = null;
 
         isInit: boolean = false;
 
@@ -184,17 +185,17 @@ namespace Scene3d {
             this._cameraNode.camera!.clearColor = [0.34,0.98,1];
 
             // Add projector
-            //this._projector = this._scene.root.addProjector(60, 1.0, 1.0, 1000.0);
-            //this._projector.localPosition.set(0, 3, 0);
-            //this._projector.lookAt(new tge3d.Vector3(0, 0, 0));
-            //this._projector.projector.material.projTexture = tge3d.texture_manager.getTexture(proj_texture);
+            this._projector = this._scene.root.addProjector(60, 1.0, 1.0, 1000.0);
+            this._projector.localPosition.set(0, 3, 0);
+            this._projector.lookAt(new tge3d.Vector3(0, 0, 0));
+            this._projector.projector!.material.projTexture = tge3d.texture_manager.getTexture(WebGlRender.proj_texture);
 
         }
 
         draw() {
             let g = WebGlRender.game;
             if(!this._scene) return;
-            this._time += 5.1;
+            this._time += 20.0;
             this._scene.update();
 
             //灯光做圆周运动
@@ -213,10 +214,10 @@ namespace Scene3d {
             this._pointLight2!.setTransformDirty();
 
             //move projector
-            //this._projector.localPosition.x = radius*cosv;
-            ////this._projector.localPosition.z = radius*sinv;
-            ////this._projector.localRotation.setFromEulerAngles(new mini3d.Vector3(60*sinv,0,0));
-            //this._projector.setTransformDirty();
+            this._projector!.localPosition.x = radius*cosv;
+            //this._projector.localPosition.z = radius*sinv;
+            //this._projector.localRotation.setFromEulerAngles(new mini3d.Vector3(60*sinv,0,0));
+            this._projector!.setTransformDirty();
 
             this._scene.render();
         }
