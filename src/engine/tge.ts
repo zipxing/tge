@@ -293,7 +293,6 @@ namespace tge {
             switch(env.kind) {
                 case "TERM":
                 case "WEBTERM":
-                case "WEB":
                     if (Date.now() - Game._previousTick < Game._tickLengthMs - 16) {
                         setTimeout(() => {
                             this.loop();
@@ -304,11 +303,11 @@ namespace tge {
                         });
                     }
                     break;
-                /*case "WEB":
+                case "WEB":
                     window.requestAnimationFrame(()=>{
                         this.loop();
                     });
-                    break;*/
+                    break;
                 default:
                     tge.error("RunEnv must be TERM | COCOS | WEB...");
             }
