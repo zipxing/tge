@@ -1,5 +1,13 @@
+/*
+ * tge
+ *
+ * A Typescript Game Engine
+ * Copyright (c) 2020, zhouxin.
+ * <zipxing@hotmail.com>
+ *
+ */
 namespace tge {
-    //Typescript game engine run environment...
+    //WebGL render environment
     export interface WebRun {
         kind: "WEB";
         context: any;
@@ -8,6 +16,7 @@ namespace tge {
         config: any;
     }
 
+    //Terminal render(powered by blessed)
     export interface TermRun {
         kind: "TERM";
         blessed: any;
@@ -15,6 +24,7 @@ namespace tge {
         tscreen: any;
     }
 
+    //Terminal render in browser
     export interface WebTermRun {
         kind: "WEBTERM";
         blessed: any;

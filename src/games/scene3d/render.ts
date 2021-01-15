@@ -2,6 +2,7 @@ namespace Scene3d {
     export class WebGlRender extends tge.Render {
         static obj_file_capsule = 'model3d/capsule.obj';
         static obj_file_sphere = 'model3d/sphere.obj';
+        static obj_file_cube = 'model3d/cube.obj';
         static obj_main_texture = 'image/wall01_diffuse.jpg';
         static obj_normal_map = 'image/wall01_normal.jpg';
         static box_main_texture = 'image/box_diffuse.jpg';
@@ -11,10 +12,12 @@ namespace Scene3d {
         static brick_main_texture = 'image/brickwall_diffuse.jpg';
         static brick_normal_map = 'image/brickwall_normal.jpg';
         static proj_texture = 'image/t2.png';
+        static image_boxs: string[] = [];
 
         static assets = [
             [WebGlRender.obj_file_capsule, tge3d.AssetType.Text],
             [WebGlRender.obj_file_sphere, tge3d.AssetType.Text],
+            [WebGlRender.obj_file_cube, tge3d.AssetType.Text],
             [WebGlRender.obj_main_texture, tge3d.AssetType.Image],
             [WebGlRender.obj_normal_map, tge3d.AssetType.Image],
             [WebGlRender.box_main_texture, tge3d.AssetType.Image],
@@ -33,11 +36,13 @@ namespace Scene3d {
         _tempVec3: tge3d.Vector3;
         _scene: tge3d.Scene | null = null;
         _mesh1: tge3d.Node | null = null;
-        _mesh2: tge3d.Node | null = null;
+        _mesh2: tge3d.Node[] | null = null;
         _pointLight1: tge3d.Node | null = null;
         _pointLight2: tge3d.Node | null = null;
         _cameraNode: tge3d.Node | null = null;
         _projector: tge3d.Node | null = null;
+
+        mats: tge3d.Material[];
 
         isInit: boolean = false;
 
@@ -48,6 +53,12 @@ namespace Scene3d {
             this._rotY = 0;
             this._tempQuat = new tge3d.Quaternion();
             this._tempVec3 = new tge3d.Vector3();
+            this.mats = [];
+
+            for(let i=0; i<8; i++) {
+                WebGlRender.image_boxs.push(`image/box${i+1}.jpg`);
+                WebGlRender.assets.push([WebGlRender.image_boxs[i], tge3d.AssetType.Image]);
+            }
 
             tge3d.asset_manager.loadAssetList(WebGlRender.assets, ()=>{
                 this.isInit = true;
@@ -115,6 +126,9 @@ namespace Scene3d {
             let sphereData = tge3d.asset_manager.getAsset(WebGlRender.obj_file_sphere).data;
             let sphereMesh = ofl.load(sphereData, 1.0, true);
 
+            let cubeData = tge3d.asset_manager.getAsset(WebGlRender.obj_file_cube).data;
+            let cubeMesh = ofl.load(cubeData, 1.0, true);
+
             // Create scene
             this._scene = new tge3d.Scene();
 
@@ -143,16 +157,26 @@ namespace Scene3d {
             this._mesh1.localPosition.set(1, 1, 0);
 
             // Create mesh node 2
-            let material2 = new tge3d.MatNormalMapW();
-            material2.mainTexture = tge3d.texture_manager.getTexture(WebGlRender.box_main_texture);
-            material2.normalMap = tge3d.texture_manager.getTexture(WebGlRender.box_normal_map);
-            material2.colorTint = [1.0, 1.0, 1.0];
-            material2.specular = [0.8, 0.8, 0.8];
-            material2.gloss = 10;
+            for(let i=0; i<8; i++) {
+                let material2 = new tge3d.MatNormalMapW();
+                material2.mainTexture = tge3d.texture_manager.getTexture(WebGlRender.image_boxs[i]);
+                //material2.mainTexture = tge3d.texture_manager.getTexture(WebGlRender.box_main_texture);
+                //material2.normalMap = tge3d.texture_manager.getTexture(WebGlRender.box_normal_map);
+                material2.colorTint = [1.0, 1.0, 1.0];
+                material2.specular = [0.8, 0.8, 0.8];
+                material2.gloss = 10;
+                this.mats[i] = material2;
+            }
 
-            this._mesh2 = meshRoot.addMeshNode(tge3d.Mesh.createCube(), material2);
-            this._mesh2.localPosition.set(-1, 1, 0);
-            this._mesh2.localScale.set(0.8, 0.8, 0.8);
+            this._mesh2 = [];
+            for(let i=0; i<10; i++) {
+                for(let j=0; j<10; j++) {
+                    //this._mesh2[i] = meshRoot.addMeshNode(tge3d.Mesh.createCube(), material2);
+                    this._mesh2[i*10+j] = meshRoot.addMeshNode(cubeMesh, this.mats[2]);
+                    this._mesh2[i*10+j].localPosition.set(-1-j*0.2, 1+i*0.2, 0);
+                    this._mesh2[i*10+j].localScale.set(0.1, 0.1, 0.1);
+                }
+            }
 
             // Add a directional light node to scene
             let mainLight = this._scene.root.addDirectionalLight([0.8,0.8,0.8]);
@@ -202,6 +226,16 @@ namespace Scene3d {
             let cosv = Math.cos(this._time/1500);
             let sinv = Math.sin(this._time/1500);
             let radius = 5;
+
+            /*
+            let stage:number = parseInt(''+this._time/1500);
+            let renderer = <tge3d.MeshRenderer>this._mesh2![0]!.components[tge3d.SystemComponents.Renderer];
+            let lp = 1.0;
+            if(stage%2==0) lp = 1.0;
+            else lp = 100.0;
+            this._mesh2![0]!.localPosition.set(lp, lp, 0);
+            renderer.setMaterial(this.mats[stage%5]);
+            */
 
             this._pointLight1!.localPosition.x = radius*cosv*cosv;
             this._pointLight1!.localPosition.z = radius*sinv*cosv;
