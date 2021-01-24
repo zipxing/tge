@@ -51,6 +51,19 @@ games = {
             "main.ts"
         ]
     },
+    "luoxuan" : {
+        "path": "src/games/luoxuan",
+        "namespace": "Luoxuan",
+        "run": ["terminal", "webterm"],
+        "terminal": True,
+        "web": True,
+        "src": [
+            "model.ts",
+            "render.ts",
+            "game.ts",
+            "main.ts"
+        ]
+    },
     "snake" : {
         "path": "src/games/snake",
         "namespace": "Snake",
