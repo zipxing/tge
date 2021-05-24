@@ -1,6 +1,14 @@
-namespace tge3d {
+import * as tge from "../../tge"
+import { Mesh } from "../core/mesh"
+import { Shader } from "../core/shader"
+import { Texture2D } from "../core/texture"
+import { RenderPass } from "./renderpass"
+import { LightMode } from "../component/meshrender"
+import { Material, SystemUniforms } from "../material/material"
+import { VertexSemantic } from "../core/vertex"
+import { texture_manager } from "../core/texture"
 
-    let vs_projector = `
+let vs_projector = `
         attribute vec4 a_Position;
         uniform mat4 u_mvpMatrix;
         uniform mat4 u_projectorMatrix;
@@ -11,7 +19,7 @@ namespace tge3d {
         }
     `;
 
-    let fs_projector = `
+let fs_projector = `
         #ifdef GL_ES
         precision mediump float;
         #endif
@@ -26,61 +34,60 @@ namespace tge3d {
         }
     `;
 
-    let g_shader: Shader | null = null;
+let g_shader: Shader | null = null;
 
-    export class MatProjector extends Material{
-        private _projMatrix: Float32Array | null;
-        private _projTexture: Texture2D;
+export class MatProjector extends Material{
+    private _projMatrix: Float32Array | null;
+    private _projTexture: Texture2D;
 
-        constructor(){
-            super();
-            if(g_shader==null){
-                g_shader = Material.createShader(vs_projector, this.getFS(), [
-                    {'semantic':VertexSemantic.POSITION, 'name':'a_Position'}
-                ]);
-            }
-            this.addRenderPass(g_shader);
-            //default uniforms
-            this._projMatrix = null;
-            this._projTexture = tge3d.texture_manager.getDefaultTexture();
+    constructor(){
+        super();
+        if(g_shader==null){
+            g_shader = Material.createShader(vs_projector, this.getFS(), [
+                {'semantic':VertexSemantic.POSITION, 'name':'a_Position'}
+            ]);
         }
+        this.addRenderPass(g_shader);
+        //default uniforms
+        this._projMatrix = null;
+        this._projTexture = texture_manager.getDefaultTexture();
+    }
 
-        getFS(){
-            let sysconf = (<tge.WebRun>tge.env).config;
-            let fs_common = "";
-            if(sysconf.gammaCorrection){
-                 fs_common += "#define GAMMA_CORRECTION\n";
-            }
-            fs_common += fs_projector;
-            return fs_common;
+    getFS(){
+        let sysconf = (<tge.WebRun>tge.env).config;
+        let fs_common = "";
+        if(sysconf.gammaCorrection){
+            fs_common += "#define GAMMA_CORRECTION\n";
         }
+        fs_common += fs_projector;
+        return fs_common;
+    }
 
-        //Override
-        get systemUniforms(){
-            return [SystemUniforms.MvpMatrix];
-        }
+    //Override
+    get systemUniforms(){
+        return [SystemUniforms.MvpMatrix];
+    }
 
-        //Override
-        setCustomUniformValues(pass: RenderPass){
-            if(!pass.shader) return;
-            pass.shader.setUniformSafe('u_projectorMatrix', this._projMatrix);
-            if(this._projTexture){
-                this._projTexture.bind();
-                pass.shader.setUniformSafe('u_texProj', 0);
-            }
+    //Override
+    setCustomUniformValues(pass: RenderPass){
+        if(!pass.shader) return;
+        pass.shader.setUniformSafe('u_projectorMatrix', this._projMatrix);
+        if(this._projTexture){
+            this._projTexture.bind();
+            pass.shader.setUniformSafe('u_texProj', 0);
         }
+    }
 
-        set projTexture(v){
-            this._projTexture = v;
-            this._projTexture.setClamp();
-        }
+    set projTexture(v){
+        this._projTexture = v;
+        this._projTexture.setClamp();
+    }
 
-        get projTexture(){
-            return this._projTexture;
-        }
+    get projTexture(){
+        return this._projTexture;
+    }
 
-        set projMatrix(v: Float32Array){
-            this._projMatrix = v;
-        }
+    set projMatrix(v: Float32Array){
+        this._projMatrix = v;
     }
 }

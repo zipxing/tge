@@ -1,6 +1,14 @@
-namespace tge3d {
+import * as tge from "../../tge"
+import { Mesh } from "../core/mesh"
+import { Shader } from "../core/shader"
+import { Texture2D } from "../core/texture"
+import { RenderPass } from "./renderpass"
+import { LightMode } from "../component/meshrender"
+import { Material, SystemUniforms } from "../material/material"
+import { VertexSemantic } from "../core/vertex"
+import { texture_manager } from "../core/texture"
 
-    let vs = `
+let vs = `
         attribute vec4 a_Position;
         attribute vec3 a_Normal;
         attribute vec4 a_Tangent;
@@ -34,7 +42,7 @@ namespace tge3d {
         }
     `;
 
-    let fs = `
+let fs = `
         #ifdef GL_ES
         precision mediump float;
         #endif
@@ -104,135 +112,134 @@ namespace tge3d {
         }
     `;
 
-    let g_shaderForwardBase:Shader | null = null;
-    let g_shaderForwardAdd:Shader | null = null;
+let g_shaderForwardBase:Shader | null = null;
+let g_shaderForwardAdd:Shader | null = null;
 
-    export class MatNormalMapW extends Material {
-        _mainTexture_ST: number[];
-        _normalMap: Texture2D;
-        _normalMap_ST: number[];
-        _specular: number[];
-        _gloss: number;
-        _colorTint: number[];
+export class MatNormalMapW extends Material {
+    _mainTexture_ST: number[];
+    _normalMap: Texture2D;
+    _normalMap_ST: number[];
+    _specular: number[];
+    _gloss: number;
+    _colorTint: number[];
 
-        constructor(){
-            super();
+    constructor(){
+        super();
 
-            if(g_shaderForwardBase==null){
-                g_shaderForwardBase = Material.createShader(this.getVS_forwardbase(), this.getFS_forwardbase(), [
-                    {'semantic':VertexSemantic.POSITION, 'name':'a_Position'},
-                    {'semantic':VertexSemantic.NORMAL , 'name':'a_Normal'},
-                    {'semantic':VertexSemantic.TANGENT , 'name':'a_Tangent'},
-                    {'semantic':VertexSemantic.UV0 , 'name':'a_Texcoord'}
-                ]);
-            }
-            if(g_shaderForwardAdd==null){
-                g_shaderForwardAdd = Material.createShader(this.getVS_forwardadd(), this.getFS_forwardadd(), [
-                    {'semantic':VertexSemantic.POSITION, 'name':'a_Position'},
-                    {'semantic':VertexSemantic.NORMAL , 'name':'a_Normal'},
-                    {'semantic':VertexSemantic.TANGENT , 'name':'a_Tangent'},
-                    {'semantic':VertexSemantic.UV0 , 'name':'a_Texcoord'}
-                ]);
-            }
-
-            this.addRenderPass(g_shaderForwardBase, LightMode.ForwardBase);
-            this.addRenderPass(g_shaderForwardAdd, LightMode.ForwardAdd);
-
-            //default uniforms
-            this._mainTexture = texture_manager.getDefaultTexture();
-            this._mainTexture_ST = [1,1,0,0];
-            this._normalMap = texture_manager.getDefaultBumpTexture();
-            this._normalMap_ST = [1,1,0,0];
-            this._specular = [1.0, 1.0, 1.0];
-            this._gloss = 20.0;
-            this._colorTint = [1.0, 1.0, 1.0];
+        if(g_shaderForwardBase==null){
+            g_shaderForwardBase = Material.createShader(this.getVS_forwardbase(), this.getFS_forwardbase(), [
+                {'semantic':VertexSemantic.POSITION, 'name':'a_Position'},
+                {'semantic':VertexSemantic.NORMAL , 'name':'a_Normal'},
+                {'semantic':VertexSemantic.TANGENT , 'name':'a_Tangent'},
+                {'semantic':VertexSemantic.UV0 , 'name':'a_Texcoord'}
+            ]);
+        }
+        if(g_shaderForwardAdd==null){
+            g_shaderForwardAdd = Material.createShader(this.getVS_forwardadd(), this.getFS_forwardadd(), [
+                {'semantic':VertexSemantic.POSITION, 'name':'a_Position'},
+                {'semantic':VertexSemantic.NORMAL , 'name':'a_Normal'},
+                {'semantic':VertexSemantic.TANGENT , 'name':'a_Tangent'},
+                {'semantic':VertexSemantic.UV0 , 'name':'a_Texcoord'}
+            ]);
         }
 
-        getVS_Common(){
-            return vs;
-        }
+        this.addRenderPass(g_shaderForwardBase, LightMode.ForwardBase);
+        this.addRenderPass(g_shaderForwardAdd, LightMode.ForwardAdd);
 
-        getFS_Common(){
-            let sysconf = (<tge.WebRun>tge.env).config;
-            let fs_common = "#define LIGHT_MODEL_PHONG\n";
-            if(sysconf.gammaCorrection){
-                fs_common += "#define GAMMA_CORRECTION\n";
-            }
-            fs_common += fs;
-            return fs_common;
-        }
+        //default uniforms
+        this._mainTexture = texture_manager.getDefaultTexture();
+        this._mainTexture_ST = [1,1,0,0];
+        this._normalMap = texture_manager.getDefaultBumpTexture();
+        this._normalMap_ST = [1,1,0,0];
+        this._specular = [1.0, 1.0, 1.0];
+        this._gloss = 20.0;
+        this._colorTint = [1.0, 1.0, 1.0];
+    }
 
-        getVS_forwardbase(){
-            return this.getVS_Common();
-        }
+    getVS_Common(){
+        return vs;
+    }
 
-        getFS_forwardbase(){
-            let fs_forwardbase = "#define USE_AMBIENT\n" + this.getFS_Common();
-            return fs_forwardbase;
+    getFS_Common(){
+        let sysconf = (<tge.WebRun>tge.env).config;
+        let fs_common = "#define LIGHT_MODEL_PHONG\n";
+        if(sysconf.gammaCorrection){
+            fs_common += "#define GAMMA_CORRECTION\n";
         }
+        fs_common += fs;
+        return fs_common;
+    }
 
-        getVS_forwardadd(){
-            return this.getVS_Common();
-        }
+    getVS_forwardbase(){
+        return this.getVS_Common();
+    }
 
-        getFS_forwardadd(){
-            // fs和forwardbase的区别只是fs里面没有加ambient
-            return this.getFS_Common();
-        }
+    getFS_forwardbase(){
+        let fs_forwardbase = "#define USE_AMBIENT\n" + this.getFS_Common();
+        return fs_forwardbase;
+    }
 
-        //Override
-        get systemUniforms(){
-            return [SystemUniforms.MvpMatrix,
-                SystemUniforms.World2Object,
-                SystemUniforms.Object2World,
-                SystemUniforms.WorldCameraPos,
-                SystemUniforms.SceneAmbient,
-                SystemUniforms.LightColor, SystemUniforms.WorldLightPos]; 
-        }
+    getVS_forwardadd(){
+        return this.getVS_Common();
+    }
 
-        //Override
-        setCustomUniformValues(pass: RenderPass) {
-            pass.shader!.setUniformSafe('u_specular', this._specular);
-            pass.shader!.setUniformSafe('u_gloss', this._gloss);
-            pass.shader!.setUniformSafe('u_colorTint', this._colorTint);
-            pass.shader!.setUniformSafe('u_texMain_ST', this._mainTexture_ST); 
-            pass.shader!.setUniformSafe('u_normalMap_ST', this._normalMap_ST);     
-            if(this._mainTexture){
-                this._mainTexture.bind(0);
-                pass.shader!.setUniformSafe('u_texMain', 0);
-            }  
-            if(this._normalMap){
-                this._normalMap.bind(1);
-                pass.shader!.setUniformSafe('u_normalMap', 1);
-            }
-        }
+    getFS_forwardadd(){
+        // fs和forwardbase的区别只是fs里面没有加ambient
+        return this.getFS_Common();
+    }
 
-        set specular(v: number[]){
-            this._specular = v;
-        }
+    //Override
+    get systemUniforms(){
+        return [SystemUniforms.MvpMatrix,
+            SystemUniforms.World2Object,
+            SystemUniforms.Object2World,
+            SystemUniforms.WorldCameraPos,
+            SystemUniforms.SceneAmbient,
+            SystemUniforms.LightColor, SystemUniforms.WorldLightPos]; 
+    }
 
-        set gloss(v: number){
-            this._gloss = v;
+    //Override
+    setCustomUniformValues(pass: RenderPass) {
+        pass.shader!.setUniformSafe('u_specular', this._specular);
+        pass.shader!.setUniformSafe('u_gloss', this._gloss);
+        pass.shader!.setUniformSafe('u_colorTint', this._colorTint);
+        pass.shader!.setUniformSafe('u_texMain_ST', this._mainTexture_ST); 
+        pass.shader!.setUniformSafe('u_normalMap_ST', this._normalMap_ST);     
+        if(this._mainTexture){
+            this._mainTexture.bind(0);
+            pass.shader!.setUniformSafe('u_texMain', 0);
+        }  
+        if(this._normalMap){
+            this._normalMap.bind(1);
+            pass.shader!.setUniformSafe('u_normalMap', 1);
         }
+    }
 
-        set colorTint(v: number[]){
-            this._colorTint = v;
-        }
+    set specular(v: number[]){
+        this._specular = v;
+    }
 
-        set mainTextureST(v: number[]){
-            this._mainTexture_ST = v;
-        }
+    set gloss(v: number){
+        this._gloss = v;
+    }
 
-        set normalMap(v: Texture2D){
-            this._normalMap = v;
-        }
+    set colorTint(v: number[]){
+        this._colorTint = v;
+    }
 
-        get normalMap(){
-            return this._normalMap;
-        }
+    set mainTextureST(v: number[]){
+        this._mainTexture_ST = v;
+    }
 
-        set normalMapST(v: number[]){
-            this._normalMap_ST = v;
-        }
+    set normalMap(v: Texture2D){
+        this._normalMap = v;
+    }
+
+    get normalMap(){
+        return this._normalMap;
+    }
+
+    set normalMapST(v: number[]){
+        this._normalMap_ST = v;
     }
 }

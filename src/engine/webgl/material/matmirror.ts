@@ -1,6 +1,13 @@
-namespace tge3d {
+import { Mesh } from "../core/mesh"
+import { Shader } from "../core/shader"
+import { Texture2D } from "../core/texture"
+import { RenderPass } from "./renderpass"
+import { LightMode } from "../component/meshrender"
+import { Material, SystemUniforms } from "../material/material"
+import { VertexSemantic } from "../core/vertex"
+import { texture_manager } from "../core/texture"
 
-    let vs = `
+let vs = `
         attribute vec4 a_Position;
         attribute vec2 a_Texcoord;
         uniform mat4 u_mvpMatrix;
@@ -13,7 +20,7 @@ namespace tge3d {
         }
     `;
 
-    let fs = `
+let fs = `
         #ifdef GL_ES
         precision mediump float;
         #endif
@@ -24,37 +31,36 @@ namespace tge3d {
         }
     `;
 
-    let g_shader:Shader | null = null;
+let g_shader:Shader | null = null;
 
-    class MatMirror extends Material {
+class MatMirror extends Material {
 
-        constructor(){
-            super();
+    constructor(){
+        super();
 
-            if(g_shader==null){
-                g_shader = Material.createShader(vs, fs, [
-                    {'semantic':VertexSemantic.POSITION, 'name':'a_Position'},
-                    {'semantic':VertexSemantic.UV0 , 'name':'a_Texcoord'}
-                ]);
-            }
-
-            this.addRenderPass(g_shader, LightMode.None);
-
-            //default uniforms
-            this._mainTexture = null;
+        if(g_shader==null){
+            g_shader = Material.createShader(vs, fs, [
+                {'semantic':VertexSemantic.POSITION, 'name':'a_Position'},
+                {'semantic':VertexSemantic.UV0 , 'name':'a_Texcoord'}
+            ]);
         }
 
-        //Override
-        get systemUniforms(){
-            return [SystemUniforms.MvpMatrix];
-        }
+        this.addRenderPass(g_shader, LightMode.None);
 
-        //Override
-        setCustomUniformValues(pass: RenderPass){
-            if(this._mainTexture){
-                this._mainTexture.bind();
-                pass.shader!.setUniformSafe('u_texMain', 0);
-            }
+        //default uniforms
+        this._mainTexture = null;
+    }
+
+    //Override
+    get systemUniforms(){
+        return [SystemUniforms.MvpMatrix];
+    }
+
+    //Override
+    setCustomUniformValues(pass: RenderPass){
+        if(this._mainTexture){
+            this._mainTexture.bind();
+            pass.shader!.setUniformSafe('u_texMain', 0);
         }
     }
 }

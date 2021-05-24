@@ -20,9 +20,12 @@ namespace Luoxuan {
         }
 
         inbox(l:tge.Point):boolean {
-            return((l.x>=0) && (l.x<Model.matnum) && (l.y>=0) && (l.y<Model.matnum));
+            return(
+                (l.x>=0) && (l.x<Model.matnum) && 
+                (l.y>=0) && (l.y<Model.matnum)
+            );
         }
-        
+
         next_step(dir:number, l:tge.Point) {
             let dnum: number[][] = [
                 [1,  0],
@@ -35,8 +38,8 @@ namespace Luoxuan {
         }
 
         walk() {
-            //this.dir = 0;
-            if(this.step>=Model.matnum*Model.matnum) return;
+            if(this.step>=Model.matnum*Model.matnum) 
+                return;
             //填充当前位置
             this.step += 1;
             this.grid[this.loc.y][this.loc.x] = this.step;
@@ -45,14 +48,12 @@ namespace Luoxuan {
             //备份xy，尝试走下一步
             let bloc: tge.Point = tge.clone(this.loc);
             this.next_step(this.dir, bloc);
-            tge.debug("this.dir=", this.dir, "bloc=", bloc);
             //走出格或者碰到了已经填充过的位置则调整方向...
             if (!this.inbox(bloc) || this.grid[bloc.y][bloc.x] != 0)
                 this.dir = (this.dir + 1) % 4;
 
             //按正确方向操作xy
             this.next_step(this.dir, this.loc);
-            tge.debug("this.dir=", this.dir, "this.loc=", this.loc);
         }
     }
 }
