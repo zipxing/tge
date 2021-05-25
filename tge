@@ -6,172 +6,40 @@ import sys
 import subprocess
 
 games = {
-    "engine" : {
-        "path": "src/engine",
-        "namespace": "tge",
-        "run": [],
-        "src" : [
-            "tge.ts",
-            "log.ts",
-            "event.ts",
-            "timer.ts",
-            "ascii.ts"
-        ]
-    },
-    "engine3d" : {
-        "path": "src/engine/webgl",
-        "namespace": "tge3d",
-        "run": [],
-        "src" : [
-            "core/*.ts",
-            "math/*.ts",
-            "component/component.ts",
-            "component/*.ts",
-            "material/*.ts",
-            "postprocessing/*.ts"
-        ]
-    },
     "tetris" : {
-        "path": "src/games/tetris",
-        "namespace": "Tetris",
-        "run": ["terminal", "webterm", "webgl"],
-        "src": [
-            "constant.ts",
-            "block.ts",
-            "stage_bmp.ts",
-            "core.ts",
-            "stat.ts",
-            "replay.ts",
-            "grid.ts",
-            "ai.ts",
-            "model.ts",
-            "render.ts",
-            "render_webgl.ts",
-            "game.ts",
-            "main.ts"
-        ]
+        "run": ["terminal", "webgl"]
     },
     "luoxuan" : {
-        "path": "src/games/luoxuan",
-        "namespace": "Luoxuan",
-        "run": ["terminal", "webterm"],
-        "terminal": True,
-        "web": True,
-        "src": [
-            "model.ts",
-            "render.ts",
-            "game.ts",
-            "main.ts"
-        ]
+        "run": ["terminal"]
     },
     "snake" : {
-        "path": "src/games/snake",
-        "namespace": "Snake",
-        "run": ["terminal", "webterm"],
-        "terminal": True,
-        "web": True,
-        "src": [
-            "model.ts",
-            "render.ts",
-            "game.ts",
-            "main.ts"
-        ]
+        "run": ["terminal"]
     },
     "jump" : {
-        "path": "src/games/jump",
-        "namespace": "Jump",
-        "run": ["terminal", "webterm"],
-        "terminal": True,
-        "web": True,
-        "src": [
-            "model.ts",
-            "render.ts",
-            "game.ts",
-            "main.ts"
-        ]
+        "run": ["terminal"]
     },
     "city" : {
-        "path": "src/games/city",
-        "namespace": "City",
-        "run": ["terminal", "webterm"],
-        "terminal": True,
-        "web": True,
-        "src": [
-            "model.ts",
-            "render.ts",
-            "game.ts",
-            "main.ts"
-        ]
+        "run": ["terminal"]
     },
     "unblock" : {
-        "path": "src/games/unblock",
-        "namespace": "Unblock",
-        "run": ["terminal", "webterm"],
-        "terminal": True,
-        "web": True,
-        "src": [
-            "constant.ts",
-            "model.ts",
-            "mouse.ts",
-            "render.ts",
-            "game.ts",
-            "main.ts"
-        ]
+        "run": ["terminal"]
     },
     "obj3d" : {
-        "path": "src/games/obj3d",
-        "namespace": "Obj3d",
-        "run": ["webgl"],
-        "src": [
-            "model.ts",
-            "render.ts",
-            "game.ts",
-            "mouse.ts",
-            "main.ts"
-        ]
+        "run": ["webgl"]
     },
     "scene3d" : {
-        "path": "src/games/scene3d",
-        "namespace": "Scene3d",
-        "run": ["webgl"],
-        "src": [
-            "model.ts",
-            "render.ts",
-            "game.ts",
-            "mouse.ts",
-            "main.ts"
-        ]
+        "run": ["webgl"]
     },
     "simple3d" : {
-        "path": "src/games/simple3d",
-        "namespace": "Simple3d",
-        "run": ["webgl"],
-        "src": [
-            "model.ts",
-            "render.ts",
-            "game.ts",
-            "mouse.ts",
-            "main.ts"
-        ]
+        "run": ["webgl"]
     },
-    "ascii" : {
-        "path": "src/tool/asc2editor",
-        "namespace": "AscIIEditor",
-        "run": ["terminal"],
-        "src": [
-            "model.ts",
-            "render.ts",
-            "game.ts",
-            "main.ts"
-        ]
+    "asc2editor" : {
+        "path": "tool/",
+        "run": ["terminal"]
     },
     "art2js" : {
-        "path": "src/tool/art2js",
-        "namespace": "Art2Js",
-        "run": ["terminal"],
-        "src": [
-            "main.ts"
-        ]
+        "path": "tool/",
+        "run": ["terminal"]
     }
 }
 
@@ -217,47 +85,20 @@ def make_build_cmd_line(name):
 
     g = games[name]
     runenv = g['run']
+    path = 'games/'
+    if 'path' in g:
+        path = g['path']
 
-    if len(runenv) == 0:
-        printColor("red", "Engine can't build independent...")
-        sys.exit(0)
-
-    pe = ' '+games["engine"]["path"]+'/'
-    pe3d = ' '+games["engine3d"]["path"]+'/'
-    pg = ' '+g["path"]+'/'
-    se = games["engine"]["src"]
-    se3d = games["engine3d"]["src"]
-    sg = g["src"]
-    artjs = ''
-
-    #convert ascii art to javascript for web-terminal...
-    if "webterm" in runenv:
-        arts = grepArt(pg)
-        if len(arts)>0:
-            cmds.append("echo|green|🍀 Art2Js...")
-        for a in arts:
-            cmds.append("node tmp/art2js.js "+a+' '+ \
-                    g["namespace"]+ \
-                    ' '+arts[a]+' tmp/'+arts[a]+'.ts')
-            artjs+=' tmp/'+arts[a]+'.ts '
 
     cmds.append("echo|green|🍀 TSC...")
-    tsccmd = "tsc -t es5 --outfile tmp/"+name+".js "+pe+pe.join(se)
-    if "webgl" in runenv:
-        tsccmd += (pe3d+pe3d.join(se3d))
-    if "webterm" in runenv:
-        tsccmd += artjs
-    tsccmd+=(pg+pg.join(sg))
+    tsccmd = "tsc -t es5 --outdir tmp/ src/"+path+name+"/main.ts"
     cmds.append(tsccmd)
 
-    if "webterm" in runenv or "webgl" in runenv:
-        cmds.append("echo|green|🍀 Browserify for web...")
-        cmds.append("browserify tmp/"+name+ \
-                ".js --ignore-missing -o tmp/"+name+"_bundle.js")
-    if "webterm" in runenv:
-        cmds.append("cp src/games/"+name+"/"+name+".html tmp/")
     if "webgl" in runenv:
-        cmds.append("cp src/games/"+name+"/"+name+"_gl.html tmp/")
+        cmds.append("echo|green|🍀 Browserify for web...")
+        cmds.append("browserify tmp/"+path+name+ \
+                "/main.js --ignore-missing -o tmp/"+name+"_bundle.js")
+        cmds.append("cp src/"+path+name+"/"+name+"_gl.html tmp/")
 
     return cmds
 
@@ -265,12 +106,13 @@ def make_build_cmd_line(name):
 def make_run_cmd_line(name, exargs=[]):
     g = games[name]
     runenv = g['run']
+    path = 'games/'
+    if 'path' in g:
+        path = g['path']
     rcs = {}
-    if "terminal" in runenv:
-        rcs["terminal"] = "node tmp/"+name+".js "+' '.join(exargs)
 
-    if "webterm" in runenv:
-        rcs["webterm"] = "open tmp/"+name+".html"
+    if "terminal" in runenv:
+        rcs["terminal"] = "node tmp/"+path+name+"/main.js "+' '.join(exargs)
 
     if "webgl" in runenv:
         hp = 'http://127.0.0.1:8866/'
@@ -298,7 +140,7 @@ def prepareTool():
         r = make_build_cmd_line('art2js')
         execCmds(r)
     if not os.path.exists('tmp/ascii.js'):
-        r = make_build_cmd_line('ascii')
+        r = make_build_cmd_line('asc2editor')
         execCmds(r)
 
 
@@ -374,12 +216,6 @@ if __name__ == "__main__":
                 os.system(r['webgl'])
             else:
                 printColor('red', "No webgl mode!")
-        elif 't' in cmd:
-            if "webterm" in runenv:
-                printColor('mag', '🚀 '+r['webterm'])
-                os.system(r['webterm'])
-            else:
-                printColor('red', "No webterm mode!")
         else:
             printColor('mag', '🚀 '+r['terminal'])
             os.system(r['terminal'])
