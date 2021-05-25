@@ -1,7 +1,4 @@
-import * as tge from "../../engine/tge"
-import * as event from "../../engine/event"
-import * as timer from "../../engine/timer"
-import * as ascii from "../../engine/ascii"
+import * as tge from "../../engine/index"
 import { Model } from "./model"
 import * as game from "./game"
 
@@ -15,8 +12,8 @@ export class TermRender extends tge.Render {
     constructor() {
         super();
 
-        ascii.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
-        ascii.AscIIManager.loadArtFile("ascii_art/snake.txt", "snake");
+        tge.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
+        tge.AscIIManager.loadArtFile("ascii_art/snake.txt", "snake");
 
         let nb = (<tge.TermRun>tge.env);
 
@@ -73,22 +70,22 @@ export class TermRender extends tge.Render {
         });
         nb.tscreen.append(this.msgbox);
 
-        event.Emitter.register("Snake.REDRAW_MSG", this.redrawMsg, this);
-        event.Emitter.register("Snake.REDRAW_GRID", this.redrawGrid, this);
-        timer.Timer.register("Snake.Timer.Title", 1.0, ()=>{
-            timer.Timer.fire("Snake.Timer.Title", 0);
+        tge.Emitter.register("Snake.REDRAW_MSG", this.redrawMsg, this);
+        tge.Emitter.register("Snake.REDRAW_GRID", this.redrawGrid, this);
+        tge.Timer.register("Snake.Timer.Title", 1.0, ()=>{
+            tge.Timer.fire("Snake.Timer.Title", 0);
         });
-        timer.Timer.fire("Snake.Timer.Title", 0);
+        tge.Timer.fire("Snake.Timer.Title", 0);
     }
 
     drawTitle() {
-        let s = ascii.AscIIManager.getArt("snake").blessed_lines;
+        let s = tge.AscIIManager.getArt("snake").blessed_lines;
         //let st = tge.Timer.getStage("Snake.Timer.Title");
         this.titlebox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}`);
     }
 
     drawLogo() {
-        let s = ascii.AscIIManager.getArt("tgelogo").blessed_lines;
+        let s = tge.AscIIManager.getArt("tgelogo").blessed_lines;
         this.logobox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}`);
     }
 

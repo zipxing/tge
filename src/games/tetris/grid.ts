@@ -1,8 +1,4 @@
-import * as tge from "../../engine/tge"
-import * as util from "../../engine/util"
-import * as log from "../../engine/log"
-import * as timer from "../../engine/Timer"
-import * as event from "../../engine/event"
+import * as tge from "../../engine/index"
 
 import * as constant from "./constant"
 import * as block from "./block"
@@ -66,7 +62,7 @@ export class ElsGrid {
     //设置方块序列
     setQueue(queue: number[]) { 
         this.block_queue=queue; 
-        log.info("mq in setqueue:\n", queue);
+        tge.info("mq in setqueue:\n", queue);
     }
 
     //重置数据，每局开始调用
@@ -74,32 +70,32 @@ export class ElsGrid {
         let mc = new ElsCore();
         this.core = mc;
 
-        timer.Timer.register(this.index+"next-block", 0.8, ()=>{});
+        tge.Timer.register(this.index+"next-block", 0.8, ()=>{});
 
-        timer.Timer.register(this.index+"ready-wending", 0.8, ()=>{
+        tge.Timer.register(this.index+"ready-wending", 0.8, ()=>{
             this.need_zhanzhu = true;
         });
 
-        timer.Timer.register(this.index+"clear-row", 0.3, ()=>{
+        tge.Timer.register(this.index+"clear-row", 0.3, ()=>{
             this.clearRow(false);
         });
 
-        timer.Timer.register(this.index+"game-over", 0.12, ()=>{
-            log.info("OVER"+this.index);
+        tge.Timer.register(this.index+"game-over", 0.12, ()=>{
+            tge.info("OVER"+this.index);
             //这里写mc.game_over会导致bug，因为实际玩的时候
             //this.core已经不是mc了...
             //mc.game_over=true;
             this.core.game_over = true;
-            event.Emitter.fire("Tetris.REDRAW_MSG");
+            tge.Emitter.fire("Tetris.REDRAW_MSG");
             //if(tgrid.index==1)
             //    process.exit(1);
         });
 
-        timer.Timer.register(this.index+"fall", 0.01, ()=>{
+        tge.Timer.register(this.index+"fall", 0.01, ()=>{
             this.fall();
         });
 
-        timer.Timer.register(this.index+"combo", 0.8, ()=>{});
+        tge.Timer.register(this.index+"combo", 0.8, ()=>{});
 
         tge.Timer.register(this.index+"attack", 0.8, ()=>{});
 
@@ -144,8 +140,8 @@ export class ElsGrid {
         mc.cur_x=5;
         mc.cur_y=0;
         mc.cur_z=0;
-        this.moveBlk(ElsMove.SET, ai);
-        mc.next_block = this.block_queue[(mc.block_index+1) % MAXBLKQUEUE];
+        this.moveBlk(constant.ElsMove.SET, ai);
+        mc.next_block = this.block_queue[(mc.block_index+1) % constant.MAXBLKQUEUE];
 
         if(this.index==0)
             tge.Emitter.fire("Tetris.REDRAW_NEXT");
@@ -158,14 +154,14 @@ export class ElsGrid {
         let mc = this.core;
         //计算总空
         let top_total = 0;
-        for (let i = 0; i < HENG; i++) {
+        for (let i = 0; i < constant.HENG; i++) {
             top_total += mc.col_top[i] * 10;
         }
 
         //计算平均行高,计算行高方差
-        let top_avg = top_total / HENG;
+        let top_avg = top_total / constant.HENG;
         let fang_cha = 0;
-        for (let i = 0; i < HENG; i++) {
+        for (let i = 0; i < constant.HENG; i++) {
             let t = mc.col_top[i] * 10 - top_avg;
             fang_cha += (t * t);
         }
@@ -194,7 +190,7 @@ export class ElsGrid {
         let mc = this.core;
         if(!mc.save_lock) {
             mc.save_lock = true;
-            this.moveBlk(ElsMove.CLEAR, ai);
+            this.moveBlk(constant.ElsMove.CLEAR, ai);
             if(mc.save_block>=0) {
                 var blktmp = mc.cur_block;
                 mc.cur_block = mc.save_block;
@@ -202,7 +198,7 @@ export class ElsGrid {
                 mc.cur_x=5;
                 mc.cur_y=0;
                 mc.cur_z=0;
-                this.moveBlk(ElsMove.SET, ai);
+                this.moveBlk(constant.ElsMove.SET, ai);
             } else {
                 mc.save_block = mc.cur_block;
                 this.nextBlk(ai, false);
@@ -220,9 +216,9 @@ export class ElsGrid {
         if(this.index != 0)
             return;
 
-        for(let i = ZONG-5; i < ZONG; i++){
-            for(let j=2; j < HENG+2;j++){
-                mc.grid[i * GRIDW + j] = 
+        for(let i = constant.ZONG-5; i < constant.ZONG; i++){
+            for(let j=2; j < constant.HENG+2;j++){
+                mc.grid[i * constant.GRIDW + j] = 
                     101 + Math.floor(Math.random()*1000) % 6;
             }
         }
@@ -244,17 +240,17 @@ export class ElsGrid {
             let i,j,n;
             for(n=0; n<mc.fullrows.length%100; n++) {
                 for(i=mc.fullrows[n]; i>=0; i--) {
-                    for (j=0; j<HENG; j++) {
+                    for (j=0; j<constant.HENG; j++) {
                         if(i) {
-                            if(mc.grid[(i-1)*GRIDW + j+2]>100 || mc.grid[(i-1)*GRIDW + j+2]==0) {
-                                if(!(mc.grid[i*GRIDW + j+2]<10 && mc.grid[i*GRIDW + j+2]>0))
-                                    mc.grid[i*GRIDW + j+2]=mc.grid[(i-1)*GRIDW + j+2];
-                            } else if(!(mc.grid[i*GRIDW + j+2]<10 && mc.grid[i*GRIDW + j+2]>0)) {
-                                mc.grid[i*GRIDW + j+2]=0;
+                            if(mc.grid[(i-1)*constant.GRIDW + j+2]>100 || mc.grid[(i-1)*constant.GRIDW + j+2]==0) {
+                                if(!(mc.grid[i*constant.GRIDW + j+2]<10 && mc.grid[i*constant.GRIDW + j+2]>0))
+                                    mc.grid[i*constant.GRIDW + j+2]=mc.grid[(i-1)*constant.GRIDW + j+2];
+                            } else if(!(mc.grid[i*constant.GRIDW + j+2]<10 && mc.grid[i*constant.GRIDW + j+2]>0)) {
+                                mc.grid[i*constant.GRIDW + j+2]=0;
                             }
                         } else {
-                            if(!(mc.grid[i*GRIDW + j+2]<10 && mc.grid[i*GRIDW + j+2]>0))
-                                mc.grid[i*GRIDW + j+2]=0;
+                            if(!(mc.grid[i*constant.GRIDW + j+2]<10 && mc.grid[i*constant.GRIDW + j+2]>0))
+                                mc.grid[i*constant.GRIDW + j+2]=0;
                         }
                     }
                 }
@@ -268,8 +264,8 @@ export class ElsGrid {
     fall() {
         do{
             if(this.core.game_over) break;
-        } while (this.moveBlk(ElsMove.DDOWN, false) != 
-            ElsMoveRet.REACH_BOTTOM);
+        } while (this.moveBlk(constant.ElsMove.DDOWN, false) != 
+            constant.ElsMoveRet.REACH_BOTTOM);
         this.nextBlk(false, false);
         this.testDDown();
     }
@@ -280,19 +276,19 @@ export class ElsGrid {
         for(m=gxs; m<=gxe; m++) {
             mc.col_top[m-2] = 0;
             mc.col_hole[m-2] = 0;
-            for (n=ZONG; n>0; n--) {
-                if (mc.grid[(ZONG-n)*GRIDW + m]>100) {
+            for (n=constant.ZONG; n>0; n--) {
+                if (mc.grid[(constant.ZONG-n)*constant.GRIDW + m]>100) {
                     mc.col_top[m-2] = n;
                     break;
                 }
             }
             for(; n>0; n--) {
-                if (mc.grid[(ZONG-n)*GRIDW + m]==0)
+                if (mc.grid[(constant.ZONG-n)*constant.GRIDW + m]==0)
                     mc.col_hole[m-2]+=n;
             }
         }
         mc.top_line = 0;
-        for (m=0; m<HENG; m++) 
+        for (m=0; m<constant.HENG; m++) 
             if(mc.col_top[m]>mc.top_line)
                 mc.top_line = mc.col_top[m];
     }
@@ -303,8 +299,8 @@ export class ElsGrid {
         let x, y;
         let mc = this.core;
         let tmp = mc.clone();
-        while (this.moveBlk(ElsMove.DDOWN, true) != 
-            ElsMoveRet.REACH_BOTTOM);
+        while (this.moveBlk(constant.ElsMove.DDOWN, true) != 
+            constant.ElsMoveRet.REACH_BOTTOM);
         x = mc.cur_x, y = mc.cur_y;
         mc.recycle();
         mc = tmp.clone();
@@ -314,16 +310,16 @@ export class ElsGrid {
     }
 
     //操作方块,更新Grid
-    moveBlk(dir:ElsMove, ai:boolean) {
+    moveBlk(dir:constant.ElsMove, ai:boolean) {
         let i, j, m, n ,fflag;
         let mc = this.core;
         let md = this.block_data;
 
         if(mc.game_over) {
-            if (dir == ElsMove.LEFT || dir == ElsMove.RIGHT)
-                return ElsMoveRet.REACH_BORDER;
+            if (dir == constant.ElsMove.LEFT || dir == constant.ElsMove.RIGHT)
+                return constant.ElsMoveRet.REACH_BORDER;
             else
-                return ElsMoveRet.REACH_BOTTOM;
+                return constant.ElsMoveRet.REACH_BOTTOM;
         }
 
         if(!ai)
@@ -336,34 +332,34 @@ export class ElsGrid {
         let x=0, y=0, z=0;
 
         switch (dir) {
-            case ElsMove.TURN_CW:
+            case constant.ElsMove.TURN_CW:
                 x=cx;
                 y=cy;
                 z=(cz+5)%4;
                 tge.Timer.cancel(this.index+"ready-wending", true);
                 break;
-            case ElsMove.TURN_CCW:
+            case constant.ElsMove.TURN_CCW:
                 x=cx;
                 y=cy;
                 z=(cz+3)%4;
                 tge.Timer.cancel(this.index+"ready-wending", true);
                 break;
-            case ElsMove.DOWN:
-            case ElsMove.DDOWN:
+            case constant.ElsMove.DOWN:
+            case constant.ElsMove.DDOWN:
                 x=cx,y=cy+1,z=cz;
                 break;
-            case ElsMove.LEFT:
+            case constant.ElsMove.LEFT:
                 x=cx-1,y=cy,z=cz;
                 tge.Timer.cancel(this.index+"ready-wending", true);
                 break;
-            case ElsMove.RIGHT:
+            case constant.ElsMove.RIGHT:
                 x=cx+1,y=cy,z=cz;
                 tge.Timer.cancel(this.index+"ready-wending", true);
                 break;
-            case ElsMove.SET:
+            case constant.ElsMove.SET:
                 x=cx,y=cy,z=cz;
                 break;
-            case ElsMove.CLEAR:
+            case constant.ElsMove.CLEAR:
                 x=cx,y=cy,z=cz;
                 break;
         }
@@ -372,18 +368,18 @@ export class ElsGrid {
         //不稳定块置0,100以上为已经下落稳定的块
         for(i=0; i<4; i++)
             for(j=0; j<4; j++)
-                if(this.isInGrid(cy+i, cx+j) && mc.grid[(cy+i)*GRIDW + cx+j]<100)
-                    mc.grid[(cy+i) * GRIDW + cx+j]=0;
+                if(this.isInGrid(cy+i, cx+j) && mc.grid[(cy+i)*constant.GRIDW + cx+j]<100)
+                    mc.grid[(cy+i) * constant.GRIDW + cx+j]=0;
 
-        if (dir == ElsMove.CLEAR)
-            return ElsMoveRet.NORMAL; //清除漂浮的块
+        if (dir == constant.ElsMove.CLEAR)
+            return constant.ElsMoveRet.NORMAL; //清除漂浮的块
 
         for(i=0; i<4; i++) {
             for(j=0; j<4; j++) {
                 //检测到了碰撞,可能是到底,到边,或者遇到了别的块,无法下落
-                if(mc.grid[(y+i)*GRIDW + x+j] && md[blk][z][i*4+j]) {
-                    if (dir == ElsMove.DOWN || dir == ElsMove.DDOWN) {
-                        if (dir == ElsMove.DOWN) {
+                if(mc.grid[(y+i)*constant.GRIDW + x+j] && md[blk][z][i*4+j]) {
+                    if (dir == constant.ElsMove.DOWN || dir == constant.ElsMove.DDOWN) {
+                        if (dir == constant.ElsMove.DOWN) {
                             //普通下落（非直落）还没粘住的情况
                             if(!this.need_zhanzhu) {
                                 let rws = tge.Timer.getStage(this.index+"ready-wending");
@@ -392,10 +388,10 @@ export class ElsGrid {
                                 for(m=0; m<4; m++) {
                                     for(n=0; n<4; n++) {
                                         if(this.isInGrid(cy+m, cx+n) && md[blk][z][m*4+n])
-                                            mc.grid[(cy+m)*GRIDW + cx+n] = md[blk][z][m*4+n];
+                                            mc.grid[(cy+m)*constant.GRIDW + cx+n] = md[blk][z][m*4+n];
                                     }
                                 }
-                                return ElsMoveRet.READY_BOTTOM;
+                                return constant.ElsMoveRet.READY_BOTTOM;
                             }
                         }
 
@@ -408,9 +404,9 @@ export class ElsGrid {
                         for(m=0; m<4; m++) {
                             for(n=0; n<4; n++) {
                                 if(this.isInGrid(cy+m, cx+n) && md[blk][z][m*4+n]) {
-                                    mc.grid[(cy+m)*GRIDW + cx+n] = 100+md[blk][z][m*4+n]; //加100,置为稳定块
+                                    mc.grid[(cy+m)*constant.GRIDW + cx+n] = 100+md[blk][z][m*4+n]; //加100,置为稳定块
                                     if (!ai) {
-                                        if(mc.grid[(cy+m)*GRIDW + cx+n]!=100) {
+                                        if(mc.grid[(cy+m)*constant.GRIDW + cx+n]!=100) {
                                             //纪录下需要显示“粘住光晕”的块坐标及个数
                                             let tp:tge.Point = {
                                                 x: cx+n-2,
@@ -429,10 +425,10 @@ export class ElsGrid {
                         //扫描判断满行,放入fullrows数组
                         for(m=0; m<4; m++) {
                             fflag=true;
-                            for (n = 0; n < HENG; n++) {
+                            for (n = 0; n < constant.HENG; n++) {
                                 if(this.isInGrid(cy+m, n+2)) {
-                                    if(mc.grid[(cy+m) * GRIDW + n+2]<100 || 
-                                        mc.grid[(cy+m) * GRIDW + n+2]==200) {
+                                    if(mc.grid[(cy+m) * constant.GRIDW + n+2]<100 || 
+                                        mc.grid[(cy+m) * constant.GRIDW + n+2]==200) {
                                         fflag=false;
                                         break;
                                     }
@@ -476,31 +472,31 @@ export class ElsGrid {
                         }
                         //进入了下一块处理,可以保存块了
                         mc.save_lock = false;
-                        return ElsMoveRet.REACH_BOTTOM;
-                    } else if (dir == ElsMove.LEFT || dir == ElsMove.RIGHT) {
+                        return constant.ElsMoveRet.REACH_BOTTOM;
+                    } else if (dir == constant.ElsMove.LEFT || dir == constant.ElsMove.RIGHT) {
                         for(i=0; i<4; i++){
                             for(j=0; j<4; j++) {
-                                if(this.isInGrid(cy+i, cx+j) && mc.grid[(cy+i)*GRIDW + cx+j] == 0)
-                                    mc.grid[(cy+i)*GRIDW + cx+j]+=md[blk][z][i*4+j];
+                                if(this.isInGrid(cy+i, cx+j) && mc.grid[(cy+i)*constant.GRIDW + cx+j] == 0)
+                                    mc.grid[(cy+i)*constant.GRIDW + cx+j]+=md[blk][z][i*4+j];
                             }
                         }
-                        return ElsMoveRet.REACH_BORDER;
+                        return constant.ElsMoveRet.REACH_BORDER;
                     } else {
-                        if (dir == ElsMove.TURN_CW || dir == ElsMove.TURN_CCW) {
+                        if (dir == constant.ElsMove.TURN_CW || dir == constant.ElsMove.TURN_CCW) {
                             for(i=0; i<4; i++)
                                 for(j=0; j<4; j++) {
-                                    if(this.isInGrid(y+i, x+j) && mc.grid[(y+i)*GRIDW + x+j]==0)
-                                        mc.grid[(y+i)*GRIDW + x+j]+=md[blk][cz][i*4+j];
+                                    if(this.isInGrid(y+i, x+j) && mc.grid[(y+i)*constant.GRIDW + x+j]==0)
+                                        mc.grid[(y+i)*constant.GRIDW + x+j]+=md[blk][cz][i*4+j];
                                 }
-                            return ElsMoveRet.REACH_BORDER;
+                            return constant.ElsMoveRet.REACH_BORDER;
                         }
                         //调用NextBlk会调用MoveBlk(SET),
                         //此时方块刚出来就有碰撞表明Game Over了
-                        if (dir == ElsMove.SET && !ai) {
+                        if (dir == constant.ElsMove.SET && !ai) {
                             this.stat.isko = true;
                             tge.Timer.fire(this.index+"game-over", 0.12);
                         }
-                        return ElsMoveRet.NORMAL;
+                        return constant.ElsMoveRet.NORMAL;
                     }
                 }
             }
@@ -509,7 +505,7 @@ export class ElsGrid {
         for(i=0; i<4; i++) {
             for(j=0; j<4; j++) {
                 if (this.isInGrid(y+i, x+j)) {
-                    mc.grid[(y+i)*GRIDW + x+j]+=md[blk][z][i*4+j];
+                    mc.grid[(y+i)*constant.GRIDW + x+j]+=md[blk][z][i*4+j];
                 }
             }
         }
@@ -518,11 +514,11 @@ export class ElsGrid {
         mc.cur_z=z;
         if(!ai)
             this.testDDown();
-        return ElsMoveRet.NORMAL;
+        return constant.ElsMoveRet.NORMAL;
     }
 
     isInGrid(x:number, y:number) {
-        return ((x>=0 && x<ZONG+2) && (y>=0 && y<HENG+4));
+        return ((x>=0 && x<constant.ZONG+2) && (y>=0 && y<constant.HENG+4));
     }
 
     checkAttack() {
@@ -552,31 +548,31 @@ export class ElsGrid {
             tge.Timer.cancel(target.index+"fall");
 
         tge.srand(spaceseed);
-        tgrid = new Uint8Array(Tetris.GRIDSIZE);
+        tgrid = new Uint8Array(constant.GRIDSIZE);
         tgrid.set(target.core.grid);
-        for (i = 0; i <Tetris.ZONG-line; i++) {
-            for (j = 0; j <Tetris.HENG; j++) {
-                tgrid[i * Tetris.GRIDW + 2+j]=target.core.grid[(i+line) * Tetris.GRIDW + 2+j];
-                if(tgrid[i * Tetris.GRIDW + 2+j]<10 && tgrid[i * Tetris.GRIDW + 2+j]>0) {
+        for (i = 0; i <constant.ZONG-line; i++) {
+            for (j = 0; j <constant.HENG; j++) {
+                tgrid[i * constant.GRIDW + 2+j]=target.core.grid[(i+line) * constant.GRIDW + 2+j];
+                if(tgrid[i * constant.GRIDW + 2+j]<10 && tgrid[i * constant.GRIDW + 2+j]>0) {
                     flowflag=1;
-                    tgrid[i * Tetris.GRIDW + 2+j]=0;
+                    tgrid[i * constant.GRIDW + 2+j]=0;
                 }
             }
         }
 
         for( i=0; i<line; i++) {
-            let r = tge.rand() % HENG;
-            for(j=0; j<HENG; j++) {
+            let r = tge.rand() % constant.HENG;
+            for(j=0; j<constant.HENG; j++) {
                 if(r == j) {
-                    tgrid[(ZONG-1-i)*GRIDW + 2+j]=0;
+                    tgrid[(constant.ZONG-1-i)*constant.GRIDW + 2+j]=0;
                 }
                 else {
-                    tgrid[(ZONG-1-i)*GRIDW + 2+j]=111;
+                    tgrid[(constant.ZONG-1-i)*constant.GRIDW + 2+j]=111;
                 }
             }
         }
 
-        target.core.grid = new Uint8Array(Tetris.GRIDSIZE);
+        target.core.grid = new Uint8Array(constant.GRIDSIZE);
         target.core.grid.set(tgrid);
 
         if (flowflag) {
@@ -588,7 +584,7 @@ export class ElsGrid {
             for(i=0; i<4; i++)
                 for(j=0; j<4; j++) {
                     if(this.isInGrid(y+i,x+j)) {
-                        if(target.core.grid[(y+i)*GRIDW + x+j]&&target.block_data[blk][z][i*4+j])
+                        if(target.core.grid[(y+i)*constant.GRIDW + x+j]&&target.block_data[blk][z][i*4+j])
                             needUp=true;
                     }
                 }
@@ -600,11 +596,11 @@ export class ElsGrid {
             for(i=0; i<4; i++)
                 for(j=0; j<4; j++) {
                     if(this.isInGrid(y+i, x+j))
-                        target.core.grid[(y+i)*GRIDW + x+j]+=target.block_data[blk][z][i*4+j];
+                        target.core.grid[(y+i)*constant.GRIDW + x+j]+=target.block_data[blk][z][i*4+j];
                 }
         }
 
-        for (i = 0; i <Tetris.HENG;i++)
+        for (i = 0; i <constant.HENG;i++)
             target.core.col_top[i]+=line;
 
         if (target.core.fullrows.length!=0) {

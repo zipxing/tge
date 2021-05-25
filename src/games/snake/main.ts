@@ -1,12 +1,11 @@
-import * as tge from "../../engine/tge"
-import * as log from "../../engine/log"
-import { Model } from "./model"
+import * as tge from "../../engine/index"
 import { Game } from "./game"
+import { Model } from "./model"
 import { TermRender } from "./render"
 
 export function main(runtype: string) {
     tge.initEnvironment(runtype);
-    log.bindLogPath('tmp/snake.log');
+    tge.bindLogPath('tmp/snake.log');
     let m = new Model();
     let r = new TermRender();
     let g = new Game(m, r);

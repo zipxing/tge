@@ -42,14 +42,6 @@ let vs = `
                 v_tangentViewDir = worldToTangent * worldViewDir;
                 vec3 worldLightDir;
                 v_atten = 1.0;
-import { Mesh } from "../core/mesh"
-import { Shader } from "../core/shader"
-import { Texture2D } from "../core/texture"
-import { RenderPass } from "./renderpass"
-import { LightMode } from "../component/meshrender"
-import { Material, SystemUniforms } from "../material/material"
-import { VertexSemantic } from "../core/vertex"
-import { texture_manager } from "../core/texture"
                 if(u_worldLightPos.w==1.0){ //点光源
                     vec3 lightver = u_worldLightPos.xyz - worldPos.xyz;
                     float dis = length(lightver);

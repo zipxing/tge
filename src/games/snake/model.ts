@@ -1,11 +1,10 @@
-import * as tge from "../../engine/tge"
-import * as util from "../../engine/util"
+import * as tge from "../../engine/index"
 
 export class Model extends tge.Model {
     static snakew:number = 50;
     static snakeh:number = 18;
-    seed: util.Point;
-    body: util.Point[];
+    seed: tge.Point;
+    body: tge.Point[];
     grid: number[][];
     dir: string;
 

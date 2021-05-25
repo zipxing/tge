@@ -1,5 +1,4 @@
-import * as tge from "../../engine/tge"
-import * as event from "../../engine/event"
+import * as tge from "../../engine/index"
 import { Model } from "./model"
 
 export enum GameState {
@@ -21,8 +20,8 @@ export class Game extends tge.Game {
         m.dir='D';
         this.gamestate=GameState.Ok;
         this.useract=[];
-        event.Emitter.fire("Snake.REDRAW_GRID");
-        event.Emitter.fire("Snake.REDRAW_MSG");
+        tge.Emitter.fire("Snake.REDRAW_GRID");
+        tge.Emitter.fire("Snake.REDRAW_MSG");
     }
 
     restartGame() {
@@ -80,8 +79,8 @@ export class Game extends tge.Game {
         cy = m.body[0].y+dy;
         if(cx>=Model.snakew || cy>=Model.snakeh || cx<0 || cy<0) {
             this.gamestate=GameState.OverBorder;
-            event.Emitter.fire("Snake.REDRAW_MSG");
-            event.Emitter.fire("Snake.REDRAW_GRID");
+            tge.Emitter.fire("Snake.REDRAW_MSG");
+            tge.Emitter.fire("Snake.REDRAW_GRID");
             return;
         }
         //check head meet seed
@@ -103,8 +102,8 @@ export class Game extends tge.Game {
         } else {
             if(m.grid[cy][cx]!=0) {
                 this.gamestate=GameState.OverSelf;
-                event.Emitter.fire("Snake.REDRAW_MSG");
-                event.Emitter.fire("Snake.REDRAW_GRID");
+                tge.Emitter.fire("Snake.REDRAW_MSG");
+                tge.Emitter.fire("Snake.REDRAW_GRID");
                 return;
             }
             m.body.pop();
@@ -112,7 +111,7 @@ export class Game extends tge.Game {
         m.body.splice(0,0,{x:cx,y:cy});
         m.dir = act;
         m.makeGrid();
-        event.Emitter.fire("Snake.REDRAW_GRID");
+        tge.Emitter.fire("Snake.REDRAW_GRID");
         this.timeout_auto=0.0;
 
     }

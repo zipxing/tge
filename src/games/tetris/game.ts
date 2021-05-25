@@ -1,19 +1,24 @@
-import * as tge from "../../engine/tge"
+import * as tge from "../../engine/index"
+import * as constant from "./constant"
+import * as block from "./block"
+import { Model } from "./model"
+import { ElsGrid } from "./grid"
+
 export class Game extends tge.Game {
-    mode: ElsMode;
+    mode: constant.ElsMode;
     bmp: number;
     seed: number;
 
-    constructor(m:Tetris.Model, r:tge.Render) {
+    constructor(m:Model, r:tge.Render) {
         super(m, r);
-        this.mode = ElsMode.AI;
+        this.mode = constant.ElsMode.AI;
         this.bmp = 0;
         tge.srand(new Date().getTime());
         this.seed = tge.rand();
     }
 
     initGame() {
-        let m = <Tetris.Model>this.model;
+        let m = <Model>this.model;
         this.seed = tge.rand();
         m.init(this.bmp, this.seed);
         this.useract = [];
@@ -26,17 +31,17 @@ export class Game extends tge.Game {
     }
 
     scheduleUpdate(dt: number) {
-        let m = <Tetris.Model>this.model;
+        let m = <Model>this.model;
 
         switch(this.mode) {
-            case ElsMode.SINGLE:
-            case ElsMode.ADVENTURE:
+            case constant.ElsMode.SINGLE:
+            case constant.ElsMode.ADVENTURE:
                 if(m.pause) return;
                 if(m.grids[0].core.game_over) return;
                 this.playAutoAction(dt);
                 this.playUserAction(dt);
                 break;
-            case ElsMode.AI:
+            case constant.ElsMode.AI:
                 if(m.pause) return;
                 if(m.grids[0].core.game_over || m.grids[1].core.game_over) {
                     for(let i=0;i<this.useract.length;i++) {
@@ -66,7 +71,7 @@ export class Game extends tge.Game {
     playAutoAction(dt: number) {
         let m = <Model>this.model;
         //tdtime=DOWN_TIME[this.model.mgrid[0].mstat.level];
-        let tdtime = DOWN_TIME[0]*1000;
+        let tdtime = constant.DOWN_TIME[0]*1000;
         if(this.timeout_auto>tdtime) {
             this.timeout_auto=0;
             //如果正在直落，不进行以下处理
@@ -83,7 +88,7 @@ export class Game extends tge.Game {
         let m = <Model>this.model;
         if(m.mai.work2idx>=0)
             m.mai.getAIAct(m.grids[1]);
-        if(this.timeout_ai>AI_SPEED[0]*300) {
+        if(this.timeout_ai>constant.AI_SPEED[0]*300) {
             //if(this.timeout_ai>0.0) {   //AIWORK
             let aiact = m.mai.getAIAct(m.grids[1]);
             this.doAction(aiact, 1);
@@ -111,18 +116,18 @@ export class Game extends tge.Game {
     }
 
     //旋转动作的辅助函数
-    _testTurn(pg: ElsGrid, dir: ElsMove, testcmd: string) {
+    _testTurn(pg: ElsGrid, dir: constant.ElsMove, testcmd: string) {
         let tcore=pg.core.clone();
         let mret;
 
         for(let i=0; i<testcmd.length; i++) {
             if(testcmd[i]=='L')
-                pg.moveBlk(ElsMove.LEFT, false);
+                pg.moveBlk(constant.ElsMove.LEFT, false);
             if(testcmd[i]=='R')
-                pg.moveBlk(ElsMove.RIGHT, false);
+                pg.moveBlk(constant.ElsMove.RIGHT, false);
         }
         mret=pg.moveBlk(dir, false);
-        if (mret==ElsMoveRet.NORMAL) {
+        if (mret==constant.ElsMoveRet.NORMAL) {
             pg.testDDown();
             return true;
         } else {
@@ -145,9 +150,9 @@ export class Game extends tge.Game {
             case 'T':
             case 'U':
                 //顺时针旋转。到边时，如果旋转遇到碰撞，就尝试自动左右移动，看看能否不碰撞了
-                dir = (act=='T')?ElsMove.TURN_CW:ElsMove.TURN_CCW;
+                dir = (act=='T')?constant.ElsMove.TURN_CW:constant.ElsMove.TURN_CCW;
                 //this.mrep.recordAction(index, act);
-                if(pg.moveBlk(dir, false)==ElsMoveRet.NORMAL) {
+                if(pg.moveBlk(dir, false)==constant.ElsMoveRet.NORMAL) {
                     pg.testDDown();
                     break;
                 } else {
@@ -169,22 +174,22 @@ export class Game extends tge.Game {
             case 'D':
                 //this.mrep.recordAction(index, act);
                 //tge.debug("DOWN...");
-                if(pg.moveBlk(ElsMove.DOWN, false)==ElsMoveRet.REACH_BOTTOM)
+                if(pg.moveBlk(constant.ElsMove.DOWN, false)==constant.ElsMoveRet.REACH_BOTTOM)
                     pg.nextBlk(false, false);
                 //pg.testDDown();
                 break;
             case 'Z':      //only for replay “ZHANZHU"
-                pg.moveBlk(ElsMove.DDOWN, false);
+                pg.moveBlk(constant.ElsMove.DDOWN, false);
                 pg.nextBlk(false, false);
                 pg.testDDown();
                 break;
             case 'L':
-                pg.moveBlk(ElsMove.LEFT, false);
+                pg.moveBlk(constant.ElsMove.LEFT, false);
                 pg.testDDown();
                 //this.mrep.recordAction(index, act);
                 break;
             case 'R':
-                pg.moveBlk(ElsMove.RIGHT, false);
+                pg.moveBlk(constant.ElsMove.RIGHT, false);
                 pg.testDDown();
                 //this.mrep.recordAction(index, act);
                 break;

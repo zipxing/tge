@@ -1,4 +1,7 @@
+import * as constant from "./constant"
+import * as block from "./block"
 import { ElsCore } from "./core"
+import { ElsGrid } from "./grid"
 
 const elsAiPolicyVS = {
     getMode: function(core: ElsCore) {
@@ -85,16 +88,16 @@ export class ElsAi {
         if(am=="safe" || am=="normal")
         aip = AIP[am];
         let i, score=aip["init"], hole_count=0, top_total=0;
-        let xiagu=new Array(HENG), xiagu_count=0, xiagu_total=0;
+        let xiagu=new Array(constant.HENG), xiagu_count=0, xiagu_total=0;
         //计算总空
-        for(i=0; i<HENG; i++) {
+        for(i=0; i<constant.HENG; i++) {
             hole_count += core.col_hole[i];
             top_total += core.col_top[i]*10;
             xiagu[i] = 0;
             if(i==0) {
                 if(core.col_top[1] > core.col_top[0])
                     xiagu[i] = core.col_top[1]-core.col_top[0];
-            } else if(i == HENG-1) {
+            } else if(i == constant.HENG-1) {
                 if(core.col_top[i-1]>core.col_top[i])
                     xiagu[i]=core.col_top[i-1]-core.col_top[i];
             } else {
@@ -108,9 +111,9 @@ export class ElsAi {
         }
 
         //计算平均行高,计算行高方差
-        let top_avg = top_total/HENG;
+        let top_avg = top_total/constant.HENG;
         let fangcha = 0;
-        for(i=0; i<HENG; i++) {
+        for(i=0; i<constant.HENG; i++) {
             let t=core.col_top[i]*10-top_avg;
             fangcha+=(t*t);
         }
@@ -158,10 +161,10 @@ export class ElsAi {
 
         bq=this.tActQueue;
         var tmpz;
-        if(ELS_CLASSIC) 
-        tmpz = ZCOUNT_C[tg.core.cur_block];
+        if(constant.ELS_CLASSIC) 
+        tmpz = block.ZCOUNT_C[tg.core.cur_block];
         else
-        tmpz = ZCOUNT_NC[tg.core.cur_block];
+        tmpz = block.ZCOUNT_NC[tg.core.cur_block];
 
         var tmpsave = save?1:0;
 
@@ -183,7 +186,7 @@ export class ElsAi {
                 //旋转
                 for(var n=0; n<nz; n++) {
                     this.tActQueue+='T';
-                    tg.moveBlk(ElsMove.TURN_CW, true);
+                    tg.moveBlk(constant.ElsMove.TURN_CW, true);
                 }
 
                 b3 = tg.core.clone();
@@ -195,13 +198,13 @@ export class ElsAi {
                     this.tActQueue = bq2
                     //左移
                     if(x2==1)
-                        while(tg.moveBlk(ElsMove.LEFT, true)!=ElsMoveRet.REACH_BORDER) {
+                        while(tg.moveBlk(constant.ElsMove.LEFT, true)!=constant.ElsMoveRet.REACH_BORDER) {
                             this.tActQueue+='L';
                             fs(this, tg, cx, cy, cf, combo, scan);
                         }
                     //右移
                     if(x2==2)
-                        while(tg.moveBlk(ElsMove.RIGHT, true)!=ElsMoveRet.REACH_BORDER) {
+                        while(tg.moveBlk(constant.ElsMove.RIGHT, true)!=constant.ElsMoveRet.REACH_BORDER) {
                             this.tActQueue+='R';
                             fs(this, tg, cx, cy, cf, combo, scan);
                         }
@@ -225,7 +228,7 @@ export class ElsAi {
         bq0 = tai.tActQueue;
 
         //直接下落
-        while(tg.moveBlk(ElsMove.DDOWN, true)!=ElsMoveRet.REACH_BOTTOM);
+        while(tg.moveBlk(constant.ElsMove.DDOWN, true)!=constant.ElsMoveRet.REACH_BOTTOM);
         tai.tActQueue+='W';
         ccombo = tg.core.combo;
         cf = tg.core.fullrows.length;
@@ -262,15 +265,15 @@ export class ElsAi {
         let mx = 0;
         for(let i=0; i<4; i++) {
             let xx = tg.core.cur_x+i;
-            if(xx>=HENG)
+            if(xx>=constant.HENG)
                 break;
             if(tg.core.col_top[xx]>mx)
                 mx=tg.core.col_top[xx];
         }
-        tg.moveBlk(ElsMove.SET, true);
+        tg.moveBlk(constant.ElsMove.SET, true);
 
         //直接下落
-        while(tg.moveBlk(ElsMove.DDOWN, true)!=ElsMoveRet.REACH_BOTTOM);
+        while(tg.moveBlk(constant.ElsMove.DDOWN, true)!=constant.ElsMoveRet.REACH_BOTTOM);
         tai.tActQueue+='W';
         nf = tg.core.fullrows.length;
         tg.clearRow(true);
