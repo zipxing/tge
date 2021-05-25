@@ -1,9 +1,14 @@
+import * as tge from "../../engine/index"
+import { Model, Pen } from "./model"
+import { Game } from "./game"
+import { TermRender } from "./render"
+
 tge.initEnvironment("TERM");
 tge.bindLogPath('tmp/ascii.log');
 
-let am = new AscIIEditor.Model();
-let ar = new AscIIEditor.TermRender();
-let ag = new AscIIEditor.Game(am, ar);
+let am = new Model();
+let ar = new TermRender();
+let ag = new Game(am, ar);
 
 tge.debug("Welcome to AscIIEditor, powered by TGE.");
 

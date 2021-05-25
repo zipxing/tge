@@ -136,10 +136,10 @@ def prepareTool():
         print(c)
         os.system(c)
 
-    if not os.path.exists('tmp/art2js.js'):
+    if not os.path.exists('tmp/tool/art2js/main.js'):
         r = make_build_cmd_line('art2js')
         execCmds(r)
-    if not os.path.exists('tmp/ascii.js'):
+    if not os.path.exists('tmp/tool/asc2editor/main.js'):
         r = make_build_cmd_line('asc2editor')
         execCmds(r)
 
