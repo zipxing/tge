@@ -6,7 +6,7 @@ import { RenderPass } from "./renderpass"
 import { LightMode } from "../component/meshrender"
 import { Material, SystemUniforms } from "../material/material"
 import { VertexSemantic } from "../core/vertex"
-import { texture_manager } from "../core/texture"
+import { textureManager } from "../core/texture"
 
 let vs_projector = `
         attribute vec4 a_Position;
@@ -50,7 +50,7 @@ export class MatProjector extends Material{
         this.addRenderPass(g_shader);
         //default uniforms
         this._projMatrix = null;
-        this._projTexture = texture_manager.getDefaultTexture();
+        this._projTexture = textureManager.getDefaultTexture();
     }
 
     getFS(){

@@ -1,6 +1,6 @@
 import * as tge from "../../tge"
 import * as log from "../../log"
-import { asset_manager } from "./asset"
+import { assetManager } from "./asset"
 
 export interface SharedTexture {
     texture: Texture2D;
@@ -186,7 +186,7 @@ export class TextureManager {
         let t = this._textures[texturePath];
         if(t == null) {
             let texture = new Texture2D();
-            texture.create(asset_manager.getAsset(texturePath).data);
+            texture.create(assetManager.getAsset(texturePath).data);
             t = <SharedTexture> {
                 texture: texture,
                 ref: 1
@@ -230,7 +230,7 @@ export class TextureManager {
     }
 }
 
-export const texture_manager = new TextureManager();
+export const textureManager = new TextureManager();
 
 export class RenderTexture{
     private _width: number;
@@ -346,7 +346,7 @@ export class RenderTexture{
         }
 
         // Unbind the buffer object
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);        
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     }
 
     bind(){

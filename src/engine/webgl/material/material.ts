@@ -3,7 +3,7 @@ import { Shader } from "../core/shader"
 import { Texture2D } from "../core/texture"
 import { RenderPass } from "./renderpass"
 import { LightMode } from "../component/meshrender"
-import { texture_manager } from "../core/texture"
+import { textureManager } from "../core/texture"
 
 export enum SystemUniforms  {
     MvpMatrix = 'u_mvpMatrix',
@@ -39,7 +39,7 @@ export class Material {
 
     constructor() {
         this.renderPasses = [];
-        this._mainTexture = texture_manager.getDefaultTexture();
+        this._mainTexture = textureManager.getDefaultTexture();
     }
 
     addRenderPass(shader: Shader, lightMode=LightMode.None){

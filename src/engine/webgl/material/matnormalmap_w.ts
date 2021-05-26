@@ -6,7 +6,7 @@ import { RenderPass } from "./renderpass"
 import { LightMode } from "../component/meshrender"
 import { Material, SystemUniforms } from "../material/material"
 import { VertexSemantic } from "../core/vertex"
-import { texture_manager } from "../core/texture"
+import { textureManager } from "../core/texture"
 
 let vs = `
         attribute vec4 a_Position;
@@ -147,9 +147,9 @@ export class MatNormalMapW extends Material {
         this.addRenderPass(g_shaderForwardAdd, LightMode.ForwardAdd);
 
         //default uniforms
-        this._mainTexture = texture_manager.getDefaultTexture();
+        this._mainTexture = textureManager.getDefaultTexture();
         this._mainTexture_ST = [1,1,0,0];
-        this._normalMap = texture_manager.getDefaultBumpTexture();
+        this._normalMap = textureManager.getDefaultBumpTexture();
         this._normalMap_ST = [1,1,0,0];
         this._specular = [1.0, 1.0, 1.0];
         this._gloss = 20.0;

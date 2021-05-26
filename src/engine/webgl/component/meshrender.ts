@@ -1,15 +1,15 @@
 import * as tge from "../../tge"
 import { Vector3, Vec3Up } from "../math/vector3"
+import { Mesh } from "../core/mesh"
 import { Matrix4 } from "../math/matrix4"
 import { Quaternion } from "../math/quaternion"
+import { MatProjector } from "../material/matprojector"
+import { Material, SystemUniforms } from "../material/material"
 import { Light, LightType } from "./light"
 import { Camera } from "./camera"
 import { Scene } from "./scene"
-import { MatProjector } from "../material/matprojector"
-import { SystemComponents, Component } from "./component"
-import { Mesh } from "../core/mesh"
-import { Material, SystemUniforms } from "../material/material"
 import { Projector } from "./projector"
+import { SystemComponents, Component } from "./component"
 
 export enum LightMode {
     None = 0,

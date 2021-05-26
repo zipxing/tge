@@ -70,7 +70,7 @@ export class WebGlRender extends tge.Render {
             WebGlRender.assets.push([WebGlRender.image_boxs[i], tge.AssetType.Image]);
         }
 
-        tge.asset_manager.loadAssetList(WebGlRender.assets, ()=>{
+        tge.assetManager.loadAssetList(WebGlRender.assets, ()=>{
             this.isInit = true;
             this.init();
         });
@@ -93,10 +93,10 @@ export class WebGlRender extends tge.Render {
     createGround(){
         let groundMesh = tge.Mesh.createPlane(20, 10, 20, 10);
         let matGround = new tge.MatNormalMap();
-        matGround.mainTexture = tge.texture_manager.getTexture(WebGlRender.plane_main_texture);
+        matGround.mainTexture = tge.textureManager.getTexture(WebGlRender.plane_main_texture);
         matGround.mainTexture.setRepeat();
         matGround.mainTextureST = [3,3,0,0];
-        matGround.normalMap = tge.texture_manager.getTexture(WebGlRender.plane_normal_map);
+        matGround.normalMap = tge.textureManager.getTexture(WebGlRender.plane_normal_map);
         matGround.normalMap.setRepeat();
         matGround.normalMapST = [3,3,0,0];
         matGround.specular = [0.8, 0.8, 0.8];
@@ -107,10 +107,10 @@ export class WebGlRender extends tge.Render {
     createWall(){
         let wallMesh = tge.Mesh.createPlane(20, 10, 20, 10);
         let matWall = new tge.MatNormalMap();
-        matWall.mainTexture =  tge.texture_manager.getTexture(WebGlRender.brick_main_texture);
+        matWall.mainTexture =  tge.textureManager.getTexture(WebGlRender.brick_main_texture);
         matWall.mainTexture.setRepeat();
         matWall.mainTextureST = [3,3,0,0];
-        matWall.normalMap = tge.texture_manager.getTexture(WebGlRender.brick_normal_map);
+        matWall.normalMap = tge.textureManager.getTexture(WebGlRender.brick_normal_map);
         matWall.normalMap.setRepeat();
         matWall.normalMapST = [3,3,0,0];
         matWall.specular = [0.8, 0.8, 0.8];
@@ -122,13 +122,13 @@ export class WebGlRender extends tge.Render {
 
         // Load meshes
         let ofl = new tge.ObjFileLoader();
-        let capusleData = tge.asset_manager.getAsset(WebGlRender.obj_file_capsule).data;
+        let capusleData = tge.assetManager.getAsset(WebGlRender.obj_file_capsule).data;
         let capusleMesh = ofl.load(capusleData, 1.0, true);
 
-        let sphereData = tge.asset_manager.getAsset(WebGlRender.obj_file_sphere).data;
+        let sphereData = tge.assetManager.getAsset(WebGlRender.obj_file_sphere).data;
         let sphereMesh = ofl.load(sphereData, 1.0, true);
 
-        let cubeData = tge.asset_manager.getAsset(WebGlRender.obj_file_cube).data;
+        let cubeData = tge.assetManager.getAsset(WebGlRender.obj_file_cube).data;
         let cubeMesh = ofl.load(cubeData, 1.0, true);
 
         // Create scene
@@ -150,8 +150,8 @@ export class WebGlRender extends tge.Render {
 
         // Create mesh node 1
         let material1 = new tge.MatNormalMap();
-        material1.mainTexture = tge.texture_manager.getTexture(WebGlRender.obj_main_texture);
-        material1.normalMap = tge.texture_manager.getTexture(WebGlRender.obj_normal_map);
+        material1.mainTexture = tge.textureManager.getTexture(WebGlRender.obj_main_texture);
+        material1.normalMap = tge.textureManager.getTexture(WebGlRender.obj_normal_map);
         material1.colorTint = [1.0, 1.0, 1.0];
         material1.specular = [0.8, 0.8, 0.8];
 
@@ -164,7 +164,7 @@ export class WebGlRender extends tge.Render {
         this._mesh2 = [];
         for(let i=0; i<8; i++) {
             let material2 = new tge.MatNormalMapW();
-            material2.mainTexture = tge.texture_manager.getTexture(WebGlRender.image_boxs[i]);
+            material2.mainTexture = tge.textureManager.getTexture(WebGlRender.image_boxs[i]);
             material2.colorTint = [1.0, 1.0, 1.0];
             material2.specular = [0.8, 0.8, 0.8];
             material2.gloss = 10;
@@ -216,7 +216,7 @@ export class WebGlRender extends tge.Render {
         this._projector = this._scene.root.addProjector(60, 1.0, 1.0, 1000.0);
         this._projector.localPosition.set(0, 3, 0);
         this._projector.lookAt(new tge.Vector3(0, 0, 0));
-        this._projector.projector!.material.projTexture = tge.texture_manager.getTexture(WebGlRender.proj_texture);
+        this._projector.projector!.material.projTexture = tge.textureManager.getTexture(WebGlRender.proj_texture);
 
     }
 

@@ -5,7 +5,7 @@ import { RenderPass } from "./renderpass"
 import { LightMode } from "../component/meshrender"
 import { Material, SystemUniforms } from "../material/material"
 import { VertexSemantic } from "../core/vertex"
-import { texture_manager } from "../core/texture"
+import { textureManager } from "../core/texture"
 
 let vs = `
         attribute vec4 a_Position;

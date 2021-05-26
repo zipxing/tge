@@ -121,4 +121,4 @@ export class AssetManager {
     }
 }
 
-export const asset_manager = new AssetManager();
+export const assetManager = new AssetManager();
