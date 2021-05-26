@@ -203,9 +203,9 @@ export class TermRender extends tge.Render {
             nb.tscreen.append(this.attackbox[idx]);
         }
 
-        tge.Emitter.register("constant.REDRAW_MSG", this.redrawMsg, this);
-        tge.Emitter.register("constant.REDRAW_NEXT", this.redrawNext, this);
-        tge.Emitter.register("constant.REDRAW_HOLD", this.redrawHold, this);
+        tge.Emitter.register("Tetris.REDRAW_MSG", this.redrawMsg, this);
+        tge.Emitter.register("Tetris.REDRAW_NEXT", this.redrawNext, this);
+        tge.Emitter.register("Tetris.REDRAW_HOLD", this.redrawHold, this);
 
         this.drawTitle();
         this.drawLogo();
