@@ -7,22 +7,22 @@ import subprocess
 
 games = {
     "tetris" : {
-        "run": ["terminal", "webgl"]
+        "run": ["term", "webgl"]
     },
     "luoxuan" : {
-        "run": ["terminal"]
+        "run": ["term"]
     },
     "snake" : {
-        "run": ["terminal"]
+        "run": ["term"]
     },
     "jump" : {
-        "run": ["terminal"]
+        "run": ["term"]
     },
     "city" : {
-        "run": ["terminal"]
+        "run": ["term"]
     },
     "unblock" : {
-        "run": ["terminal"]
+        "run": ["term"]
     },
     "obj3d" : {
         "run": ["webgl"]
@@ -35,11 +35,11 @@ games = {
     },
     "asc2editor" : {
         "path": "tool/",
-        "run": ["terminal"]
+        "run": ["term"]
     },
     "art2js" : {
         "path": "tool/",
-        "run": ["terminal"]
+        "run": ["term"]
     }
 }
 
@@ -56,69 +56,34 @@ def printColor(color, msg, crlf=True):
     sys.stdout.flush()
 
 
-def grepArt(path):
-    art_dict = {}
-    arts = subprocess.getstatusoutput('grep "loadArtFile(" -R '+path)
-    ats = arts[1].split('\n')
-    for a in ats:
-        m = re.match(r'.*[\"|\'](.*)[\"|\'].*[\"|\'](.*)[\"|\'].*', a)
-        if m:
-            p, n = m.group(1), m.group(2)
-            art_dict[p]=n
-    arts = subprocess.getstatusoutput('grep "loadArtFileSEQ(" -R '+path)
-    ats = arts[1].split('\n')
-    for a in ats:
-        m = re.match(r'.*[\"|\'](.*)[\"|\'].*[\"|\'](.*)[\"|\'].*,(.*)\).*', a)
-        if m:
-            p, n, c = m.group(1), m.group(2), m.group(3)
-            for i in range(int(c)):
-                art_dict[p+n+str(i)+'.txt']=n+str(i)
-    return art_dict
-
-
-def make_build_cmd_line(name):
+def make_cmd_line(name, exargs=[]):
     cmds = []
+    rcs = {}
 
     if name not in games:
         printColor("red", "Game:"+name+" not in list...")
         sys.exit(0)
 
     g = games[name]
-    runenv = g['run']
-    path = 'games/'
-    if 'path' in g:
-        path = g['path']
-
+    runenv = g["run"]
+    path = g["path"] if "path" in g else "games/"
 
     cmds.append("echo|green|🍀 TSC...")
     tsccmd = "tsc -t es5 --outdir tmp/ src/"+path+name+"/main.ts"
     cmds.append(tsccmd)
+
+    if "term" in runenv:
+        rcs["term"] = "node tmp/"+path+name+"/main.js "+' '.join(exargs)
 
     if "webgl" in runenv:
         cmds.append("echo|green|🍀 Browserify for web...")
         cmds.append("browserify tmp/"+path+name+ \
                 "/main.js --ignore-missing -o tmp/"+name+"_bundle.js")
         cmds.append("cp src/"+path+name+"/"+name+"_gl.html tmp/")
-
-    return cmds
-
-
-def make_run_cmd_line(name, exargs=[]):
-    g = games[name]
-    runenv = g['run']
-    path = 'games/'
-    if 'path' in g:
-        path = g['path']
-    rcs = {}
-
-    if "terminal" in runenv:
-        rcs["terminal"] = "node tmp/"+path+name+"/main.js "+' '.join(exargs)
-
-    if "webgl" in runenv:
         hp = 'http://127.0.0.1:8866/'
         rcs["webgl"] = "open "+hp+"tmp/"+name+"_gl.html"
 
-    return rcs
+    return cmds, rcs
 
 
 def prepareTool():
@@ -148,7 +113,7 @@ def printUsage():
     printColor('yellow', '🏖  TGE building script usage:')
     printColor('white', '\nBuild game:')
     printColor('green', '  ./tge b <game-name>')
-    printColor('white', '\nRun in terminal:')
+    printColor('white', '\nRun in term:')
     printColor('green', '  ./tge r <game-name> <...>')
     printColor('white', '\nRun in browser:')
     printColor('green', '  ./tge rw <game-name> <...>')
@@ -200,8 +165,7 @@ if __name__ == "__main__":
     game = sys.argv[2]
     oargs = sys.argv[3:]
 
-    b = make_build_cmd_line(game)
-    r = make_run_cmd_line(game, oargs)
+    b, r = make_cmd_line(game, oargs)
 
     if 'b' in cmd and b:
         execCmds(b)
@@ -217,7 +181,7 @@ if __name__ == "__main__":
             else:
                 printColor('red', "No webgl mode!")
         else:
-            printColor('mag', '🚀 '+r['terminal'])
-            os.system(r['terminal'])
+            printColor('mag', '🚀 '+r['term'])
+            os.system(r['term'])
 
 
