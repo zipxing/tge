@@ -175,7 +175,7 @@ export class GeomertyHelper{
         let normal = new Vector3();
         Vector3.cross(edge1, edge2, normal);
         if(Vector3.dot(crossTB, normal)<0){
-            tangent.w = -1; //由于用了Vector3，所以这里hack一个w           
+            tangent.w = -1; //由于用了Vector3，所以这里hack一个w
         } else {
             tangent.w = 1;
         }

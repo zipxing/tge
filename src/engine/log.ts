@@ -8,6 +8,7 @@ export enum LogLevel{
 }
 
 export let LOG_LEVEL = LogLevel.DEBUG;
+export let STDOUT = "~~LOGT~~STDOUT~~"
 
 export function bindLogPath(fpath: string, loglevel: LogLevel = LogLevel.DEBUG) {
 
@@ -17,11 +18,13 @@ export function bindLogPath(fpath: string, loglevel: LogLevel = LogLevel.DEBUG) 
         return;
     let fs=require('fs');
     let util = require('util');
-    let logFile = fs.createWriteStream(fpath, {flags:'a'});
-    //let logso = process.stdout;
+    let logFile = process.stdout;
+    if(fpath == STDOUT)
+        logFile = process.stdout;
+    else 
+        logFile = fs.createWriteStream(fpath, {flags:'a'});
     console.log = function() {
         logFile.write(util.format.apply(null, arguments)+'\n');
-        //logso.write(util.format.apply(null, arguments)+'\n');
     }
     console.error = console.log;
 }

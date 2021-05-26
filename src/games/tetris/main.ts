@@ -8,6 +8,7 @@ import { WebGlRender } from "./render_webgl"
 export function main(runtype: string) {
     tge.initEnvironment(runtype);
     tge.bindLogPath('tmp/tetris.log', tge.LogLevel.INFO);
+    //tge.bindLogPath(tge.STDOUT, tge.LogLevel.INFO);
 
     let m1 = new Model();
     let r1: tge.Render;
