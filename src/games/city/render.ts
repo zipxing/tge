@@ -1,4 +1,4 @@
-import * as tge from "../../engine/index"
+import * as tge from "../../engine"
 import { Model, Cell, HEIGHT, WIDTH } from "./model"
 import { Game, GameState, LEVELUP_STEP_TIME } from "./game"
 

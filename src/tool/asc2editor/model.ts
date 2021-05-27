@@ -1,4 +1,4 @@
-import * as tge from "../../engine/index"
+import * as tge from "../../engine"
 
 export enum Pen {
     Asc2code = 1,

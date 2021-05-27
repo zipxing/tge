@@ -1,4 +1,4 @@
-import * as tge from "../../engine/index"
+import * as tge from "../../engine"
 
 export interface Cell {
     id: number;

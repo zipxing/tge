@@ -1,4 +1,4 @@
-import * as tge from "../../engine/index"
+import * as tge from "../../engine"
 import { Game } from "./game"
 import { Model } from "./model"
 import { TermRender } from "./render"

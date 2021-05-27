@@ -1,4 +1,4 @@
-import * as tge from "../../engine/tge"
+import * as tge from "../../engine"
 import * as util from "../../engine/util"
 import * as constant from "./constant"
 import * as block from "./block"

@@ -1,4 +1,5 @@
-import * as tge from "../../engine/index"
+import * as tge from "../../engine"
+
 //art2js <artfile> <namespace> <var_name> <js_name>
 let artfile = process.argv[2];
 let ns = process.argv[3];

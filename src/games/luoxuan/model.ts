@@ -1,4 +1,4 @@
-import * as tge from "../../engine/index"
+import * as tge from "../../engine"
 
 export class Model extends tge.Model {
     static matnum: number = 20;

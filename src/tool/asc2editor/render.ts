@@ -1,4 +1,4 @@
-import * as tge from "../../engine/index"
+import * as tge from "../../engine"
 import { Model, Pen } from "./model"
 
 export class TermRender extends tge.Render {

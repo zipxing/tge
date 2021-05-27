@@ -1,5 +1,4 @@
-import * as tge from "../../engine/index"
-
+import * as tge from "../../engine"
 import * as constant from "./constant"
 import * as block from "./block"
 import { ElsCore } from "./core"
