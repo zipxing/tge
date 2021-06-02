@@ -69,7 +69,6 @@ export class Model extends tge.Model {
 
     //debug...
     dumpGrid(msg:string = '') {
-        //return;
         let dgs = `---------DUMPGRID.${msg}------------\n`;
         for(let i=0; i<HEIGHT; i++) {
             for(let j=0; j<WIDTH; j++) {

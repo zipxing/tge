@@ -3,10 +3,10 @@ import { Model, HEIGHT, WIDTH } from "./model"
 
 export enum GameState {
     Normal = 0,
-        MergeMovie,
-        LevelUpMovie,
-        DropMovie,
-        NoMove
+    MergeMovie,
+    LevelUpMovie,
+    DropMovie,
+    NoMove
 }
 
 export const LEVELUP_STEP_TIME = 0.05;
