@@ -7,8 +7,8 @@ import { TermRender } from "./render"
 
 enum BlockType {
     BLANK = 0,
-        FULLROW,
-        NORMAL
+    FULLROW,
+    NORMAL
 }
 
 export class WebGlRender extends tge.Render {
@@ -49,6 +49,7 @@ export class WebGlRender extends tge.Render {
     _scene: tge.Scene | null = null;
     _mesh1: tge.Node | null = null;
     _mesh2: tge.Node[] | null = null;
+    _mesh3: tge.Node | null = null;
     _pointLight1: tge.Node | null = null;
     _pointLight2: tge.Node | null = null;
     _cameraNode: tge.Node | null = null;
@@ -117,6 +118,15 @@ export class WebGlRender extends tge.Render {
         return this._scene!.root.addMeshNode(wallMesh, matWall);
     }
 
+    createMesh2d() {
+        let m2Mesh = tge.Mesh.createPlane(20, 10, 20, 10);
+        let matm2 = new tge.MatSample();
+        matm2.mainTexture = tge.textureManager.getTexture(WebGlRender.proj_texture);
+        matm2.mainTexture.setRepeat();
+        let m2node = this._scene!.root.addMeshNode(m2Mesh, matm2);
+        m2node.localPosition.set(0, 5, -3);
+    }
+
     createWorld() {
         let canvas = (<tge.WebRun>tge.env).canvas;
 
@@ -138,9 +148,11 @@ export class WebGlRender extends tge.Render {
         this.createGround();
 
         // Create walls
+        /*
         let wall1 = this.createWall();
         wall1.localPosition.set(0, 5, -5);
         wall1.localRotation.setFromEulerAngles(new tge.Vector3(90,0,0));
+        */
 
         // Create an empty mesh root node
         let meshRoot = this._scene.root.addEmptyNode();
@@ -183,6 +195,8 @@ export class WebGlRender extends tge.Render {
                 }
             }
         }
+
+        this.createMesh2d();
 
         // Add a directional light node to scene
         let mainLight = this._scene.root.addDirectionalLight([0.8,0.8,0.8]);

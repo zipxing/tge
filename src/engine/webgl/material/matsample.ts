@@ -36,7 +36,7 @@ let fs = `
 
 let g_shader:Shader | null = null;
 
-class MatSample extends Material {
+export class MatSample extends Material {
 
     constructor(){
         super();
@@ -44,7 +44,7 @@ class MatSample extends Material {
         if(g_shader==null){
             g_shader = Material.createShader(vs, fs, [
                 {'semantic':VertexSemantic.POSITION, 'name':'a_Position'},
-                {'semantic':VertexSemantic.UV0 , 'name':'a_Texcoord'}
+                {'semantic':VertexSemantic.UV0 , 'name':'a_TexCoord'}
             ]);
         }
 
