@@ -225,6 +225,7 @@ export class WebGlRender extends tge.Render {
         this._cameraNode.localPosition.set(0, 2, 6);
         this._cameraNode.lookAt(new tge.Vector3(0, 1, 0));
         this._cameraNode.camera!.clearColor = [0.34,0.98,1];
+        //this._cameraNode.camera!.setOrtho(0, 0, 800, 600, 1.0, 1000);
 
         // Add projector
         this._projector = this._scene.root.addProjector(60, 1.0, 1.0, 1000.0);
