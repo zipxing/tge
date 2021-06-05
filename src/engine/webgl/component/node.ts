@@ -216,6 +216,17 @@ export class Node {
         return node;
     }
 
+    addOrthoCamera(left:number, right:number, bottom:number, top:number, near:number, far:number){
+        let camera = new Camera();
+        camera.setOrtho(left, right, bottom, top, near, far);
+
+        let node = new Node();
+        node.addComponent(SystemComponents.Camera, camera);
+        node.setParent(this);
+        node.camera = camera;
+        return node;
+    }
+
     addProjector(fovy:number, aspect:number, near:number, far:number){
         let projector = new Projector();
         projector.setPerspective(fovy, aspect, near, far);

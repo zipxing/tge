@@ -221,11 +221,12 @@ export class WebGlRender extends tge.Render {
         this._pointLight2 = pointLight;
 
         // Add a perspective camera
-        this._cameraNode = this._scene.root.addPerspectiveCamera(60, canvas.width / canvas.height, 1.0, 1000);
-        this._cameraNode.localPosition.set(0, 2, 6);
+        //this._cameraNode = this._scene.root.addPerspectiveCamera(60, canvas.width / canvas.height, 1.0, 1000);
+        this._cameraNode = this._scene.root.addOrthoCamera(-1, 1, -1, 1, 0.1, 100.0);
+        this._cameraNode.localPosition.set(0, 2, 10);
         this._cameraNode.lookAt(new tge.Vector3(0, 1, 0));
-        this._cameraNode.camera!.clearColor = [0.34,0.98,1];
-        //this._cameraNode.camera!.setOrtho(0, 0, 800, 600, 1.0, 1000);
+        //this._cameraNode.camera!.clearColor = [0.34,0.98,1];
+        this._cameraNode.camera!.clearColor = [1.0,0.98,1];
 
         // Add projector
         this._projector = this._scene.root.addProjector(60, 1.0, 1.0, 1000.0);
