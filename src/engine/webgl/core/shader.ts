@@ -82,7 +82,8 @@ export class Shader {
     loadShader(type: any, source: string) {
         let gl = (<tge.WebRun>tge.env).context;
         let shader = gl.createShader(type);
-        log.debug("-=GLFLOW=-", "glCreateShader&glShaderSource&glCompileShader&getShaderParameter...", source);
+        log.debug("-=GLFLOW=-", 
+            "glCreateShader&glShaderSource&glCompileShader&getShaderParameter...", source);
         if (shader == null) {
             log.error('unable to create shader');
             return null;
@@ -109,7 +110,8 @@ export class Shader {
     findoutAttributes() {
         let gl = (<tge.WebRun>tge.env).context;
         let attributeCount = gl.getProgramParameter(this.program, gl.ACTIVE_ATTRIBUTES);
-        log.debug("-=GLFLOW=-", "glGetProgramParameter&getActiveAttrib&getAttribLocation...", "findoutAttributes");
+        log.debug("-=GLFLOW=-", 
+            "glGetProgramParameter&getActiveAttrib&getAttribLocation...", "findoutAttributes");
         for(let i=0; i<attributeCount; ++i) {
             let info = gl.getActiveAttrib(this.program, i);
             if(!info) {
@@ -124,7 +126,8 @@ export class Shader {
     findoutUniforms() {
         let gl = (<tge.WebRun>tge.env).context;
         let uniformCount = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
-        log.debug("-=GLFLOW=-", "glGetProgramParameter&getActiveUniform&getAttribUniform...", "findoutUniform");
+        log.debug("-=GLFLOW=-", 
+            "glGetProgramParameter&getActiveUniform&getAttribUniform...", "findoutUniform");
         for(let i=0; i<uniformCount; ++i) {
             let info = gl.getActiveUniform(this.program, i);
             if(!info) {

@@ -119,12 +119,14 @@ export class WebGlRender extends tge.Render {
     }
 
     createMesh2d() {
-        let m2Mesh = tge.Mesh.createPlane(20, 10, 20, 10);
+        let m2Mesh = tge.Mesh.createPlane(10, 5, 10, 5);
         let matm2 = new tge.MatSample();
         matm2.mainTexture = tge.textureManager.getTexture(WebGlRender.proj_texture);
         matm2.mainTexture.setRepeat();
         let m2node = this._scene!.root.addMeshNode(m2Mesh, matm2);
-        m2node.localPosition.set(0, 5, -3);
+        m2node.localPosition.set(0, 5, -5);
+        //m2node.localRotation.setFromEulerAngles(new tge.Vector3(90,0,0));
+        //m2node.localScale.set(0.5, 0.5, 0.5);
     }
 
     createWorld() {
@@ -222,18 +224,18 @@ export class WebGlRender extends tge.Render {
 
         // Add a perspective camera
         //this._cameraNode = this._scene.root.addPerspectiveCamera(60, canvas.width / canvas.height, 1.0, 1000);
-        this._cameraNode = this._scene.root.addOrthoCamera(-1, 1, -1, 1, 0.1, 100.0);
-        this._cameraNode.localPosition.set(0, 2, 10);
+        this._cameraNode = this._scene.root.addOrthoCamera(-1, 1, -1, 1, -100, 100.0);
+        this._cameraNode.localPosition.set(0, 2, 6);
+        this._cameraNode.localScale.set(5, 5, 5);
+        //this._cameraNode.localPosition.set(5, 6, 0);
         this._cameraNode.lookAt(new tge.Vector3(0, 1, 0));
-        //this._cameraNode.camera!.clearColor = [0.34,0.98,1];
-        this._cameraNode.camera!.clearColor = [1.0,0.98,1];
+        this._cameraNode.camera!.clearColor = [0.9,0.98,1];
 
         // Add projector
         this._projector = this._scene.root.addProjector(60, 1.0, 1.0, 1000.0);
         this._projector.localPosition.set(0, 3, 0);
         this._projector.lookAt(new tge.Vector3(0, 0, 0));
         this._projector.projector!.material.projTexture = tge.textureManager.getTexture(WebGlRender.proj_texture);
-
     }
 
     draw() {

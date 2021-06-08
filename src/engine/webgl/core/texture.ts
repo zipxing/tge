@@ -79,7 +79,8 @@ export class Texture2D {
         this._height = height;
 
         gl.bindTexture(gl.TEXTURE_2D, this._id);
-        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, srcFormat, srcType, null);
+        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, 
+            width, height, border, srcFormat, srcType, null);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         gl.bindTexture(gl.TEXTURE_2D, null);
@@ -109,7 +110,8 @@ export class Texture2D {
         this._height = height;
 
         gl.bindTexture(gl.TEXTURE_2D, this._id);
-        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, srcFormat, srcType, pixelData);
+        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, 
+            width, height, border, srcFormat, srcType, pixelData);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.bindTexture(gl.TEXTURE_2D, null);
@@ -137,7 +139,8 @@ export class Texture2D {
         this._height = height;
 
         gl.bindTexture(gl.TEXTURE_2D, this._id);
-        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, srcFormat, srcType, pixelData);
+        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, 
+            width, height, border, srcFormat, srcType, pixelData);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.bindTexture(gl.TEXTURE_2D, null);
@@ -253,7 +256,8 @@ export class RenderTexture{
 
     clampTextureSize(){
         let glAbility = (<tge.WebRun>tge.env).ability;
-        while(this._width>glAbility.MAX_TEXTURE_SIZE || this._height>glAbility.MAX_TEXTURE_SIZE){
+        while(this._width>glAbility.MAX_TEXTURE_SIZE || 
+            this._height>glAbility.MAX_TEXTURE_SIZE) {
             this._width /= 2;
             this._height /= 2;
         }
@@ -329,13 +333,16 @@ export class RenderTexture{
         }
 
         gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthBuffer);
-        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, this._width, this._height);
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, 
+            this._width, this._height);
         gl.bindRenderbuffer(gl.RENDERBUFFER, null);
 
         // Attach the texture and the renderbuffer object to the FBO
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._fbo);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture2D.id, 0);
-        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthBuffer);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+            gl.TEXTURE_2D, this._texture2D.id, 0);
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, 
+            gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthBuffer);
 
         // Check if FBO is configured correctly
         let e = gl.checkFramebufferStatus(gl.FRAMEBUFFER);

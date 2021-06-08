@@ -1,8 +1,8 @@
 import * as tge from "../../tge"
 import * as log from "../../log"
-import { GeomertyHelper } from "./geomerty"
-import {VertexBuffer, VertexFormat, VertexSemantic, IndexBuffer} from "./vertex"
 import { Mesh } from "./mesh"
+import { GeomertyHelper } from "./geomerty"
+import { VertexBuffer, VertexFormat, VertexSemantic, IndexBuffer} from "./vertex"
 
 class StringParser{
     str: string = '';

@@ -34,20 +34,32 @@ export class GeomertyHelper{
             if(vertexNormals[idx0]==null){
                 vertexNormals[idx0] = new Vector3();
             }
-            let angle = GeomertyHelper._calcAngle(new Vector3(p1x-p0x, p1y-p0y, p1z-p0z), new Vector3(p2x-p0x, p2y-p0y, p2z-p0z));
-            vertexNormals[idx0].add(Vector3.scaleTo(faceN, angle, new Vector3().scale(faceArea)));
+            let angle = GeomertyHelper._calcAngle(
+                new Vector3(p1x-p0x, p1y-p0y, p1z-p0z), 
+                new Vector3(p2x-p0x, p2y-p0y, p2z-p0z)
+            );
+            vertexNormals[idx0].add(Vector3.scaleTo(faceN, angle, 
+                new Vector3().scale(faceArea)));
 
             if(vertexNormals[idx1]==null){
                 vertexNormals[idx1] = new Vector3();
             }
-            angle = GeomertyHelper._calcAngle(new Vector3(p2x-p1x, p2y-p1y, p2z-p1z), new Vector3(p0x-p1x, p0y-p1y, p0z-p1z));
-            vertexNormals[idx1].add(Vector3.scaleTo(faceN, angle, new Vector3().scale(faceArea)));
+            angle = GeomertyHelper._calcAngle(
+                new Vector3(p2x-p1x, p2y-p1y, p2z-p1z), 
+                new Vector3(p0x-p1x, p0y-p1y, p0z-p1z)
+            );
+            vertexNormals[idx1].add(Vector3.scaleTo(faceN, angle, 
+                new Vector3().scale(faceArea)));
 
             if(vertexNormals[idx2]==null){
                 vertexNormals[idx2] = new Vector3();
             }
-            angle = GeomertyHelper._calcAngle(new Vector3(p0x-p2x, p0y-p2y, p0z-p2z), new Vector3(p1x-p2x, p1y-p2y, p1z-p2z));
-            vertexNormals[idx2].add(Vector3.scaleTo(faceN, angle, new Vector3().scale(faceArea)));
+            angle = GeomertyHelper._calcAngle(
+                new Vector3(p0x-p2x, p0y-p2y, p0z-p2z), 
+                new Vector3(p1x-p2x, p1y-p2y, p1z-p2z)
+            );
+            vertexNormals[idx2].add(Vector3.scaleTo(faceN, angle, 
+                new Vector3().scale(faceArea)));
         }
 
         for(let i=0; i<vertexNormals.length; ++i){

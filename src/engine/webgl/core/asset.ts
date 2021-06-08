@@ -49,7 +49,7 @@ export class ImageLoader {
 
 export enum AssetType {
     Text = 'text',
-        Image =  'image'
+    Image =  'image'
 }
 
 export class AssetManager {

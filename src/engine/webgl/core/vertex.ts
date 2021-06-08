@@ -4,13 +4,13 @@ import * as log from "../../log"
 //VertexFormat, VertexBuffer, IndexBuffer
 export enum VertexSemantic {
     POSITION = 'position',
-        NORMAL = 'normal',
-        TANGENT = 'tangent',
-        COLOR = 'color',
-        UV0 = 'uv0',
-        UV1 = 'uv1',
-        UV2 = 'uv2',
-        UV3 = 'uv3'
+    NORMAL = 'normal',
+    TANGENT = 'tangent',
+    COLOR = 'color',
+    UV0 = 'uv0',
+    UV1 = 'uv1',
+    UV2 = 'uv2',
+    UV3 = 'uv3'
 }
 
 export interface VertexAttribInfo {
