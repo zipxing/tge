@@ -9,13 +9,12 @@ import { textureManager } from "../core/texture"
 
 let vs = `
         attribute vec4 a_Position;
-        attribute vec2 a_TexCoord;
+        attribute vec2 a_Texcoord;
         uniform mat4 u_mvpMatrix;
-        varying vec4 v_Color;
-        varying vec2 v_TexCoord;
+        varying vec2 v_texcoord;
         void main(){
             gl_Position = u_mvpMatrix * a_Position;
-            v_TexCoord = a_TexCoord;
+            v_texCoord = a_TexCoord;
         }
     `;
 
@@ -24,9 +23,9 @@ let fs = `
 		precision mediump float;
 		#endif
 		uniform sampler2D u_texMain;
-		varying vec2 v_TexCoord;
+		varying vec2 v_texCoord;
 		void main() {
-            gl_FragColor = texture2D(u_texMain, v_TexCoord);
+            gl_FragColor = texture2D(u_texMain, v_texCoord);
 		}
     `;
 

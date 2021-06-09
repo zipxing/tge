@@ -53,7 +53,10 @@ export class WebGlRender extends tge.Render {
     _pointLight1: tge.Node | null = null;
     _pointLight2: tge.Node | null = null;
     _cameraNode: tge.Node | null = null;
+    _renderCamera: tge.Node | null = null;
+    _mirror: tge.Node | null = null;
     _projector: tge.Node | null = null;
+    _renderTexture: tge.RenderTexture | null = null;
     mats: tge.Material[];
     isInit: boolean = false;
 
@@ -118,14 +121,28 @@ export class WebGlRender extends tge.Render {
         return this._scene!.root.addMeshNode(wallMesh, matWall);
     }
 
+    createMirror(texture: tge.Texture2D) {
+        let mirrorRoot = this._scene!.root.addEmptyNode();
+        let mirrorMesh = tge.Mesh.createPlane(6,3,6,3);
+        let matMirror = new tge.MatMirror();
+        matMirror.mainTexture = texture;
+        let node = mirrorRoot.addMeshNode(mirrorMesh, matMirror);
+        node.localRotation.setFromEulerAngles(this._tempVec3.set(90,0,0));
+
+        mirrorRoot.localPosition.set(0, 2, -4);
+        return mirrorRoot;
+
+    }
+
     createMesh2d() {
-        let m2Mesh = tge.Mesh.createPlane(10, 5, 10, 5);
-        let matm2 = new tge.MatSample();
+        let m2Mesh = tge.Mesh.createPlane(5, 5, 5, 5);
+        //let matm2 = new tge.MatSample();
+        let matm2 = new tge.MatMirror();
         matm2.mainTexture = tge.textureManager.getTexture(WebGlRender.proj_texture);
-        matm2.mainTexture.setRepeat();
+        //matm2.mainTexture.setRepeat();
         let m2node = this._scene!.root.addMeshNode(m2Mesh, matm2);
         m2node.localPosition.set(0, 5, -5);
-        //m2node.localRotation.setFromEulerAngles(new tge.Vector3(90,0,0));
+        m2node.localRotation.setFromEulerAngles(new tge.Vector3(-90.0,0,0));
         //m2node.localScale.set(0.5, 0.5, 0.5);
     }
 
@@ -150,11 +167,9 @@ export class WebGlRender extends tge.Render {
         this.createGround();
 
         // Create walls
-        /*
         let wall1 = this.createWall();
         wall1.localPosition.set(0, 5, -5);
         wall1.localRotation.setFromEulerAngles(new tge.Vector3(90,0,0));
-        */
 
         // Create an empty mesh root node
         let meshRoot = this._scene.root.addEmptyNode();
@@ -223,8 +238,8 @@ export class WebGlRender extends tge.Render {
         this._pointLight2 = pointLight;
 
         // Add a perspective camera
-        //this._cameraNode = this._scene.root.addPerspectiveCamera(60, canvas.width / canvas.height, 1.0, 1000);
-        this._cameraNode = this._scene.root.addOrthoCamera(-1, 1, -1, 1, -100, 100.0);
+        this._cameraNode = this._scene.root.addPerspectiveCamera(60, canvas.width / canvas.height, 1.0, 1000);
+        //this._cameraNode = this._scene.root.addOrthoCamera(-1, 1, -1, 1, -100, 100.0);
         this._cameraNode.localPosition.set(0, 2, 6);
         this._cameraNode.localScale.set(5, 5, 5);
         //this._cameraNode.localPosition.set(5, 6, 0);
@@ -236,6 +251,17 @@ export class WebGlRender extends tge.Render {
         this._projector.localPosition.set(0, 3, 0);
         this._projector.lookAt(new tge.Vector3(0, 0, 0));
         this._projector.projector!.material.projTexture = tge.textureManager.getTexture(WebGlRender.proj_texture);
+
+        let mirrorWidth = 2048;
+        let mirrorHeight = 1024;
+        this._renderTexture = new tge.RenderTexture(mirrorWidth,mirrorHeight);
+        let rt = this._renderTexture!.texture2D;
+        let mirror = this.createMirror(rt!);
+        this._mirror = mirror;
+        this._renderCamera = mirror.addPerspectiveCamera(60, mirrorWidth/mirrorHeight, 0.2, 100);
+        this._renderCamera.localRotation.setFromEulerAngles(this._tempVec3.set(0,180,0));
+        this._renderCamera!.camera!.clearColor = [0.34,0.98,1];
+        this._renderCamera!.camera!.target = this._renderTexture;
     }
 
     draw() {

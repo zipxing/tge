@@ -33,7 +33,7 @@ let fs = `
 
 let g_shader:Shader | null = null;
 
-class MatMirror extends Material {
+export class MatMirror extends Material {
 
     constructor(){
         super();

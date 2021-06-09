@@ -9,24 +9,24 @@ import { VertexSemantic } from "../core/vertex"
 import { textureManager } from "../core/texture"
 
 let vs = `
-attribute vec4 a_Position;
-uniform mat4 u_mvpMatrix;
-void main(){
-    gl_Position = u_mvpMatrix * a_Position;
-}
+    attribute vec4 a_Position;
+    uniform mat4 u_mvpMatrix;
+    void main(){
+        gl_Position = u_mvpMatrix * a_Position;
+    }
 `;
 
 let fs = `
-#ifdef GL_ES
-precision mediump float;
-#endif
-uniform vec3 u_Color;
-void main(){
-    gl_FragColor = vec4(u_Color, 1.0);
-#ifdef GAMMA_CORRECTION
-    gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.0/2.2));
-#endif
-}
+    #ifdef GL_ES
+    precision mediump float;
+    #endif
+    uniform vec3 u_Color;
+    void main(){
+        gl_FragColor = vec4(u_Color, 1.0);
+    #ifdef GAMMA_CORRECTION
+        gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.0/2.2));
+    #endif
+    }
 `;
 
 let g_shader:Shader | null = null;
