@@ -11,10 +11,10 @@ let vs = `
         attribute vec4 a_Position;
         attribute vec2 a_Texcoord;
         uniform mat4 u_mvpMatrix;
-        varying vec2 v_texcoord;
+        varying vec2 v_texCoord;
         void main(){
             gl_Position = u_mvpMatrix * a_Position;
-            v_texCoord = a_TexCoord;
+            v_texCoord = a_Texcoord;
         }
     `;
 

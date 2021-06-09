@@ -149,8 +149,16 @@ export class MeshRenderer extends Component {
             } else if(pass.lightMode == LightMode.ShadowCaster){
 
             } else {
+                gl.enable(gl.BLEND);
+                gl.blendFunc(gl.ONE, gl.ONE);
+                gl.disable(gl.DEPTH_TEST);
+                gl.depthMask(false);
+                gl.depthFunc(gl.LEQUAL);
                 //非光照pass
                 this.material.renderPass(this.mesh!, uniformContext, pass);
+                gl.disable(gl.BLEND);
+                gl.depthMask(true);
+                gl.depthFunc(gl.LESS);
             }
         }
 
