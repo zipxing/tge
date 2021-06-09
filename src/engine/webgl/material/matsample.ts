@@ -39,7 +39,7 @@ export class MatSample extends Material {
         if(g_shader==null){
             g_shader = Material.createShader(vs, fs, [
                 {'semantic':VertexSemantic.POSITION, 'name':'a_Position'},
-                {'semantic':VertexSemantic.UV0 , 'name':'a_TexCoord'}
+                {'semantic':VertexSemantic.UV0 , 'name':'a_Texcoord'}
             ]);
         }
 
