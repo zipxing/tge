@@ -158,7 +158,6 @@ export class TermRender extends tge.Render {
     draw() {
         this.drawTitle();
         this.drawLogo();
-        this.redrawGrid();
         this.drawWay();
         let nb = (<tge.TermRun>tge.env);
         nb.tscreen.render();
