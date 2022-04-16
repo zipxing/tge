@@ -13,7 +13,7 @@ export class TermRender extends tge.Render {
         super();
 
         tge.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
-        tge.AscIIManager.loadArtFile("ascii_art/tower.txt", "tower");
+        tge.AscIIManager.loadArtFile("ascii_art/snake.txt", "snake");
 
         let nb = (<tge.TermRun>tge.env);
 
@@ -57,6 +57,9 @@ export class TermRender extends tge.Render {
                     tags:true
                 });
                 nb.tscreen.append(this.gridboxes[i][j]);
+                this.gridboxes[i][j].on('click', (data: any)=>{
+                    this.touchCell("M", i, j);
+                });
             }
         }
 
@@ -70,17 +73,21 @@ export class TermRender extends tge.Render {
         });
         nb.tscreen.append(this.msgbox);
 
-        tge.Emitter.register("Snake.REDRAW_MSG", this.redrawMsg, this);
-        tge.Emitter.register("Snake.REDRAW_GRID", this.redrawGrid, this);
-        tge.Timer.register("Snake.Timer.Title", 1.0, ()=>{
-            tge.Timer.fire("Snake.Timer.Title", 0);
-        });
-        tge.Timer.fire("Snake.Timer.Title", 0);
+        tge.Emitter.register("Tower.REDRAW_GRID", this.redrawGrid, this);
     }
 
+    touchCell(t:string, i:number, j:number) {
+        let nb = (<tge.TermRun>tge.env);
+        if(!TermRender.game) return;
+        let g = TermRender.game;
+        let m = <Model>g.model;
+        if(g.gamestate!=game.GameState.Normal) return;
+        g.useract.splice(0,0,`${t}:${i}:${j}`);
+    }
+
+
     drawTitle() {
-        let s = tge.AscIIManager.getArt("tower").blessed_lines;
-        //let st = tge.Timer.getStage("Snake.Timer.Title");
+        let s = tge.AscIIManager.getArt("snake").blessed_lines;
         this.titlebox.setContent(`${s[0]}\n${s[1]}\n${s[2]}\n${s[3]}`);
     }
 
@@ -106,7 +113,6 @@ export class TermRender extends tge.Render {
     }
 
     redrawGrid() {
-        //let c = ['magenta', 'blue', 'red', 'green', 'yellow', 'cyan'];
         let c = [27, 33, 39, 45, 51, 50, 44, 38, 32, 26,
             128, 134, 140, 146, 152, 147, 141, 135, 129];
         let g = TermRender.game;
@@ -118,15 +124,15 @@ export class TermRender extends tge.Render {
                 let gb = this.gridboxes[i][j];
                 switch(gv) {
                     case 0:
-                        if(g.gamestate==game.GameState.Ok) 
-                            this.setPoint256(gb, 232, 15, " ");
-                        else
-                            this.setPoint256(gb, 239, 15, " ");
+                        this.setPoint256(gb, 232, 15, " ");
                         break;
-                    case 10000:
+                    case 1:
+                        this.setPoint256(gb, 232, 15, "O");
                         break;
                     default:
-                        if(g.gamestate==game.GameState.Ok) {
+                        this.setPoint256(gb, 232, 15, " ");
+                        /*
+                        if(g.gamestate==game.GameState.Normal) {
                             if(gv==1)
                                 this.setPoint256(gb, 0, 196, "█");
                             else
@@ -134,26 +140,25 @@ export class TermRender extends tge.Render {
                         }
                         else
                             this.setPoint256(gb, 15, c[gv%c.length], "█");
+                        */
                 }
             }
         }
     }
 
-    drawSeed() {
+    drawWay() {
         let g = TermRender.game;
         let m = <Model>g.model;
-        let gb = this.gridboxes[m.seed.y][m.seed.x];
-        let tc = 18 + Math.floor((g.stage / 2)) % 212;
-        if(g.gamestate==game.GameState.Ok) 
-            this.setPoint256(gb, 232, tc, "∙");
-        else
-            this.setPoint256(gb, 239, 203, "∙");
+        for(let p of m.result) {
+            let gb = this.gridboxes[p.y][p.x];
+            this.setPoint256(gb, 232, 15, ".");
+        }
     }
 
     draw() {
         this.drawTitle();
         this.drawLogo();
-        this.drawSeed();
+        this.drawWay();
         let nb = (<tge.TermRun>tge.env);
         nb.tscreen.render();
     }

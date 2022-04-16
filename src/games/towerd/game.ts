@@ -2,26 +2,16 @@ import * as tge from "../../engine"
 import { Model } from "./model"
 
 export enum GameState {
-    Ok = 0,
-        OverSelf ,
-        OverBorder
+    Normal = 0,
 }
 
 export class Game extends tge.Game {
     initGame() {
         let m = <Model>this.model;
-        m.body[0] = {x:Model.towerw/2, y:Model.towerh/2};
-        m.body.length=1;
-        m.seed = {
-            x:Math.floor(Math.random()*Model.towerw), 
-            y:Math.floor(Math.random()*Model.towerh)
-        };
-        m.makeGrid();
-        m.dir='D';
-        this.gamestate=GameState.Ok;
+        this.gamestate=GameState.Normal;
         this.useract=[];
-        tge.Emitter.fire("Snake.REDRAW_GRID");
-        tge.Emitter.fire("Snake.REDRAW_MSG");
+        m.searchRoad();
+        tge.Emitter.fire("Tower.REDRAW_GRID");
     }
 
     restartGame() {
@@ -36,7 +26,7 @@ export class Game extends tge.Game {
     playAutoAction(dt: number) {
         let m = <Model>this.model;
         if(this.timeout_auto>400.0) {
-            this.doAction(m.dir);
+            //this.doAction(m.dir);
         } else {
             this.timeout_auto+=dt;
         }
@@ -46,74 +36,25 @@ export class Game extends tge.Game {
     }
 
     doAction(act: any) {
-        let m = <Model>this.model;
-        if(this.gamestate!=GameState.Ok) {
-            if(act=='R')
-                this.initGame();
-            return;
+
+        let ag = act.split(":");
+        let i=0, j=0;
+        if(ag.length==3) {
+            i = parseInt(ag[1]);
+            j = parseInt(ag[2]);
         }
-        let dx, dy, cx, cy: number;
-        switch(act) {
-            case 'W':
-                if(m.dir=='S') return;
-                dx=0,dy=-1;
-                break;
-            case 'S':
-                if(m.dir=='W') return;
-                dx=0,dy=1;
-                break;
-            case 'A':
-                if(m.dir=='D') return;
-                dx=-1,dy=0;
-                break;
-            case 'D':
-                if(m.dir=='A') return;
-                dx=1,dy=0;
+        let m = <Model>this.model;
+        switch(ag[0]) {
+            case "M":
+                m.grid[i][j] = 1;
+                m.searchRoad();
+                tge.debug('...................');
                 break;
             default:
-                dx=0,dy=0;
-                //return;
-                //console.log('error act!');
+                break;
         }
-        cx = m.body[0].x+dx;
-        cy = m.body[0].y+dy;
-        if(cx>=Model.towerw || cy>=Model.towerh || cx<0 || cy<0) {
-            this.gamestate=GameState.OverBorder;
-            tge.Emitter.fire("Snake.REDRAW_MSG");
-            tge.Emitter.fire("Snake.REDRAW_GRID");
-            return;
-        }
-        //check head meet seed
-        if(m.grid[cy][cx]==10000) {
-            let sok = false;
-            for(let n=0;n<888;n++) {
-                let _nx = Math.floor(Math.random()*Model.towerw);
-                let _ny = Math.floor(Math.random()*Model.towerh);
-                let _np = m.grid[_ny][_nx];
-                if(_np==10000 || _np==0) {
-                    m.seed = {x:_nx, y:_ny};
-                    sok = true;
-                    break;
-                }
-            }
-            if(!sok) {
-                //TODO····
-            }
-        } else {
-            if(m.grid[cy][cx]!=0) {
-                this.gamestate=GameState.OverSelf;
-                tge.Emitter.fire("Snake.REDRAW_MSG");
-                tge.Emitter.fire("Snake.REDRAW_GRID");
-                return;
-            }
-            m.body.pop();
-        }
-        m.body.splice(0,0,{x:cx,y:cy});
-        m.dir = act;
-        m.makeGrid();
-        tge.Emitter.fire("Snake.REDRAW_GRID");
+        tge.Emitter.fire("Tower.REDRAW_GRID");
         this.timeout_auto=0.0;
-
     }
 
     scheduleUpdate(dt: number) {

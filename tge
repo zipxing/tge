@@ -12,6 +12,9 @@ games = {
     "luoxuan" : {
         "run": ["term"]
     },
+    "towerd" : {
+        "run": ["term"]
+    },
     "snake" : {
         "run": ["term"]
     },
