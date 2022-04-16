@@ -34,6 +34,7 @@ export class Model extends tge.Model {
         let closeList: TPoint[] = [];
         let result_index = 0;   //结果数组在开启列表中的序号
 
+        this.result = [];
         openList.push({
             p:{ x:this.start.x, y:this.start.y},
             g:0,
@@ -53,15 +54,15 @@ export class Model extends tge.Model {
                     item.p.y>=0 &&
                     item.p.x<Model.towerw &&
                     item.p.y<Model.towerh &&
-                    this.grid[item.p.x][item.p.y] != 1 &&         //判断是否是障碍物
+                    this.grid[item.p.y][item.p.x] != 1 &&         //判断是否是障碍物
                     this.existList(item, closeList) == -1 &&      //判断是否在关闭列表中
-                    this.grid[item.p.x][currentPoint.p.y]!=1 &&   //判断之间是否有障碍物，如果有障碍物是过不去的
-                    this.grid[currentPoint.p.x][item.p.y]!=1) {
+                    this.grid[currentPoint.p.y][item.p.x]!=1 &&   //判断之间是否有障碍物，如果有障碍物是过不去的
+                    this.grid[item.p.y][currentPoint.p.x]!=1) {
                     //g 到父节点的位置
                     //如果是上下左右位置的则g等于10，斜对角的就是14
                     let g = currentPoint.g + 
                         ((currentPoint.p.x - item.p.x) * (currentPoint.p.y - item.p.y) == 0 ? 10 : 14);
-                    let index:number = this.existList(item, openList);
+                    let index = this.existList(item, openList);
                     if (index == -1) {       //如果不在开启列表中
                         //计算H，通过水平和垂直距离进行确定
                         item.h = Math.abs(this.end.x - item.p.x) * 10 + Math.abs(this.end.y - item.p.y) * 10;
@@ -69,13 +70,12 @@ export class Model extends tge.Model {
                         item.f = item.h + item.g;
                         item._parent = currentPoint;
                         openList.push(item);
-                    }
-                    else {                                  //存在在开启列表中，比较目前的g值和之前的g的大小
+                    } else {                                  //存在在开启列表中，比较目前的g值和之前的g的大小
                         //如果当前点的g更小
                         if (g < openList[index].g) {
                             openList[index]._parent = currentPoint;
                             openList[index].g = g;
-                            openList[index].f=g+openList[index].h;
+                            openList[index].f = g + openList[index].h;
                         }
                     }
                 }
@@ -87,7 +87,7 @@ export class Model extends tge.Model {
             openList.sort(this.sortF);//这一步是为了循环回去的时候，找出 F 值最小的, 将它从 "开启列表" 中移掉
         }while((result_index=this.existList({
             p:{x:this.end.x,y:this.end.y},g:0,h:0,f:0,_parent:null
-        },openList)) != -1);
+        },openList)) == -1);
 
         //判断结果列表是否为空
         if(result_index == -1) {

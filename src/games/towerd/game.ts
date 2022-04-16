@@ -48,7 +48,7 @@ export class Game extends tge.Game {
             case "M":
                 m.grid[i][j] = 1;
                 m.searchRoad();
-                tge.debug('...................');
+                tge.debug('...................', m.result);
                 break;
             default:
                 break;
