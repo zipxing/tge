@@ -36,7 +36,6 @@ export class Game extends tge.Game {
     }
 
     doAction(act: any) {
-
         let ag = act.split(":");
         let i=0, j=0;
         if(ag.length==3) {
@@ -48,7 +47,6 @@ export class Game extends tge.Game {
             case "M":
                 m.grid[i][j] = 1;
                 m.searchRoad();
-                tge.debug('...................', m.result);
                 break;
             default:
                 break;

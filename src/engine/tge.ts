@@ -233,5 +233,27 @@ export abstract class Render {
             mp.clear();
         }
     }
+
     abstract draw(): any;
+
+    addBox(w:number, h:number, t:number, l:number, border?:any) {
+        let nb = (<TermRun>env);
+        let bo;
+        bo =  {
+            width: w,
+            height: h,
+            top: t,
+            left: l,
+            border: null,
+            tags: true
+        };
+
+        if(border) {
+            bo.border = border;
+        } 
+
+        let box = nb.blessed.box(bo);
+        nb.tscreen.append(box);
+        return box;
+    }
 }

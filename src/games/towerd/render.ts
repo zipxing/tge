@@ -17,62 +17,24 @@ export class TermRender extends tge.Render {
 
         let nb = (<tge.TermRun>tge.env);
 
-        this.titlebox = nb.blessed.box({
-            width:Model.towerw+2,
-            height:4,
-            top:0,
-            left:3,
-            tags:true
-        });
-        nb.tscreen.append(this.titlebox);
-
-        this.logobox = nb.blessed.box({
-            width:12,
-            height:4,
-            top:0,
-            left:Model.towerw+16,
-            tags:true
-        });
-        nb.tscreen.append(this.logobox);
-
-        this.gamebox = nb.blessed.box({
-            width:Model.towerw+2,
-            height:Model.towerh+2,
-            top:4,
-            left:0,
-            border:{type:'line', fg:238},
-            tags:true
-        });
-        nb.tscreen.append(this.gamebox);
+        this.titlebox = this.addBox(Model.towerw+2, 4, 0, 3);
+        this.logobox = this.addBox(12, 4, 0, Model.towerw+16);
+        this.gamebox = this.addBox(Model.towerw+2, 
+            Model.towerh+2, 4, 0, {type:'line', fg:238});
 
         this.gridboxes=[];
         for(let i=0;i<Model.towerh;i++) {
             this.gridboxes[i]=[];
             for(let j=0;j<Model.towerw;j++) {
-                this.gridboxes[i][j]=nb.blessed.box({
-                    width:1,
-                    height:1,
-                    top:i+5,
-                    left:j+1,
-                    tags:true
-                });
-                nb.tscreen.append(this.gridboxes[i][j]);
+                this.gridboxes[i][j]= this.addBox(1, 1, i+5, j+1);
                 this.gridboxes[i][j].on('click', (data: any)=>{
                     this.touchCell("M", i, j);
                 });
             }
         }
 
-        this.msgbox = nb.blessed.box({
-            width:23,
-            height:Model.towerh+2,
-            top:4,
-            left:Model.towerw+3,
-            border:{type:'line', fg:238},
-            tags:true
-        });
-        nb.tscreen.append(this.msgbox);
-
+        this.msgbox = this.addBox(23, Model.towerh+2, 4, 
+            Model.towerw+3, {type:'line', fg:238});
         tge.Emitter.register("Tower.REDRAW_GRID", this.redrawGrid, this);
     }
 
@@ -104,9 +66,6 @@ export class TermRender extends tge.Render {
         this.msgbox.setContent(msg[g.gamestate]);
     }
 
-    setPoint(box: any, bg:string, fg:string, cchar:string) {
-        box.setContent(`{${bg}-bg}{${fg}-fg}${cchar}{/}`);
-    }
 
     setPoint256(box: any, bg:number, fg:number, cchar:string) {
         box.setContent(`{${bg}-bg}{${fg}-fg}${cchar}{/}`);
