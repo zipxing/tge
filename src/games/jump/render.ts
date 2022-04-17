@@ -18,27 +18,14 @@ export class TermRender extends tge.Render {
 
         let nb = (<tge.TermRun>tge.env);
 
-        this.logobox = nb.blessed.box({
-            width:12,
-            height:4,
-            top:1,
-            left:Model.gamew+16,
-            tags:true
-        });
-        nb.tscreen.append(this.logobox);
+        this.logobox = this.addBox(12, 4, 1, Model.gamew+16);
 
         this.carboxes = [];
         for(let i=0; i<4; i++) {
-            this.carboxes[i] = nb.blessed.box({
-                width:Model.carw,
-                height:Model.carh,
-                top: 20 + 4,
-                left: 3+i*Model.carw,
-                tags:true
-            });
+            this.carboxes[i] = this.addBox(Model.carw, Model.carh, 
+                20+4, 3 + i * Model.carw);
             let bls = tge.AscIIManager.getArt("car"+(i+1)).blessed_lines;
             this.carboxes[i].setContent(bls.join('\n'));
-            nb.tscreen.append(this.carboxes[i]);
         }
 
         /*this.msgbox = nb.blessed.box({

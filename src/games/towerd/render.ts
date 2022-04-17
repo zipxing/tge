@@ -20,7 +20,7 @@ export class TermRender extends tge.Render {
         this.titlebox = this.addBox(Model.towerw+2, 4, 0, 3);
         this.logobox = this.addBox(12, 4, 0, Model.towerw+16);
         this.gamebox = this.addBox(Model.towerw+2, 
-            Model.towerh+2, 4, 0, {type:'line', fg:238});
+            Model.towerh+2, 4, 0, {border: {type:'line', fg:238}});
 
         this.gridboxes=[];
         for(let i=0;i<Model.towerh;i++) {
@@ -34,7 +34,7 @@ export class TermRender extends tge.Render {
         }
 
         this.msgbox = this.addBox(23, Model.towerh+2, 4, 
-            Model.towerw+3, {type:'line', fg:238});
+            Model.towerw+3, {border: {type:'line', fg:238}});
         tge.Emitter.register("Tower.REDRAW_GRID", this.redrawGrid, this);
     }
 

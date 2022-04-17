@@ -236,7 +236,7 @@ export abstract class Render {
 
     abstract draw(): any;
 
-    addBox(w:number, h:number, t:number, l:number, border?:any) {
+    addBox(w:number, h:number, t:number, l:number, bla?:any) {
         let nb = (<TermRun>env);
         let bo;
         bo =  {
@@ -245,11 +245,15 @@ export abstract class Render {
             top: t,
             left: l,
             border: null,
+            label: null,
+            align: null,
             tags: true
         };
 
-        if(border) {
-            bo.border = border;
+        if(bla) {
+            bo.border = bla.border;
+            bo.label = bla.label;
+            bo.align  = bla.align;
         } 
 
         let box = nb.blessed.box(bo);

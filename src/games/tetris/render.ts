@@ -29,42 +29,24 @@ export class TermRender extends tge.Render {
 
         let nb = (<tge.TermRun>tge.env);
 
-        this.titlebox = nb.blessed.box({
-            width:50,
-            height:5,
-            top:0,
-            left:22,
-            tags:true
-        });
-        nb.tscreen.append(this.titlebox);
+        this.titlebox = this.addBox(50, 5, 0, 22);
 
-        this.gamebox = nb.blessed.box({
-            width:constant.HENG*9-6,
-            height:constant.ZONG+6,
-            top:5,
-            left:0,
-            //border:{type:'line', fg:232},
-            tags:true
-        });
-        nb.tscreen.append(this.gamebox);
+        this.gamebox = this.addBox(
+            constant.HENG*9 - 6,
+            constant.ZONG+6, 5, 0);
 
-        this.backbox = nb.blessed.box({
-            width:constant.HENG*9-10,
-            height: constant.ZONG+2,
-            top: 5+2,
-            left: 2+1,
-            tags:true
-        });
-        nb.tscreen.append(this.backbox);
+        this.backbox = this.addBox(
+            constant.HENG*9-10,
+            constant.ZONG+2,
+            5+2,
+            2+1
+        );
 
-        this.helpbox = nb.blessed.box({
-            width: constant.HENG*8,
-            height: 1,
-            top: constant.ZONG+5+6,
-            left: 3,
-            tags: true
-        });
-        nb.tscreen.append(this.helpbox);
+        this.helpbox = this.addBox(
+            constant.HENG*8,
+            1,
+            constant.ZONG+5+6,
+            3);
 
         this.gridboxes=[[],[]];
         for(let idx=0; idx<=1; idx++) {
@@ -72,22 +54,18 @@ export class TermRender extends tge.Render {
                 this.gridboxes[idx][i]=new Array(constant.HENG*2);
             for(let i=0; i<constant.ZONG; i++) {
                 for(var j=0;j<constant.HENG;j++) {
-                    this.gridboxes[idx][i][j*2]=nb.blessed.box({
-                        width:1,
-                        height:1,
-                        top:i+6+2,
-                        left:j*2+idx*53+4+1,
-                        tags:true
-                    });
-                    this.gridboxes[idx][i][j*2+1]=nb.blessed.box({
-                        width:1,
-                        height:1,
-                        top:i+6+2,
-                        left:j*2+1+idx*53+4+1,
-                        tags:true
-                    });
-                    nb.tscreen.append(this.gridboxes[idx][i][j*2]);
-                    nb.tscreen.append(this.gridboxes[idx][i][j*2+1]);
+                    this.gridboxes[idx][i][j*2] = this.addBox(
+                        1,
+                        1,
+                        i+6+2,
+                        j*2+idx*53+4+1
+                    );
+                    this.gridboxes[idx][i][j*2+1] = this.addBox(
+                        1,
+                        1,
+                        i+6+2,
+                        j*2+1+idx*53+4+1
+                    );
                 }
             }
         }
@@ -106,22 +84,18 @@ export class TermRender extends tge.Render {
         for(let i=0; i<4; i++) {
             this.holdboxes[i] = new Array(4);
             for(let j=0; j<4; j++) {
-                this.holdboxes[i][j*2] = nb.blessed.box({
-                    width:1,
-                    height:1,
-                    top:i+8+1,
-                    left:j*2+1+43,
-                    tags:true
-                });
-                this.holdboxes[i][j*2+1] = nb.blessed.box({
-                    width:1,
-                    height:1,
-                    top:i+8+1,
-                    left:j*2+1+1+43,
-                    tags:true
-                });
-                nb.tscreen.append(this.holdboxes[i][j*2]);
-                nb.tscreen.append(this.holdboxes[i][j*2+1]);
+                this.holdboxes[i][j*2] = this.addBox(
+                    1,
+                    1,
+                    i+8+1,
+                    j*2+1+43
+                );
+                this.holdboxes[i][j*2+1] = this.addBox(
+                    1,
+                    1,
+                    i+8+1,
+                    j*2+1+1+43
+                );
             }
         }
 
@@ -140,34 +114,27 @@ export class TermRender extends tge.Render {
         for(let i=0; i<4; i++) {
             this.nextboxes[i] = new Array(4);
             for(let j=0; j<4; j++) {
-                this.nextboxes[i][j*2] = nb.blessed.box({
-                    width:1,
-                    height:1,
-                    top:i+8+1,
-                    left:j*2+1+30,
-                    tags:true
-                });
-                this.nextboxes[i][j*2+1] = nb.blessed.box({
-                    width:1,
-                    height:1,
-                    top:i+8+1,
-                    left:j*2+1+1+30,
-                    tags:true
-                });
-                nb.tscreen.append(this.nextboxes[i][j*2]);
-                nb.tscreen.append(this.nextboxes[i][j*2+1]);
+                this.nextboxes[i][j*2] = this.addBox(
+                    1,
+                    1,
+                    i+8+1,
+                    j*2+1+30
+                );
+                this.nextboxes[i][j*2+1] = this.addBox(
+                    1,
+                    1,
+                    i+8+1,
+                    j*2+1+1+30
+                );
             }
         }
 
-        this.logobox = nb.blessed.box({
-            width:12,
-            height:5,
-            top:25,
-            left:30+7,
-            tags:true
-        });
-        nb.tscreen.append(this.logobox);
-
+        this.logobox = this.addBox(
+            12,
+            5,
+            25,
+            30+7
+        );
 
         this.msgbox = nb.blessed.box({
             width:23,
@@ -189,7 +156,7 @@ export class TermRender extends tge.Render {
                 top:18+idx,
                 left:32,
                 align:'center',
-                tages:true
+                tags:true
             });
             this.attackbox[idx] = nb.blessed.box({
                 width:10,
@@ -197,7 +164,7 @@ export class TermRender extends tge.Render {
                 top:20+idx,
                 left:32,
                 align:'center',
-                tages:true
+                tags:true
             });
             nb.tscreen.append(this.combobox[idx]);
             nb.tscreen.append(this.attackbox[idx]);

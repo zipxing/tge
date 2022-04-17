@@ -19,61 +19,35 @@ export class TermRender extends tge.Render {
 
         let nb = (<tge.TermRun>tge.env);
 
-        this.titlebox = nb.blessed.box({
-            width:WIDTH*10+10,
-            height:7,
-            top:0,
-            left:2,
-            tags:true
-        });
-        nb.tscreen.append(this.titlebox);
+        this.titlebox = this.addBox(WIDTH*10 + 10, 7, 0, 2);
 
-        this.logobox = nb.blessed.box({
-            width:12,
-            height:4,
-            top:3,
-            left:WIDTH*10+16,
-            tags:true
-        });
-        nb.tscreen.append(this.logobox);
+        this.logobox = this.addBox(12, 4, 3, WIDTH*10 + 16);
 
-        this.gamebox = nb.blessed.box({
-            width:WIDTH*10+2,
-            height:HEIGHT*5+2,
-            top:7,
-            left:0,
-            border:{type:'line', fg:238},
-            tags:true
-        });
-        nb.tscreen.append(this.gamebox);
+        this.gamebox = this.addBox(
+            WIDTH*10+2,
+            HEIGHT*5+2,
+            7, 0,
+            {border: {type:'line', fg:238}}
+        );
 
         this.gridboxes=[];
         for(let i=0;i<HEIGHT;i++) {
             this.gridboxes[i]=[];
             for(let j=0;j<WIDTH;j++) {
-                this.gridboxes[i][j]=nb.blessed.box({
-                    width:10,
-                    height:5,
-                    top:i*5+8,
-                    left:j*10+1,
-                    tags:true
-                });
-                nb.tscreen.append(this.gridboxes[i][j]);
+                this.gridboxes[i][j] = this.addBox(10, 5, i*5+8, j*10+1);
                 this.gridboxes[i][j].on('click', (data: any)=>{
                     this.touchCell("M", i, j);
                 });
             }
         }
 
-        this.msgbox = nb.blessed.box({
-            width:23,
-            height:HEIGHT*5+2,
-            top:7,
-            left:WIDTH*10+3,
-            border:{type:'line', fg:238},
-            tags:true
-        });
-        nb.tscreen.append(this.msgbox);
+        this.msgbox = this.addBox(
+            23,
+            HEIGHT*5+2,
+            7,
+            WIDTH*10+3,
+            {border: {type:'line', fg:238}}
+        );
 
         this.drawTitle();
         this.drawLogo();
