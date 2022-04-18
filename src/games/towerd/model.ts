@@ -32,7 +32,7 @@ export class Model extends tge.Model {
     searchRoad() {
         let openList: TPoint[] = [];
         let closeList: TPoint[] = [];
-        let result_index = 0;   //结果数组在开启列表中的序号
+        let result_index = -1;   //结果数组在开启列表中的序号
 
         this.result = [];
         openList.push({
