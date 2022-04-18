@@ -23,59 +23,49 @@ export class TermRender extends tge.Render {
         let nb = <tge.TermRun>tge.env;
         let mh = new MouseHandler();
 
-        this.titlebox = nb.blessed.box({
-            width:constant.WIDTH*10+10,
-            height:4,
-            top:0,
-            left:2,
-            tags:true
-        });
-        nb.tscreen.append(this.titlebox);
+        this.titlebox = this.addBox(
+            constant.WIDTH*10+10,
+            4,
+            0,
+            2,
+        );
 
-        this.logobox = nb.blessed.box({
-            width:12,
-            height:4,
-            top:0,
-            left:constant.WIDTH*10+16,
-            tags:true
-        });
-        nb.tscreen.append(this.logobox);
+        this.logobox = this.addBox(
+            12,
+            4,
+            0,
+            constant.WIDTH*10+16,
+        );
 
-        this.gamebox = nb.blessed.box({
-            width:constant.WIDTH*10+2,
-            height:constant.HEIGHT*5+2,
-            top:4,
-            left:0,
-            border:{type:'line', fg:238},
-            tags:true
-        });
-        nb.tscreen.append(this.gamebox);
+        this.gamebox = this.addBox(
+            constant.WIDTH*10+2,
+            constant.HEIGHT*5+2,
+            4,
+            0,
+            {border:{type:'line', fg:238}},
+        );
 
         this.gridboxes=[];
         for(let i=0;i<constant.HEIGHT;i++) {
             this.gridboxes[i]=[];
             for(let j=0;j<constant.WIDTH;j++) {
-                this.gridboxes[i][j]=nb.blessed.box({
-                    width:10,
-                    height:5,
-                    top:i*5+5,
-                    left:j*10+1,
-                    hidden: true,
-                    tags:true
-                });
-                nb.tscreen.append(this.gridboxes[i][j]);
+                this.gridboxes[i][j] = this.addBox(
+                    10,
+                    5,
+                    i*5+5,
+                    j*10+1,
+                    {hidden: true}
+                );
             }
         }
 
-        this.msgbox = nb.blessed.box({
-            width:23,
-            height:constant.HEIGHT*5+2,
-            top:4,
-            left:constant.WIDTH*10+3,
-            border:{type:'line', fg:238},
-            tags:true
-        });
-        nb.tscreen.append(this.msgbox);
+        this.msgbox = this.addBox(
+            23,
+            constant.HEIGHT*5+2,
+            4,
+            constant.WIDTH*10+3,
+            {border:{type:'line', fg:238}}
+        );
 
         tge.Emitter.register("Unblock.REDRAW_GRID", this.redrawGrid, this);
         tge.Emitter.register("Unblock.RESET_GRID", this.resetGrid, this);

@@ -247,6 +247,7 @@ export abstract class Render {
             border: null,
             label: null,
             align: null,
+            content: null,
             tags: true
         };
 
@@ -254,6 +255,7 @@ export abstract class Render {
             bo.border = bla.border;
             bo.label = bla.label;
             bo.align  = bla.align;
+            bo.content = bla.content;
         } 
 
         let box = nb.blessed.box(bo);

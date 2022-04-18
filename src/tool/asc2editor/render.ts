@@ -27,47 +27,39 @@ export class TermRender extends tge.Render {
         let nb = (<tge.TermRun>tge.env);
         this.mousedown = false;
 
-        this.titlebox = nb.blessed.box({
-            width:Model.asciiw+2,
-            height:4,
-            top:0,
-            left:0,
-            tags:true
-        });
-        nb.tscreen.append(this.titlebox);
+        this.titlebox = this.addBox(
+            Model.asciiw+2,
+            4,
+            0,
+            0,
+        );
 
-        this.logobox = nb.blessed.box({
-            width:12,
-            height:4,
-            top:0,
-            left:Model.asciiw-7,
-            tags:true
-        });
-        nb.tscreen.append(this.logobox);
+        this.logobox = this.addBox(
+            12,
+            4,
+            0,
+            Model.asciiw-7,
+        );
 
-        this.imagebox = nb.blessed.box({
-            width:Model.asciiw+2,
-            height:Model.asciih+2,
-            top:4,
-            left:0,
-            border:{type:'line'},
-            tags:true
-        });
+        this.imagebox = this.addBox(
+            Model.asciiw+2,
+            Model.asciih+2,
+            4,
+            0,
+            {border:{type:'line'}},
+        );
         this.imagebox.setLabel("Image");
-        nb.tscreen.append(this.imagebox);
 
         this.gridimage=[];
         for(let i=0;i<Model.asciih;i++) {
             this.gridimage[i]=[];
             for(let j=0;j<Model.asciiw;j++) {
-                this.gridimage[i][j]=nb.blessed.box({
-                    width:1,
-                    height:1,
-                    top:i+5,
-                    left:j+1,
-                    tags:true
-                });
-                nb.tscreen.append(this.gridimage[i][j]);
+                this.gridimage[i][j] = this.addBox(
+                    1,
+                    1,
+                    i+5,
+                    j+1,
+                );
                 this.gridimage[i][j].on('mousedown', (data: any)=>{
                     this.mousedown = true;
                     this.touchCell("IMAGE", i, j);
@@ -82,45 +74,39 @@ export class TermRender extends tge.Render {
             }
         }
 
-        this.charbox = nb.blessed.box({
-            width:28+2,
-            height:8+2,
-            top:Model.asciih+6,
-            left:0,
-            border:{type:'line'},
-            tags:true
-        });
+        this.charbox = this.addBox(
+            28+2,
+            8+2,
+            Model.asciih+6,
+            0,
+            {border:{type:'line'}}
+        );
         this.charbox.setLabel("ASCII");
-        nb.tscreen.append(this.charbox);
 
         this.gridchar=[];
         for(let i=0;i<Model.ascii.length;i++) {
             this.gridchar[i]=[];
             for(let j=0;j<Model.ascii[i].length;j++) {
-                this.gridchar[i][j]=nb.blessed.box({
-                    width:1,height:1,
-                    content:`{15-fg}{238-bg}${Model.ascii[i][j]}{/}`,
-                    top:Model.asciih+7+i,
-                    left:j+1,
-                    tags:true
-                });
-                nb.tscreen.append(this.gridchar[i][j]);
+                this.gridchar[i][j]= this.addBox(
+                    1,1,
+                    Model.asciih+7+i,
+                    j+1,
+                    {content:`{15-fg}{238-bg}${Model.ascii[i][j]}{/}`}
+                );
                 this.gridchar[i][j].on('click', (data: any)=>{
                     this.touchCell("CHAR", i, j);
                 });
             }
         }
 
-        this.colorbox = nb.blessed.box({
-            width:32+2,
-            height:8+2,
-            top:Model.asciih+6,
-            left:30,
-            border:{type:'line'},
-            tags:true
-        });
+        this.colorbox = this.addBox(
+            32+2,
+            8+2,
+            Model.asciih+6,
+            30,
+            {border:{type:'line'}}
+        );
         this.colorbox.setLabel("FGColor");
-        nb.tscreen.append(this.colorbox);
 
         //init color content...
         this.gridcolor=[];
@@ -129,31 +115,26 @@ export class TermRender extends tge.Render {
             for(let j=0;j<32;j++) {
                 let cn = i*32+j;
                 let nstr=' ';
-                this.gridcolor[i][j]=nb.blessed.box({
-                    width:1,height:1,
-                    content:`{${cn}-bg}{${0}-fg}${nstr}{/}`,
-                    top:Model.asciih+7+i,
-                    left:j+31,
-                    tags:true
-
-                });
-                nb.tscreen.append(this.gridcolor[i][j]);
+                this.gridcolor[i][j]=this.addBox(
+                    1,1,
+                    Model.asciih+7+i,
+                    j+31,
+                    {content:`{${cn}-bg}{${0}-fg}${nstr}{/}`}
+                );
                 this.gridcolor[i][j].on('click', (data: any)=>{
                     this.touchCell("FG-COLOR", i, j);
                 });
             }
         }
 
-        this.colorbbox = nb.blessed.box({
-            width:32+2,
-            height:8+2,
-            top:Model.asciih+6,
-            left:64,
-            border:{type:'line'},
-            tags:true
-        });
+        this.colorbbox = this.addBox(
+            32+2,
+            8+2,
+            Model.asciih+6,
+            64,
+            {border:{type:'line'}},
+        );
         this.colorbbox.setLabel("BGColor");
-        nb.tscreen.append(this.colorbbox);
 
         //init back color content...
         this.gridbcolor=[];
@@ -162,31 +143,25 @@ export class TermRender extends tge.Render {
             for(let j=0;j<32;j++) {
                 let cn = i*32+j;
                 let nstr=' ';
-                this.gridbcolor[i][j]=nb.blessed.box({
-                    width:1,height:1,
-                    content:`{${cn}-bg}{${0}-fg}${nstr}{/}`,
-                    top:Model.asciih+7+i,
-                    left:j+65,
-                    tags:true
-
-                });
-                nb.tscreen.append(this.gridbcolor[i][j]);
+                this.gridbcolor[i][j]=this.addBox(
+                    1,1,
+                    Model.asciih+7+i,
+                    j+65,
+                    {content:`{${cn}-bg}{${0}-fg}${nstr}{/}`}
+                );
                 this.gridbcolor[i][j].on('click', (data: any)=>{
                     this.touchCell("BG-COLOR", i, j);
                 });
             }
         }
 
-        this.msgbox = nb.blessed.box({
-            width:35,
-            height:4,
-            top:0,
-            left:53,
-            border:{type:'line', fg:238},
-            align:'center',
-            tags:true
-        });
-        nb.tscreen.append(this.msgbox);
+        this.msgbox = this.addBox(
+            35,
+            4,
+            0,
+            53,
+            {border:{type:'line', fg:238}, align:'center'}
+        );
 
         this.drawTitle();
         this.drawLogo();
