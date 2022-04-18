@@ -2,7 +2,7 @@ import * as tge from "../../engine"
 import { Model, Pen } from "./model"
 
 export class Game extends tge.Game {
-    asciiart: string = '/tmp/test.art';
+    asciiart: string = 'ascii_art/test.art';
 
     initGame() {
         let m = <Model>this.model;

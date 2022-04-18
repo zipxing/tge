@@ -67,6 +67,6 @@ export class Model extends tge.Model {
         }
         ots = ots.slice(0, ots.length-blank_count);
         let fs=require('fs');
-        fs.writeFileSync(fpath, ots.join('\n'));
+        fs.writeFileSync('assets/' + fpath, ots.join('\n'));
     }
 }
