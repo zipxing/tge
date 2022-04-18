@@ -5,7 +5,6 @@ import { Game } from "./game"
 export class TermRender extends tge.Render {
     logobox: any;
     carboxes: any[];
-    //msgbox: any;
 
     constructor() {
         super();
@@ -27,31 +26,11 @@ export class TermRender extends tge.Render {
             let bls = tge.AscIIManager.getArt("car"+(i+1)).blessed_lines;
             this.carboxes[i].setContent(bls.join('\n'));
         }
-
-        /*this.msgbox = nb.blessed.box({
-                width:23,
-                height:Model.carh+2,
-                top:4,
-                left:Model.carw+3,
-                border:{type:'line', fg:238},
-                tags:true
-            });
-            nb.tscreen.append(this.msgbox);*/
-
-        //tge.Emitter.register("Jump.REDRAW_MSG", this.redrawMsg, this);
     }
 
     drawLogo() {
         let s = tge.AscIIManager.getArt("tgelogo").blessed_lines;
         this.logobox.setContent(s.join('\n'));
-    }
-
-    redrawMsg() {
-        let msg:string[] =['Press {green-fg}q{/} quit...',
-            'Game over,press {green-fg}r{/} restart...',
-            'Game over,press {green-fg}r{/} restart...'];
-        let g = TermRender.game;
-        //this.msgbox.setContent(msg[g.gamestate]);
     }
 
     redrawCar() {

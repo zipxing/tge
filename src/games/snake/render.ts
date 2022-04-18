@@ -17,58 +17,48 @@ export class TermRender extends tge.Render {
 
         let nb = (<tge.TermRun>tge.env);
 
-        this.titlebox = nb.blessed.box({
-            width:Model.snakew+2,
-            height:4,
-            top:0,
-            left:3,
-            tags:true
-        });
-        nb.tscreen.append(this.titlebox);
+        this.titlebox = this.addBox(
+            Model.snakew+2,
+            4,
+            0,
+            3
+        );
 
-        this.logobox = nb.blessed.box({
-            width:12,
-            height:4,
-            top:0,
-            left:Model.snakew+16,
-            tags:true
-        });
-        nb.tscreen.append(this.logobox);
+        this.logobox = this.addBox(
+            12,
+            4,
+            0,
+            Model.snakew+16
+        );
 
-        this.gamebox = nb.blessed.box({
-            width:Model.snakew+2,
-            height:Model.snakeh+2,
-            top:4,
-            left:0,
-            border:{type:'line', fg:238},
-            tags:true
-        });
-        nb.tscreen.append(this.gamebox);
+        this.gamebox = this.addBox(
+            Model.snakew+2,
+            Model.snakeh+2,
+            4,
+            0,
+            {border:{type:'line', fg:238}}
+        );
 
         this.gridboxes=[];
         for(let i=0;i<Model.snakeh;i++) {
             this.gridboxes[i]=[];
             for(let j=0;j<Model.snakew;j++) {
-                this.gridboxes[i][j]=nb.blessed.box({
-                    width:1,
-                    height:1,
-                    top:i+5,
-                    left:j+1,
-                    tags:true
-                });
-                nb.tscreen.append(this.gridboxes[i][j]);
+                this.gridboxes[i][j] = this.addBox(
+                    1,
+                    1,
+                    i+5,
+                    j+1
+                );
             }
         }
 
-        this.msgbox = nb.blessed.box({
-            width:23,
-            height:Model.snakeh+2,
-            top:4,
-            left:Model.snakew+3,
-            border:{type:'line', fg:238},
-            tags:true
-        });
-        nb.tscreen.append(this.msgbox);
+        this.msgbox = this.addBox(
+            23,
+            Model.snakeh+2,
+            4,
+            Model.snakew+3,
+            {border:{type:'line', fg:238}}
+        );
 
         tge.Emitter.register("Snake.REDRAW_MSG", this.redrawMsg, this);
         tge.Emitter.register("Snake.REDRAW_GRID", this.redrawGrid, this);
@@ -95,10 +85,6 @@ export class TermRender extends tge.Render {
             'Game over,press {green-fg}r{/} restart...'];
         let g = TermRender.game;
         this.msgbox.setContent(msg[g.gamestate]);
-    }
-
-    setPoint(box: any, bg:string, fg:string, cchar:string) {
-        box.setContent(`{${bg}-bg}{${fg}-fg}${cchar}{/}`);
     }
 
     setPoint256(box: any, bg:number, fg:number, cchar:string) {

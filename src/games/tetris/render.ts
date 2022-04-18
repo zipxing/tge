@@ -31,22 +31,16 @@ export class TermRender extends tge.Render {
 
         this.titlebox = this.addBox(50, 5, 0, 22);
 
-        this.gamebox = this.addBox(
-            constant.HENG*9 - 6,
+        this.gamebox = this.addBox(constant.HENG*9 - 6,
             constant.ZONG+6, 5, 0);
 
         this.backbox = this.addBox(
             constant.HENG*9-10,
-            constant.ZONG+2,
-            5+2,
-            2+1
-        );
+            constant.ZONG+2, 5+2, 2+1);
 
         this.helpbox = this.addBox(
-            constant.HENG*8,
-            1,
-            constant.ZONG+5+6,
-            3);
+            constant.HENG*8, 1,
+            constant.ZONG+5+6, 3);
 
         this.gridboxes=[[],[]];
         for(let idx=0; idx<=1; idx++) {
@@ -55,119 +49,73 @@ export class TermRender extends tge.Render {
             for(let i=0; i<constant.ZONG; i++) {
                 for(var j=0;j<constant.HENG;j++) {
                     this.gridboxes[idx][i][j*2] = this.addBox(
-                        1,
-                        1,
-                        i+6+2,
-                        j*2+idx*53+4+1
+                        1, 1, i+6+2, j*2+idx*53+4+1
                     );
                     this.gridboxes[idx][i][j*2+1] = this.addBox(
-                        1,
-                        1,
-                        i+6+2,
-                        j*2+1+idx*53+4+1
+                        1, 1, i+6+2, j*2+1+idx*53+4+1
                     );
                 }
             }
         }
-        this.holdbox = nb.blessed.box({
-            width:10,
-            height:6,
-            top:8,
-            left:43,
-            border:{type:'line', fg:238},
-            label:{text:'{238-fg}Hold{/}'},
-            tags:true
-        });
-        nb.tscreen.append(this.holdbox);
+
+        this.holdbox = this.addBox(10, 6, 8, 43,
+            {border:{type:'line', fg:238},
+                label:{text:'{238-fg}Hold{/}'}},
+        );
 
         this.holdboxes=[];
         for(let i=0; i<4; i++) {
             this.holdboxes[i] = new Array(4);
             for(let j=0; j<4; j++) {
                 this.holdboxes[i][j*2] = this.addBox(
-                    1,
-                    1,
-                    i+8+1,
-                    j*2+1+43
-                );
+                    1, 1, i+8+1, j*2+1+43);
                 this.holdboxes[i][j*2+1] = this.addBox(
-                    1,
-                    1,
-                    i+8+1,
-                    j*2+1+1+43
-                );
+                    1, 1, i+8+1, j*2+1+1+43);
             }
         }
 
-        this.nextbox = nb.blessed.box({
-            width:10,
-            height:6,
-            top:8,
-            left:30,
-            border:{type:'line', fg:238},
-            label:{text:'{238-fg}Next{/}'},
-            tags:true
-        });
-        nb.tscreen.append(this.nextbox);
+        this.nextbox = this.addBox(10, 6, 8, 30,
+            {border:{type:'line', fg:238},
+            label:{text:'{238-fg}Next{/}'}});
 
         this.nextboxes=[];
         for(let i=0; i<4; i++) {
             this.nextboxes[i] = new Array(4);
             for(let j=0; j<4; j++) {
                 this.nextboxes[i][j*2] = this.addBox(
-                    1,
-                    1,
-                    i+8+1,
-                    j*2+1+30
-                );
+                    1, 1, i+8+1, j*2+1+30);
                 this.nextboxes[i][j*2+1] = this.addBox(
-                    1,
-                    1,
-                    i+8+1,
-                    j*2+1+1+30
-                );
+                    1, 1, i+8+1, j*2+1+1+30);
             }
         }
 
-        this.logobox = this.addBox(
-            12,
-            5,
-            25,
-            30+7
-        );
+        this.logobox = this.addBox(12, 5, 25, 30+7);
 
-        this.msgbox = nb.blessed.box({
-            width:23,
-            height:11,
-            top:14,
-            left:30,
-            border:{type:'line', fg:232},
-            align:'center',
-            tags:true
-        });
-        nb.tscreen.append(this.msgbox);
+        this.msgbox = this.addBox(
+            23,
+            11,
+            14,
+            30,
+            {border:{type:'line', fg:232},
+            align:'center'});
 
         this.combobox = [];
         this.attackbox = [];
         for(let idx=0; idx<2; idx++) {
-            this.combobox[idx] = nb.blessed.box({
-                width:10,
-                height:1,
-                top:18+idx,
-                left:32,
-                align:'center',
-                tags:true
-            });
-            this.attackbox[idx] = nb.blessed.box({
-                width:10,
-                height:1,
-                top:20+idx,
-                left:32,
-                align:'center',
-                tags:true
-            });
-            nb.tscreen.append(this.combobox[idx]);
-            nb.tscreen.append(this.attackbox[idx]);
+            this.combobox[idx] = this.addBox(
+                10,
+                1,
+                18+idx,
+                32,
+                {align:'center'}
+            );
+            this.attackbox[idx] = this.addBox(
+                10,
+                1,
+                20+idx,
+                32,
+                {align:'center'}
+            );
         }
 
         tge.Emitter.register("Tetris.REDRAW_MSG", this.redrawMsg, this);
