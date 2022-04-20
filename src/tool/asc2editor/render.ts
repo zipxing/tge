@@ -24,42 +24,20 @@ export class TermRender extends tge.Render {
         super();
         tge.AscIIManager.loadArtFile("ascii_art/tge.txt", "tgelogo");
         tge.AscIIManager.loadArtFile("ascii_art/ascii_title.txt", "title");
-        let nb = (<tge.TermRun>tge.env);
         this.mousedown = false;
 
-        this.titlebox = this.addBox(
-            Model.asciiw+2,
-            4,
-            0,
-            0,
-        );
+        this.titlebox = this.addBox( Model.asciiw+2, 4, 0, 0);
 
-        this.logobox = this.addBox(
-            12,
-            4,
-            0,
-            Model.asciiw-7,
-        );
+        this.logobox = this.addBox( 12, 4, 0, Model.asciiw-7 );
 
-        this.imagebox = this.addBox(
-            Model.asciiw+2,
-            Model.asciih+2,
-            4,
-            0,
-            {border:{type:'line'}},
-        );
-        this.imagebox.setLabel("Image");
+        this.imagebox = this.addBox( Model.asciiw+2, Model.asciih+2, 4, 0,
+            {border:{type:'line'}, label:'Image'});
 
         this.gridimage=[];
         for(let i=0;i<Model.asciih;i++) {
             this.gridimage[i]=[];
             for(let j=0;j<Model.asciiw;j++) {
-                this.gridimage[i][j] = this.addBox(
-                    1,
-                    1,
-                    i+5,
-                    j+1,
-                );
+                this.gridimage[i][j] = this.addBox( 1, 1, i+5, j+1,);
                 this.gridimage[i][j].on('mousedown', (data: any)=>{
                     this.mousedown = true;
                     this.touchCell("IMAGE", i, j);
@@ -181,7 +159,6 @@ export class TermRender extends tge.Render {
     }
 
     touchCell(t:string, i:number, j:number) {
-        let nb = (<tge.TermRun>tge.env);
         if(!TermRender.game) return;
         let g = TermRender.game;
         let m = <Model>g.model;
