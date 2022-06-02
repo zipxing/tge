@@ -235,9 +235,9 @@ export class ElsGrid {
             }
         }
 
-        if(mc.fullrows.length%100 != 0) {
+        if(mc.fullrows.length != 0) {
             let i,j,n;
-            for(n=0; n<mc.fullrows.length%100; n++) {
+            for(n=0; n<mc.fullrows.length; n++) {
                 for(i=mc.fullrows[n]; i>=0; i--) {
                     for (j=0; j<constant.HENG; j++) {
                         if(i) {
